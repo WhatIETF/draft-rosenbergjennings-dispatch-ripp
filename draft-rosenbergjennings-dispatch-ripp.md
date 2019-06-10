@@ -417,6 +417,59 @@ more than traditional HTTP load balancing techniques, the connection
 terminates on one of several RIPP servers that sit behind the load
 balancer. 
 
+Because RIPP clients and servers are nothing more than HTTP3
+applications, the behavior or RIPP is specified entirey by describing
+how various RIPP procedures map to the core HTTP3 primitives available
+to applications - opening connections, closing connections, sending
+requests and responses, receiving requests and responses, and setting
+header fields. That's it.
+
+When two domains wish to exchange calls in both directions, they
+implement both the HTTP3 client and server roles. We refer to this as
+fluid HTTP - since either domain can act as either client, or server,
+depending on the need. Fluid HTTP is shown in Figure 2:
+
+  Domain A                    Domain B
+
+                 Calls
++-------------+  From      +-------------+
+|             |  A to B    |             |
+|             |            |             |
+|  Client     | +--------> |  Server     |
+|             |            |             |
+|             |            |             |
++-------------+            +-------------+
+
+                Calls
++-------------+ From       +-------------+
+|             | B to A     |             |
+|             |            |             |
+|  Server     | <--------+ |  Client     |
+|             |            |             |
+|             |            |             |
++-------------+            +-------------+
+
+# Terminology
+
+This specification follows the terminology of HTTP3 - specifically:
+
+RIPP Client: The entity that initiates a call, by acting as an HTTP
+client.
+
+RIPP Server: The entity that receives a call, by acting as an HTTP
+server.
+
+RIPP Connection: An HTTP connection between a RIPP client and RIPP
+server.
+
+RIPP Endpoint: Either a RIPP client or RIPP server.
+
+RIPP Peer: An endpoint.  When discussing a particular endpoint, "peer"
+refers to the endpoint that is remote to the primary subject of
+discussion.
+
+Call: A VoIP session established by a RIPP client for the purposes of
+exchanging audio and signaling information.
 
 
 # Overview of Operation
