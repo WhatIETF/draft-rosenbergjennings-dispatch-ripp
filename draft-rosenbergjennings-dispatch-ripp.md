@@ -29,6 +29,14 @@ organization = "Cisco Systems"
   [author.address]
   email = "fluffy@iii.ca"
 
+[[author]]
+initials = "J."
+surname = "Rosenberg"
+fullname = "Jonathan Rosenberg"
+organization = "Five9"
+  [author.address]
+  email = "jdrosen@jdrosen.net"
+
 %%%
 
 .# Abstract
