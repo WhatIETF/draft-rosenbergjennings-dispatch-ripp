@@ -368,7 +368,35 @@ implement STIR. Since RIPP is meant for peering between providers (and
 not client-to-server connections), STIR is applicable. RIPP clients
 must either insert a signed passport, or pass one through if it
 exists. Similarly, RIPP servers must act as verifying parties and
-reject any calls that omit a passport. 
+reject any calls that omit a passport.
+
+## Calls Separate from Connections
+
+In SIP, there is a fuzzy relationship between calls and
+connections. In some cases, connection failures cause call
+terminations, and vice a versa.
+
+HTTP, on the otherhand, very clearly separates the state of the
+resource being manipulated, with the state of the HTTP connection used
+to manipulate it. This design principle is inherited by
+RIPP. Consequently, call state on both client and server exist
+independently from the connections which manipulate them. This allows
+for greater availability my enabling connections for the same call to
+move between machines in the case of failures.
+
+## Path Validation, not ICE
+
+HTTP3 is designed to work through NAT as a client-server protocol. It
+has built in techniques for dealing with NAT rebindings, IP address
+changes due to a client moving between networks (e.g., wifi to
+cellular data). It has built in path validation that ensures that HTTP
+cannot be used for amplification attacks.
+
+SIP has, over the years, solved these problems to some degree, but not
+efficiently nor completely. To work with HTTP, RIPP must utilize the
+HTTP approaches for these problems. Consequently, RIPP does not
+utilize ICE and has no specific considerations for NAT traversal, as
+these are handled by HTTP3 itself.
 
 
 # Reference Architecture
@@ -471,61 +499,417 @@ discussion.
 Call: A VoIP session established by a RIPP client for the purposes of
 exchanging audio and signaling information.
 
+RIPP Domain: An administrative domain that can implement a RIPP
+client, RIPP server, or both, for the purposes of making and receiving
+calls. 
+
+Originating Domain: The domain that initiates a call, therefore
+acting as an HTTP and RIPP client.
+
+Terminating Domain: The domain that receives a call, therefore acting
+as an HTTP and RIPP server. 
 
 # Overview of Operation
 
+This section provides an overview of the operation of RIPP.
+
+## Discovery and Provisioning
+
+RIPP does not provide any technique for discovery. It is assumed that
+peering is arranged bilaterally through some out of bands means. For
+example, a RIPP domain can offer a web site through which customers
+can order termination services. This website can provide the RIPP
+client domain with the information needed to inject calls into that
+domain. For bidirectional peering arrangements, each side would need
+to perform this function independently. 
+
+Automated techniques for provisioning bidirecitonal peering
+relationships are beyond the scope of this specification.
+
+Two pieces - and only two pieces of information - are required for a
+client domain to initiate calls to a server domain:
+
+1. The root URI for placing calls,
+2. A valid OAuth token
+
+It is RECOMMENDED that these be provided via a website operated by the
+terminating domain. This also means the process of authentication of
+the originating domain to the terminating domai is fully outside the
+scope of this spceification, and can follow any desired technique by
+the terminating domain that ultimately results in the issuance of an
+OAuth token. 
+
+The root URI MUST be a valid HTTPS URI. The terminating domain MUST be
+compliant with HTTP3 in processing requests. The root URI MAY contain
+a path component, though this is optional.
+
+All requests to create a new call are initiated by the client towards
+this URI.
+
+As an example, the following is a valid RIPP root URI:
+
+https://telco.com/calls
+
+
 ## Initiating Calls
 
-Client initiates the call. Call initiation is an HTTP request and will
-be sent over a new stream. The response is a reference to a call
-object that was created, identified by a URI. Structure of this URI
-allows flexibility in design for receiving side of calls. If you want
-all further transactions for this specific call to go to same backend
-server, you can use a URI which is configured to route to that
-specific server. In other words, each server instance is its own REST
-endpoint.
+To initiate a new call, a client initiates a connection to the root
+URI for the domain to which it wishes to place the call. This MUST be
+an HTTP3 request, and MUST be made to an HTTPS URI. If the client
+already has a connection open to the server, it MAY reuse that
+connection. It is RECOMMENDED that clients keep their connections open
+to the server, in order to speed up call setup delays. Furthermore, it
+is RECOMMENDED that the underlying HTTP client implementation make use
+of 0-RTT connections to further improve call setup times in cases
+where the HTTP connection has been dropped.
 
-Alternative: to get all mid-call requests and media to the same
-instance we can use session stickiness - common feature in http load
-balancers. This might be better - but we'd need to check on how well
-this is supported. 
+To place the call, the RIPP client MUST initiate a POST request to
+this URI. It MUST append the root URI with the attribute
+"newcall". For example:
 
-## Ongoing Signaling
+POST https://telco.com/calls?newcall
 
-New request immediately initiated by the client to the URI learned in
-the response to the initial call request. This request is a long lived
-request - headers, followed by a series of data frames. Final
-trailing header only sent once the call is over. SImilarly, server
-sends a response immediately - provisonal headers, final headers,
-followed by a long stream of data frames. This creates a bidirectional
-stream of data frames which are used to convey signaling for the
-call.
+This request MUST contain the OAuth token that the client has
+obtained out-of-band.
 
-Ongoing signaling operations are used to move the call along a defined
-state machine - from created (the result of the initial call request),
-to pending, to ringing, to connected or terminated. Once established,
-mid-call signaling exists to terminate the call, and to gracefully
-move the call to another server instance to facilitate
-maintenance. There is no equivalent of re-INVITE.
+The server will validate the OAuth token, authorize the creation of a
+new call, and then either accept or reject the request. If accepted,
+it indicates that the server is willing to create this call. The
+server MUST return a 201 Created response, and MUST include a Location
+header field containing an HTTPS URI which identifies the call that
+has been created. The URI identifying the call MUST include a path
+segment which contains a type 4 UUID, ensuring that call identifiers
+are unique across time and space. 
+
+An example URI that identifies a call is:
+
+https://telco.com/calls/id/ha8d7f6fso29s88clzopapie8x8c
+
+The server MAY include an HTTP session cookie in the 201 response. 
+
+The usage of an HTTP URI to identify the call itself, combined with
+session cookies,  gives the terminating RIPP domain a great deal of
+flexibility in how it manages state for the call. In traditional
+softswitch designs, call and media state is held in-memory in the
+server and not placed into databases. In such a design, a RIPP server
+can use the session cookie in combination with sticky session routing
+in the load balancers to ensure that subsequent requests for the same
+call go to the same call server. Alternatively, if the server is not
+using any kind of HTTP load balancer at all, it can use a specific
+hostname in the URI to route all requests for this call to a specific
+instance of the server. This technique is particularly useful for
+telcos who have not deployed HTTP infrastructure, but do have
+SBCs. The root URI can use a domain whose A records identify all of
+the perimeter SBCs. Once a call has landed on a particular SBC, the
+call URI can indicate the specific hostname of the SBC.
+
+For example, the root URI for such a telco operator might be:
+
+https://sbc-farm.telco.com/calls
+
+and the call URIs could be of the form:
+
+https://sbc-host-{instance-number}.sbc-farm.telco.com/calls/id/{UUID}
+
+However, the HTTP URI for the call MUST NOT contain an IP address; it
+MUST utilize a valid host or domain name. This is to ensure that TLS
+certificate validation functions properly without manual
+configuration of certificates (a practice which is required still for
+SIP based peering).
+
+Neither the request, nor the response, contain bodies.
+
+FFS: Inclusion of bodies in requests and responses for signaling
+capabilities? 
+
+
+## Establishing the Signaling and Media Transactions
+
+To perform signaling and to exchange media for this call, once the
+client has the call URI, it simultaneously creates a set of new
+request transactions towards the call URI. These are called signaling
+transactions and media transactions respectively.
+
+Both the media and signaling transactions are long running. This means
+that the client initiates the connections, sends the headers, and then
+sends the body as a long-running stream (e.g., streaming
+requests). ((TODO: must confirm that this works with http3 servers -
+it seems ok according to the specs though)). Similarly, the server
+receives the request, and if it accepts the request, immediately
+generates a 200 response and begins streaming the response body back
+towards the client. This has the property of creating a bidirectional
+data stream between the client, and the server. RIPP specific
+information is carried in that data stream.
+
+The client SHOULD open a single signaling transaction, and SHOULD open
+at least 10 ((FFS: what is the right number and how to negotiate
+proper ranges of values)) media transactions. The use of multiple
+media transactions is essential to low latency operation of RIPP. This
+is because, as describe below, media packets are sprayed across these
+transactions in order to ensure that there is never head-of-line
+blocking. This is possible because, in HTTP3, each transaction is
+carried over a separate QUIC stream, and QUIC streams run ontop of
+UDP. ((FFS: is there some configuration required to make sure that
+QUIC dosnt multiplex data from different streams into the same UDP
+packet?? This wont cause HOL blocking but will cause amplification of
+packet loss))
+
+The state of the connection is separate from the state of the
+call. The client MAY terminate the connection at any time, and
+re-establish it. Similarly, the server or cient may end the signaling
+or media transactions, and restart them too. RIPP provides identifiers
+and sequencing at the application layer in order to facilitate this
+process. This process is an essential part of this specification, due
+to the high likelihood that streams, connections, and servers fail at
+some point during a call. This is described in more detail below.
+
+To initiate a signaling transaction, the client MUST initiate a POST
+request to the call URI, and MUST include the signaling URI
+parameter. To initiate a media transaction, it MUST include the media
+URI parameter. These requests MUST NOT include the newcall URI
+parameter. A client MUST NOT include both the media and signaling
+parameters in a request. This is because media and signaling utilize
+different framing within the data stream and cannot be multiplexed.
+
+The requests to create these transactions MUST include headers for any
+applicable session cookies.
+
+When opening a media transaction, the client MUST include a RIPP-Media
+header field in the request headers. Simiarly, the server MUST include
+this header in the response headers. This header contains a channel
+number, the name of the codec used in the stream, and a timestamp
+conveying the wall clock time corresponding to the time at which the
+media packets in that stream were received or generated by the
+client. The timestamp also includes timestamps received from any
+upstream servers, providing an e2e timing trace for the media
+path. ((TODO: need to fill in details)).
+
+RIPP supports multiple channels, meant for handling stereo
+audio. Each channel MUST be its own media transaction. Channel number
+zero is reserved for the media command channel. The media command
+channel - unlike the media channels - requires reliability, and thus
+media frames on this channel are never acknowledged. Indeed, the
+primary purpose of the media command channel is to convey
+acknowledgements for media packets. The client MUST open at least one
+media transaction on channel 0. 
+
+
+((FFS: any other headers we need to talk
+about??))
+
+
+## Terminating and Re-establishing Media and Signaling Transactions
+
+The originating domain MUST ensure that there is always at least one
+signaling connection, and at least 10 media conncetions between the
+originating domain and the call URI, for a specific call. As such, if
+a transaction ends or the connection breaks or is migrated, the client
+MUST re-initiate these transactions immediately, or risk loss of media
+and signaling events. However, to deal with the fact that
+re-establishment takes time, both client and server MUST buffer their
+signaling and media streams for at least 5 seconds, and then once the
+connections and streams are re-established, it sends all buffered data
+immediately.
+
+Note that it is the sole responsibility of the client to make sure
+these connections are re-established if they fail unexpectedly. 
+
+These rules result in the creation of at least one bidirectional byte
+stream between originating and terminating server to be used for
+signaling, and at least ten bidirectional byte streams for media.
+
 
 ## Media Negotiation
 
 There is no offer-answer model. Only two codecs are supported - G711
-and Opus. All entities must support it. Without the need to signal
+and Opus. All entities must support both. Without the need to signal
 media destinations - IP and ports - there is no longer a need for
 SDP. Either side can modify codecs at will, without signaling. They
 can also adjust frame sizes within a range defined by this
-specification. There is no SRTP.
+specification. There is no SRTP, as described above.
 
 Future extensions will consider the addition of a declarative model,
 where each side can send settings which are then cached and span
 across multiple calls, in much the same way it works with HTTP/3
-itself. 
+itself.
+
+## Framing
+
+Both signaling and media are carried over a bidirectional byte stream
+that is established by the client. Signaling uses self-delineating
+text frames. This is done to enable end users to initiate signaling
+easily from command line applications like curl, and through
+interactive developer portals. Media is sent using a simple binary
+framing, similar to - but not identical to - RTP.
+
+### Signaling Framing
+
+Signaling is carried as a series of valid JSON objects. If there is
+more than one object to be sent over a transaction, the JSON objects
+are separated by a visual separator consistenting of ten contiguous
+instances of the ascii dash "-", followed by a CRLF. As a result, the
+JSON itself MUST NOT ever contain more than ten dashes in a row. Since
+the JSON is extensible, future extensions MUST NOT ever specify new
+fields which contain 10 or more dashes.
+
+The usage of the dashes allows the receiving client to extract
+independent objects from the stream without performing JSON parsing or
+validation. ((TODO: should we limit the size of an individual JSON
+object?))
+
+HTTP compression is used to reduce the on-the-wire penalty for using
+JSON. Since this is transparent, it enables an easy developer
+interface to RIPP without the penalty of text encoding. ((TODO:
+specify more details on how this works - assumes that HTTP does in
+fact do payload compression vs. requiring the application to do it??))
+
+### Media Framing
+
+Media is carried as a series of binary objects. These binary objects
+contain a 7 bit payload type value (mirroring RTP), a 32 bit sequence
+number (twice as large as RTP), and a single bit for reserved. This is
+followed by a variable length length field that describes the length
+of the data which follows, in bytes. The data which follows is the
+codec frame. The minimum length for the length
+field is 8 bits. This means the framing has a minimum size of 6 bytes,
+significantly smaller than the RTP minimum of 12 bytes. Consequently,
+RIPP is more bandwidth efficient than RTP when used with long running
+transactions.
+
+Because there is no separate timestamp, RIPP does not permit the use
+of non-exitent frames to convey silence. The encoder used by the
+client MUST emit a contiuous series of frames based on its sending
+clock. If there is a desire to use lower bandwidth during silence
+periods, the encode must transcode to Opus (which is more efficient
+during silence periods), or else fill in the time gap with comfort
+noise using RFC3389, whose support is required by this
+specification. See details below on usage of RFC3389 with RIPP.
+
+The sequence number space is unique for each direction, and unique for
+each call (as identified by the call URI). Each side MUST start the
+sequence number at zero, and MUST inccrement it by one for each
+subsequent media frame. With 32 bits of sequence space, starting at
+zero, with a minimum frame size of 10ms, RIPP can support call
+durations as long as 11,930 hours. Rollover of the sequence number is
+not permitted, the client or server MUST end the call before
+rollover. This means that the combination of call URI, direction
+(client to server, or server to client), channel number, and sequence
+number represent a unique identifier in space and time for media packets. 
+
+## Signaling - Events
+
+Signaling is performed by having the client and server exchange
+events. Each event is a JSON object embedded in the signaling
+stream, which conveys the event as perceived by the client or
+server. Each event has a sequence number, which starts at zero for a
+call, and increases by one for each event. The sequence number space
+is unique in each direction. The event also contains a direction
+field, which indicates whether the event was sent from client to
+server, or server to client. It also contains a timestamp field, which
+indicates the time of the event as perceived by the sender. This
+timestamp is not updated when retransmissions happen; the timestamp
+exists at the RIPP application layer and RIPP cannot directly observe
+HTTP retransmits.
+
+It also contains a call field, which contains the URI of the call in
+question. 
+
+Finally, there is an event type field, which conveys the type of
+event. This is followed by additional fields which are specific to the
+event type.
+
+This structure means that each event carried in the signaling is
+totally self-describing, irregardless of the enclosing connection and
+stream. This greatly facilitates logging, debugging, retransmissions,
+retries, and other race conditions which may deliver the same event
+multiple times, or deliver an event to a server which is not aware of
+the call.
+
+This specification defines the following events:
+
+start: Passed from client to server, it tells the server to begin
+processing of the specific call. This event is the first event
+delivered to the call URI by the client.
+
+started: Passed from server to client, confirming that the call is now
+in the start state as far as it is concerned.
+
+alerting: Passed from server to client, indicating that the recipint
+is alerting.
+
+accepted: Passed from server to client, indicating that the call was
+accepted.
+
+rejected: Passed from server to client, indicating that the call was
+rejected by the user.
+
+failed: Passed from server to client, indicating that the call was
+rejected by server or downstream servers, not by the user, but due to
+some kind of error condition. This event contains a response code and
+reason phrase, which are identical to the response codes and reason
+phrases in SIP.
+
+noanswer: Passed from server to client, indicating that the call was
+delivered to the receiving user but was not answered, and the server
+or a downstream server timed out the call.
+
+end: initiated by either client or server, it indicates that the call
+is to be terminated. Note that this does NOT delete the HTTP resource,
+it merely changes its state to call end. Furthermore, a call cannot be
+ended with a DELETE against the call URI; DELETE is not permitted and
+MUST be rejected by the server.
+
+migrate: sent from server to client, it instructs the client to
+terminate the connections and restablish them to a new URI which
+replaces the URI for the call. The event contains the new URI to use.
+
+
+## Signaling State Machine
+
+### Client
+
+The call begins in the CREATED state. This state is entered the moment
+the cient receives the 201 response from the server with the call
+URI. That creates an instance of the state machine associated with
+that URI.
+
+The states are:
+
+CREATED
+STARTING
+PENDING
+ALERTING
+ANSWERED
+TERMINATED
+
+When in the CREATED state, when the client sends a start event on the
+signaling transaction, it transitions to the STARTING state. Once in
+the starting state, it MUST open 10 media connections. Once it has
+opened these connections and also receive a started event from the
+server, it transitions to the PENDING state. The receipt of an
+alerting event moves it to the ALERTING state. From ALERTING, receipt
+of an answered event moves it to the ANSWERED state. Receipt of a
+noanwer or failed moves it to the terminated state. From any state,
+receipt or transmission of an end event moves it to the terminated
+event.
+
+A migrate event does not change the state of the call; it merely
+causes the client to re-initiate the connection to the new URI.
+
+
+### Server
+
+TODO - mirrors the client. 
 
 ## Media
 
-THe approach for media is media striping. Once call is in pending
-state, client opens N (N=10 maybe? 20?) streams using N requests,
+((TODO: this is rambling, need to split it up - introduce channels,
+command channel, relationships between all of these things,
+description of the ack mechanism as multi-hop for latency
+troubleshooting.))
+
+THe approach for media is media striping. Once call is in the STARTING
+state, the client opens N (N=10 maybe? 20?) streams using N requests,
 targeted to the URI associated with the call. As with signaling, these
 are long lived for the duration of the call and establish a
 bidirectional data stream.
@@ -540,12 +924,68 @@ therefore there is no blocking on that stream. The sender may then
 once again use that stream. This causes media packets to be sprayed
 across the streams sequentially. The number of streams that must be
 opened to ensure no HOL blocking are a function of the RTT delay and
-packet loss tolerance. TOOD: Need some math here.
+packet loss tolerance. ((TODO: Need some math here.))
+
+RIPP media acknowledgement packets MUST be sent on channel zero. Like
+media packets, media acknowledgement packets have a sequence number, a
+payload type, and a reserved it. The mapping of payload types to
+object structure is conveyed in the Media headers upon opening of the
+transaction. Media ackowledgement packets follow a simple format. They
+contain the sequence number and channel number of the media packet
+being acknowledged, and the timestamp at which that media packet was
+received by the endpoint, and a flag indicating whether the endpoint
+dropped the media packet or sent it onwards.
+
+This protocol also supports conveyance of ack messages that indicate
+packet disposition at downstream and upstream endpoints. If a RIPP
+server acts as a RIPP client, and sends a packet to the next-hop RIPP
+server, the RIPP client will receive an acknowledgement for that
+packet. Once received, it adds a hop counter (in this case, a hop
+count of 1) and passes the ACK upstream. In addition, if the RIPP
+client receives an ACK with a hop count greater than 0, it increments
+the hop count and passes it upstream.
+
+For this to be effective, RIPP servers acting as clients MUST NOT
+perform sequence renumbering.
+
+A RIPP endpoint that receives a media packet on a stream will not know
+whether this packet had been retransmitted or not. However, it can
+compute the time of transmission of the media packet, as the timestamp
+of the start of the transaction, times the difference between the
+first and most recent sequence numbers, times the framing for the
+codec. ((TODO: hmm this means we need fixed framing if we want to
+avoid adding timestamps)). With this information it can compute the
+one way hop delay, accurate to within the clock delta between the
+sender and receiver. Based on these, it can can determine whether the
+incremental hop delay is small enough to merit continued transmission
+of the media packet.
+
+
+After a client sends the headers for a media transaction, it MAY
+immediately send a single media packet. AFter that, it MUST mark the
+transaction as blocked. Once it receives an acknowledgement that the
+packet was received, it MUST mark the transaction as unblocked. A
+server behaves similarly, once it has received the request headers and
+sent its response headers, it MAY immediately send a single media
+packet, and then it MUST mark the transaction as blocked. Once it
+receives an acknowledgement that the packet was received, it MUST mark
+the transaction as unblocked. An endpoint SHOULD NOT send a media
+packet on a blocked connection.
+
+IF a client reaches 75% of its media transactions as in the blocked
+state, it MUST begin opening new media transactions to ensure that
+media can continue to flow uninterrupted. A server cannot open new
+connections. However, if the server has marked 75% of the connections
+as blocked, it MUST send a command on the media command channel
+instructing the client to open another connection. Once this command
+is received, the client MUST open a new connection.
+
+A client MAY terminate media transactions gracefully if they have not
+sent or received packets on that connection for 5 or more
+seconds. This is to clean up unused transactions.
 
 There is no need for sender or receiver reports. The equivalent
-information is knowable from the application layer acks. This allows
-either endpoint to generate receiver and sender reports in gateway
-functions. 
+information is knowable from the application layer acks.  
 
 ## Call Termination
 
