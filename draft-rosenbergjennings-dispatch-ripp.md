@@ -991,47 +991,101 @@ information is knowable from the application layer acks.
 
 Signaling allows an application layer call end to be sent. This will
 also cause each side to termiante the request and media streams with
-end flags per HTTP3 specs.
+end flags per HTTP3 specs. However, the opposite is not true - ending
+of the transactions or connection does not impact the call state.
 
-## Graceful Call Migration
+A server MUST maintain a timer, with a value equal to 5 seconds, for
+which it will hold the call in its current state without any active
+signaling transaction. If the server does not receive a signaling
+transaction before the expiration of this timer, it MUST consider the
+call as ended and transition its state to TERMINATED.
+
+If the server receives a signaling or media connection for a call that
+is in the TERMINATED, it MUST reject the transaction with an XX
+response code.
+
+Note that the call resource itself - the URI - still exists. POST
+transactions for signaling and media are not permitted against it once
+the call is in an ended state. However, a server MUST maintain the
+resource for at least one day, to facilitate a GET request against
+it. As described below, a GET request against a call resource allows
+the client to catch up with the state of the call, facilitating
+stateless migration of clients.
+
+## GET Transactions
+
+A client MAY initiate a GET request against the call URI at any
+time. This returns the current state of the resource. This request
+returns an objet which is the concatenation of all call events, sent
+by the server and received by the server, in the order in whch the
+server applied them to the state machine.
+
+The response also contains a summary of media packet statistics up to
+that point ((TODO: specify)). 
+
+## Graceful Call Migration: Server
 
 To facilitate operational maintenance, the protocol has built in
 support for allowing a server instance to drain all active calls to
 another server instance.
 
-Either endpoint can issue a move command over the signaling channel,
-which includes a new URI that the peer should use. Once received, the
-streams are closed and the peer initiates a new signaling connection
-to the URI it just received, and in parallel re-establishes media. All
-media received during the migration phase is buffered to ensure there
-is no packet loss (though there will be jitter) during the migration
-period.
+The server can issue a migrate event over the signaling channel,
+which includes a new call URI that the peer should use. Once received,
+the client closes all transactions to the current call URI. It then
+establishes new signaling transactions to the URI it just received,
+and in parallel re-establishes media transactions. All media received
+during the migration phase is buffered to ensure there is no packet
+loss (though there will be jitter) during the migration period.
+
+If the server receives a GET request to the old call URI, it MUST
+return a 3xx response redirecting to the new call URI.
 
 We dont use QUIC layer connection migration, as that is triggered by
 network changes and not likely to be exposed to applications.
 
+## Graceful Call Migration: Client
+
+Clients can move a call from one client instance to another easily. No
+commands are required. The client simply ends the in-progress
+transactions for signaling and media, and then reinitiates them to the
+existing call URI from whatever server is to take over. Note that the
+client MUST do this within 5s or the server will end the call. 
+
 ## Ungraceful Call Migration
 
 Since all media packets are acknowledged at the application layer, it
-is possible for endpoints to very quickly detect server failures,
-network failures, and other related problems. The protocol specifies
-how such failures are detected. In response to them, the client
-generates a request to the top-level URI for establishing new calls,
-but indicates its a re-establishment due to failure. A normal call
-setup proceeds but the far side knows this is re-establishing a prior
-call. It can then reconnect it to the next-hop. 
+is possible for endpoints to very quickly detect remote failures,
+network failures, and other related problems.
 
-# Protocol Semantics
+Failure detection falls entirely at the hands of the client. A failure
+situation is detected when any one of the following happens:
 
-## Client Behavior
+1. The QUIC connection closss unexpectedly
+2. Any outstanding signaling or media transactions are reset by the
+peer
+3. No media packets are received from the peer for 5s
+4. No acknowledgements are received for packets that have been sent in
+the last 5s
 
-## Server Behavior
+If the client detects such a failure, it MUST abort all ongoing
+transactions to the server, terminate the QUIC connection, and then
+establish a new connection using 0-RTT, and re-establish signaling and
+media transactions.
 
-# Protocol Syntax
+TOOD: need to specify back-off timers and retry algorithms
 
-Use SIP header field syntax, but with QPACK compression.
+
+# Detailed Protocol Semantics
+
+To be filled in.
+
+# Syntx
+
+To be filled in.
+
 
 # SIP to RIPP Gatewaying
+
 
 # RIPP to SIP Gatewaying
 
