@@ -403,7 +403,7 @@ these are handled by HTTP3 itself.
 
 The RIPP reference architecture is shown in Figure 1.
 
-
+~~~ ascii-art
                                            +------------+ 
                                            |            | 
                                            |  RIPP      | 
@@ -437,6 +437,8 @@ The RIPP reference architecture is shown in Figure 1.
                                            |            |    
                                            +------------+
 
+~~~
+                                           
 A RIPP client is an HTTP3 client that wishes to initiate a call to a
 user in another administrative domain. To do that, it initiates an
 HTTP3 connection, which will often (though it is not required to)
@@ -457,6 +459,7 @@ implement both the HTTP3 client and server roles. We refer to this as
 fluid HTTP - since either domain can act as either client, or server,
 depending on the need. Fluid HTTP is shown in Figure 2:
 
+~~~ ascii-art
   Domain A                    Domain B
 
                  Calls
@@ -476,6 +479,8 @@ depending on the need. Fluid HTTP is shown in Figure 2:
 |             |            |             |
 |             |            |             |
 +-------------+            +-------------+
+~~~
+
 
 # Terminology
 
