@@ -50,7 +50,8 @@ network. RIPP is an alternative to SIP and RTP for this use case, and
 is designed to run ontop of HTTP/3. Using HTTP/3 allows application
 providers to more easily build their applications ontop of cloud
 platforms, such as AWS, Azure and Google Cloud, all of which are
-heavily focused on HTTP based services.
+heavily focused on HTTP based services. Furthemore, RIPP requires
+STIR-based secure caller ID, and facilitates easy provisioning.
 
 {mainmatter}
 
@@ -160,10 +161,11 @@ send information to the client in an easy fashion.
 HTTP2 addressed the second of these with the introduction of pushes
 and long running requests. However, its usage of TCP was still a
 problem. This has finally been addressed with the arrival of QUIC and
-HTTP3. QUIC is based on UDP, and it introduces the concept of a
-stream. These streams are carried over UDP, and though are still
-reliable, there is no head of line blocking across streams. This
-change has made it possible for HTTP to support VoIP applications.
+HTTP3. QUIC is based on UDP, and it introduces the concept of a stream
+that can be set up with zero RTT. These streams are carried over UDP,
+and though are still reliable, there is no head of line blocking
+across streams. This change has made it possible for HTTP to support
+VoIP applications.
 
 
 # Solution Requirements
@@ -177,32 +179,41 @@ REQ2: The solution shall work with both L4 and L7 HTTP load balancers
 
 REQ3: The solution shall work in ways that are compatible with best
 practices for load balancers and proxies supporting HTTP3, and not
-require any special changes to these load balancers in order to function.
+require any special changes to these load balancers in order to
+function.
 
-REQ4: The solution shall enable the usage of autoscaling technologies
+REQ4: The solution should hide the number of servers behind the load
+balancer, allow the addition or removal of servers from the cluster at
+will, and not expose any of this information to the peer
+
+REQ5: The solution shall enable the usage of autoscaling technologies
 used in cloud platforms
 
-REQ4: The solution shall provide call reliability in the face of
+REQ6: The solution shall provide call reliability in the face of
 failures of the server or client
 
-REQ5: The solution shall support built-in migration, allowing a server
+REQ7: The solution shall support built-in migration, allowing a server
 to quickly shed load in order to be restarted or upgraded, without any
 impact to calls in progress
 
-REQ6: The solution will be easy to interoperate with SIP
+REQ8: The solution will be easy to interoperate with SIP
 
-REQ7: The solution shall be incrementally deployable - specifically it
+REQ9: The solution shall be incrementally deployable - specifically it
 must be designed for easy implementation by SBCs and easy deployment
 by PSTN termination and origination providers who do not utilize cloud
 platforms
 
-REQ8: The solution shall build-in callerID security and protections
+REQ10: The solution shall build-in callerID security and protections
 from robocalling at the outset
 
-REQ9: The solution shall provide low latency for media
+REQ11: The solution shall provide low latency for media
 
-REQ10: The solution shall support only audio, but be extensible to
+REQ12: The solution shall support only audio, but be extensible to
 video or other media in the future
+
+REQ13: The solution must support secure caller ID out of the gate and
+not inherit any of the insecure techniques used with SIP
+
 
 # Design Approaches
 
@@ -245,12 +256,12 @@ use them, RIPP must abide by HTTP3 rules, and that means distinct
 roles for clients and servers. Clients must always initiate
 connections and send requests, not servers.
 
-To handle this RIPP, specifies that the calling domain implements the
-RIPP client, and the domain receiving the calls is the RIPP
-server. For any particular call, the roles of client and server do not
-change. To facilitate calls in either direction, a domain can
-implement both RIPP client and RIPP server roles. However, there is no
-relationship between the two directions. 
+To handle this RIPP, specifies that the domain associated with the
+caller implements the RIPP client, and the domain receiving the calls
+is the RIPP server. For any particular call, the roles of client and
+server do not change. To facilitate calls in either direction, a
+domain can implement both RIPP client and RIPP server roles. However,
+there is no relationship between the two directions.
 
 ## Signaling and Media Together
 
@@ -294,7 +305,9 @@ struggle with NAT traversal.
 HTTP of course does not suffer from this. In general, "addressing", to
 the degree it exists at all, is done with HTTP URIs. RIPP follows this
 pattern. RIPP - as an application ontop of HTTP3 - does not use or
-convey any IP addresses or ports.
+convey any IP addresses or ports. Furthermore, the client never
+provides addressing to the server - all traffic is sent in the reverse
+direction over the connection. 
 
 ## OAuth not MTLS or private IP
 
@@ -321,11 +334,13 @@ as a server, the domain authenticates itself with TLS and verifies the
 client with OAuth tokens. For calls in the reverse direction, the
 roles are reversed.
 
-Consequently, if two domains want to be able to send calls to each
-other in either direction, both domains must acquire Oauth tokens
-valid for placing calls to the other, and both domains must obtain
-traditional web TLS certificates to prove their server identities to
-the other.
+To make it possible to easily pass calls in both directions, RIPP
+allows one domain to act as the customer of another, the provider. The
+customer domain authenticates with the provider and obtains an OAuth
+token using traditional techniques. RIPP then allows the customer
+domain to automatically create a bearer token for inbound calls and
+pass it to the provider. 
+
 
 ## TLS1.3 not SRTP or SIPS
 
@@ -512,9 +527,67 @@ Originating Domain: The domain that initiates a call, therefore
 acting as an HTTP and RIPP client.
 
 Terminating Domain: The domain that receives a call, therefore acting
-as an HTTP and RIPP server. 
+as an HTTP and RIPP server.
+
+Customer Domain: A domain that purchases telephony services from
+another.
+
+Provider Domain: A domain that sells telephony services to a customer
+domain. 
 
 # Overview of Operation
+
+RIPP begins with a provisioning phase, which happens when a customer
+domain purchases telephony service from a provider. Using normal OAuth
+techniques, the customer authorizes the domain software handling RIPP
+to access their provider account on their behalf. The customer domain
+will mint a bearer token and push it to the provider domain, along
+with other configuration data, enabling authenticated inbound
+calls. Consequently, RIPP facilitates one-click provisioning and does
+not require any manual configuration of IP, ports or other
+information.
+
+Once provisioned, either domain can initiate calls by sending an HTTP
+request to the other. Calls are initiating by posting to a URL used to
+intiate calls. This request returns a call-specific URL. Either side
+can also post a capabilities document to the other side, in advance of
+any call. This capabilities document declares the receive capabilities
+of that domain. Defaults are defined for each capability, in case a
+document has not been posted. These documents are cached and apply to
+all future calls. 
+
+Once a call has been created, a long-lived HTTP transaction is
+initiated from the client to the server for purposes of
+signaling. This transaction enables bidirectional data flow, tunneled
+within the body of a long-running HTTP request and response. This data
+flow is called a byway. A separate byway is established by the client
+for signaling, one for media control, and multiple byways for
+media. HTTP3 ensures zero RTT for setup of these byways.
+
+Signaling commands are encoded into the signaling byway using
+streaming JSON in both direcitons. The media control and media byways
+carry a simple binary encoding in both directions. 
+
+To eliminate HOL blocking for media, a media packet is sent on a media
+byway when it is first established. After the first packet, the client
+cannot be sure a subsequent packet will be delayed due to the ordering
+guarantees provided by HTTP3 within a stream. To combat this, both
+sides acknowledge the receipt of each packet using the media control
+byway. Once a media packet is acknowledged, the media byway can be
+used once again without fear of HOL blocking.
+
+Finally, RIPP provides a simple technique for allowing a call to
+seamlessly migrate from one client instance to another on a different
+host, or from one server instance on one host to another. For a
+client, it need only end the byways in use for the call and
+re-initiate from a different instance. Similarly, a server can request
+migration, and this triggers the client to perform this same
+action. The call state persists independently of the state of the HTTP
+connection or the byways embedded in HTTP transactions, so that a
+reconnect can continue where things left off.
+
+
+# Detailed Behaviors
 
 This section provides an overview of the operation of RIPP.
 
