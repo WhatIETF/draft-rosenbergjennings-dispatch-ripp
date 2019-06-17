@@ -42,16 +42,24 @@ organization = "Five9"
 .# Abstract
 
 This document specifies the Realtime Internet Peering Protocol
-(RIPP). RIPP is used to provide telephony peering between two
-providers, and is targeted specifically at interconnections between a
-telephony provider and an application provider (such as a cloud
-contact center) that wishes to send and receive calls to the telephone
-network. RIPP is an alternative to SIP and RTP for this use case, and
-is designed to run ontop of HTTP/3. Using HTTP/3 allows application
-providers to more easily build their applications ontop of cloud
+(RIPP). RIPP is used to provide telephony peering between a trunking
+provider (such as a telco), and a trunking consumer (such as an
+enterprise, cloud PBX provider, cloud contact center provider, and so
+on). RIPP is an alternative to SIP, SDP and RTP for this use case, and
+is designed to run ontop of HTTP/3. Using HTTP/3 allows trunking
+consumers to more easily build their applications ontop of cloud
 platforms, such as AWS, Azure and Google Cloud, all of which are
-heavily focused on HTTP based services. Furthemore, RIPP requires
-STIR-based secure caller ID, and facilitates easy provisioning.
+heavily focused on HTTP based services. RIPP also addresses many of
+the challenges of traditional SIP-based trunking. Most notably, it
+mandates secure caller ID via STIR, and provides automated trunk
+provisionin as a mandatory protocol component. RIPP supports both
+direct and "BYO" trunk configurations. Since it runs over HTTP/3, it
+works thrugh NATs and firewalls with the same ease as HTTP does, and
+easily supports load balancing with elastic cluster expansion and
+contraction, including auto-scaling - all because it is nothing more
+than an HTTP application. RIPP also provides built in mechanisms for
+migrations of calls between RIPP client and server instances, enabling
+failover with call preservation.
 
 {mainmatter}
 
@@ -114,12 +122,13 @@ on. Furthermore, commerce websites would like to allow customers
 to call into the telephone network for customer support.
 
 In order for these applications to connect to the PSTN, they typically
-deploy SIP-based servers - SBCs, SIP proxies, and softswitches, to
-provide this interconnection. Unfortunately, SIP based applications
-cannot make use of the many capabilities these cloud platforms afford
-to HTTP based applications. These SIP servers are usually deployed on
-bare metal or VMs at best. Application developers must build their own
-load balancing, HA, failover, clustering, security, and scaling
+deploy Session Initiation Protocol (SIP) [@RFC3261] based servers -
+SBCs, SIP proxies, and softswitches, to provide this
+interconnection. Unfortunately, SIP based applications cannot make use
+of the many capabilities these cloud platforms afford to HTTP based
+applications. These SIP servers are usually deployed on bare metal or
+VMs at best. Application developers must build their own load
+balancing, HA, failover, clustering, security, and scaling
 technologies, rather than using the capabilities of these platforms.
 
 This has creating a barrier to entry, particularly for applications
@@ -129,20 +138,39 @@ been unable to take advantage of the many technology improvements that
 have come to networking and protocol design since the publication of
 RFC 3261 in 2002.
 
+In addition, SIP trunking has suffered from complex provisioning
+operations, oftentimes requiring the exchange of static IPs and
+ports. These operations are almost never self-service and
+consequently, SIP trunk turn ups can take weeks. Finally, perhaps the
+biggest challenge with SIP trunking has been its abuse for injecting
+robocalls. 
+
 ## Solution
 
 The goal of RIPP is to enable one administrative domain to send and
 receive voice calls with another domain. In this regard, RIPP replaces
-the usage of SIP, SDP and RTP for this particular use case. RIPP does
-not actually deprecate or replace SIP itself, as it covers only a
-small subset of the broader functionality that SIP provides. It is
-designed to be the minimum protocol required to interconnect voice.
+the usage of SIP, SDP offer/answer [@RFC3264] and RTP [@RFC3550] for
+this particular use case. RIPP does not actually deprecate or replace
+SIP itself, as it covers only a small subset of the broader
+functionality that SIP provides. It is designed to be the minimum
+protocol required to interconnect voice between a trunking provider
+and a domain wishing to access trunking services.
 
 In order to make use of new HTTP based technologies as described
-above, RIPP is not an extension to HTTP3, but rather is a usage of
-it. The goal is to ride the coattails of advancement in HTTP based
-technologies without requiring them to do anything special for the
-benefit of VoIP.
+above, RIPP uses HTTP/3 [@draft-ietf-quic-http], but is not an
+extension to it. The goal is to ride the coattails of advancement in
+HTTP based technologies without requiring them to do anything special
+for the benefit of VoIP. This means that RIPP inherits the benefits of
+classic HTTP deployments - easy load balancing, easy expansion and
+contraction of clusters (including auto-scaling), standard techniques
+for encryption, authentication, and denial-of-service prevention, and
+so on.
+
+RIPP also includes a built-in mechanism for provisioning, as a
+mandatory component of the specification. This enables RIPP trunks to
+be self-provisioned through web portals, and instantly turned on in
+production. This will help accelerate the adoption of
+telecommunications services across the web.
 
 ## Why Now?
 
@@ -158,9 +186,10 @@ them. This will often provide intolerable latency for VoIP.
 receive a response. There as no way for a server to asynchronously
 send information to the client in an easy fashion.
 
-HTTP2 addressed the second of these with the introduction of pushes
+HTTP2 [@RFC7540] addressed the second of these with the introduction of pushes
 and long running requests. However, its usage of TCP was still a
-problem. This has finally been addressed with the arrival of QUIC and
+problem. This has finally been addressed with the arrival of QUIC
+[@draft-ietf-quic-transport] and
 HTTP3. QUIC is based on UDP, and it introduces the concept of a stream
 that can be set up with zero RTT. These streams are carried over UDP,
 and though are still reliable, there is no head of line blocking
@@ -187,10 +216,12 @@ balancer, allow the addition or removal of servers from the cluster at
 will, and not expose any of this information to the peer
 
 REQ5: The solution shall enable the usage of autoscaling technologies
-used in cloud platforms
+used in cloud platforms, without any special consideration for RIPP -
+its just a web app
 
-REQ6: The solution shall provide call reliability in the face of
-failures of the server or client
+REQ6: The solution shall provide call preservation in the face of
+failures of the server or client. It is acceptable for a brief blip of
+media due to transient packet loss, but thats it
 
 REQ7: The solution shall support built-in migration, allowing a server
 to quickly shed load in order to be restarted or upgraded, without any
@@ -213,6 +244,9 @@ video or other media in the future
 
 REQ13: The solution must support secure caller ID out of the gate and
 not inherit any of the insecure techniques used with SIP
+
+REQ14: The solution shall include mandatory-to-implement provisioning
+operations 
 
 
 # Design Approaches
@@ -335,11 +369,11 @@ client with OAuth tokens. For calls in the reverse direction, the
 roles are reversed.
 
 To make it possible to easily pass calls in both directions, RIPP
-allows one domain to act as the customer of another, the provider. The
-customer domain authenticates with the provider and obtains an OAuth
-token using traditional techniques. RIPP then allows the customer
-domain to automatically create a bearer token for inbound calls and
-pass it to the provider. 
+allows one domain to act as the customer of another, the trunking
+provider. The customer domain authenticates with the provider and
+obtains an OAuth token using traditional techniques. RIPP then allows
+the customer domain to automatically create a bearer token for inbound
+calls and pass it to the provider.
 
 
 ## TLS1.3 not SRTP or SIPS
@@ -419,63 +453,7 @@ these are handled by HTTP3 itself.
 The RIPP reference architecture is shown in Figure 1.
 
 ~~~ ascii-art
-                                           +------------+ 
-                                           |            | 
-                                           |  RIPP      | 
-                                          >|  Server    | 
-                                         / |            | 
-                                        /  |            | 
-                                       /   +------------+ 
-                                      /                   
-                                     /                    
-                                    /                     
-                                   /                      
-                   +---------+    /                       
-                   |         |   /                        
-+------------+     |         |  /          +------------+ 
-|            |     |         | /           |            | 
-| RIPP       |     |  L4/L7  |/            |  RIPP      | 
-| Client     |---->|  LB     | ----------->|  Server    | 
-|            |     |         |\            |            | 
-|            |     |         | \           |            | 
-+------------+     |         |  \          +------------+   
-                   +---------+   \                          
-                                  \                         
-                                   \                        
-                                    \                       
-                                     \                      
-                                      \    +------------+   
-                                       \   |            |   
-                                        \  |  RIPP      |    
-                                         > |  Server    |    
-                                           |            |    
-                                           |            |    
-                                           +------------+
-
-~~~
-                                           
-A RIPP client is an HTTP3 client that wishes to initiate a call to a
-user in another administrative domain. To do that, it initiates an
-HTTP3 connection, which will often (though it is not required to)
-terminate on one or more L4 or L7 HTTP load balancers. Using nothing
-more than traditional HTTP load balancing techniques, the connection
-terminates on one of several RIPP servers that sit behind the load
-balancer. 
-
-Because RIPP clients and servers are nothing more than HTTP3
-applications, the behavior or RIPP is specified entirey by describing
-how various RIPP procedures map to the core HTTP3 primitives available
-to applications - opening connections, closing connections, sending
-requests and responses, receiving requests and responses, and setting
-header fields. That's it.
-
-When two domains wish to exchange calls in both directions, they
-implement both the HTTP3 client and server roles. We refer to this as
-fluid HTTP - since either domain can act as either client, or server,
-depending on the need. Fluid HTTP is shown in Figure 2:
-
-~~~ ascii-art
-  Domain A                    Domain B
+ Trunk Provider             Trunk Consumer
 
                  Calls
 +-------------+  From      +-------------+
@@ -495,6 +473,65 @@ depending on the need. Fluid HTTP is shown in Figure 2:
 |             |            |             |
 +-------------+            +-------------+
 ~~~
+
+RIPP is used between a RIPP trunk provider and a RIPP trunk
+consumer. Both entities implement the RIPP client and RIPP server
+roles; the latter to receive calls, and the former to send them.
+
+RIPP is also designed such that all communications between the a RIPP
+client and the RIPP server can easily sit behind a typical HTTP load
+balancer, as shown below:
+
+
+~~~ ascii-art
+                                           +------------+ 
+                                           |            | 
+                                           |  RIPP      | 
+                                          >|  Server    | 
+                                         / |            | 
+                                        /  |            | 
+                                       /   +------------+ 
+                                      /                   
+                                     /                    
+                                    /                     
+                                   /                      
+                   +---------+    /                       
+                   |         |   /                        
++------------+     |         |  /          +------------+ 
+|            |     |         | /           |            | 
+| RIPP       |     |  HTTP   |/            |  RIPP      | 
+| Client     |---->|  LB     | ----------->|  Server    | 
+|            |     |         |\            |            | 
+|            |     |         | \           |            | 
++------------+     |         |  \          +------------+   
+                   +---------+   \                          
+                                  \                         
+                                   \                        
+                                    \                       
+                                     \                      
+                                      \    +------------+   
+                                       \   |            |   
+                                        \  |  RIPP      |    
+                                         > |  Server    |    
+                                           |            |    
+                                           |            |    
+                                           +------------+
+
+~~~
+
+Since both the trunk provider and trunk consumer implement the client
+and server roles, both entities will typically have a load balancer
+used to receive incoming calls. This is not required, of course. It is
+worth restating that this load balancer is NOT specific to RIPP - it
+is any off-the-shelf HTTP load balancer which supports HTTP/3. No
+specific support for RIPP is required. RIPP is just a usage of HTTP. 
+
+Because RIPP clients and servers are nothing more than HTTP3
+applications, the behavior or RIPP is specified entirey by describing
+how various RIPP procedures map to the core HTTP3 primitives available
+to applications - opening connections, closing connections, sending
+requests and responses, receiving requests and responses, and setting
+header fields and bodies. That's it.
 
 
 # Terminology
@@ -516,69 +553,164 @@ RIPP Peer: An endpoint.  When discussing a particular endpoint, "peer"
 refers to the endpoint that is remote to the primary subject of
 discussion.
 
+This specification defines the following additional terms:
+
+RIPP Trunk: A container for calls between a trunking provider and
+trunking consumer. A RIPP trunk is identified by an HTTP URI hosted by
+the trunking provider. RIPP trunks act as a unit of policy and
+capabilities, including rules such as rate limits, allowed phone
+numbers, and so on.
+
 Call: A VoIP session established by a RIPP client for the purposes of
-exchanging audio and signaling information.
+exchanging audio and signaling information. A call is always
+associated with a RIPP trunk. 
 
-RIPP Domain: An administrative domain that can implement a RIPP
-client, RIPP server, or both, for the purposes of making and receiving
-calls. 
+Trunking Consumer: An administrative entity that utilizes trunking
+services from the trunking provider. The relationship between the
+trunking consumer and trunking provider is static and does not vary
+from call to call. (e.g., Verizon would be the trunking provider to an
+enterprise, and the enterprise would be the trunking customer of
+Verizon. A trunking consumer implements a RIPP client to initiate
+calls to the trunking provider, and a RIPP server to receive them. 
 
-Originating Domain: The domain that initiates a call, therefore
-acting as an HTTP and RIPP client.
+Trunking Provider: The administrative entity that provides elephony
+trunking services to the trunking consumer. The relationship between
+the trunking consumer and trunking provider is static and does not
+vary from call to call. (e.g., Verizon would be the trunking provider
+to an enterprise, and the enterprise woul be the trunking customer of
+Verizon. The trunking provider implements a RIPP server to receive
+calls from the trunking consumer, and a RIPP client to send calls to
+the trunking consumer
 
-Terminating Domain: The domain that receives a call, therefore acting
-as an HTTP and RIPP server.
+Trunking Customer: The administrative entity which purchases trunking
+services from the trunking provider. The trunking customer may be the
+same as the trunking consumer - such as an enterprise purchasing and
+then consuming trunking services from a telco. Or, it can be different
+- such as an enterprise purchasing trunking services from a telco, and
+then authorizing a cloud PBX or cloud contact center provider to
+consume those trunking services on their behalf.
 
-Customer Domain: A domain that purchases telephony services from
-another.
+RIPP Trunk URI: An HTTP URI hosted by the trunking provider, which
+represents RIPP trunk.
 
-Provider Domain: A domain that sells telephony services to a customer
-domain. 
+RIPP Trunk Consumer URI: An HTTP URI hosted by the trunking consumer,
+used to receive calls from the trunking provider associated with a
+specific RIPP trunk.
+
+Byway: A bidirectional byte stream between a RIPR providre and
+consumer. A Byway passes its data through a long-running HTTP request
+and a long-running HTTP response. Byways are used for signaling, media
+control, and media.
+
 
 # Overview of Operation
 
-RIPP begins with a provisioning phase, which happens when a customer
-domain purchases telephony service from a provider. Using normal OAuth
-techniques, the customer authorizes the domain software handling RIPP
-to access their provider account on their behalf. The customer domain
-will mint a bearer token and push it to the provider domain, along
-with other configuration data, enabling authenticated inbound
-calls. Consequently, RIPP facilitates one-click provisioning and does
-not require any manual configuration of IP, ports or other
-information.
+RIPP begins with a configuration phase. This configuration  phase occurs
+when an OAuth2.0 client application (such as a softswitch, cloud PBX,
+cloud contact center, etc) wishes to enable trunking customers to
+provision RIPP trunks against a trunking provider. The trunking
+provider acts as the resource provider in OAuth2.0
+parlance. Consequently, The configuration phase is identical to the way
+in which client applications register with resource providers in
+OAuth2.0, the details of which are beyond the scope of this
+specification, but expected to follow existing best practices used by
+web applications.
 
-Once provisioned, either domain can initiate calls by sending an HTTP
-request to the other. Calls are initiating by posting to a URL used to
-intiate calls. This request returns a call-specific URL. Either side
-can also post a capabilities document to the other side, in advance of
-any call. This capabilities document declares the receive capabilities
-of that domain. Defaults are defined for each capability, in case a
-document has not been posted. These documents are cached and apply to
-all future calls. 
+The next step is provisioning. Once a trunking customer has purchased
+services from a trunking provider, the trunking customer can perform
+provisioning. Provisioning is the process by which a trunking customer
+connects a RIPP trunk from a trunking provider to trunking
+consumer. Provisioning is accomplished using  
+OAuth2.0 code authorization techniques. In the case of RIPP, the
+OAuth resource owner is the trunking customer. The OAuth client is the
+RIPP implementation within the trunking consumer. The resource server
+is the RIPP implementation in the trunking provider.
+
+To provision a RIPP trunk, the trunking customer will visit a web page
+hosted by the trunking consumer, and typically click on a button labeled
+with their trunking provider. This will begin the Oauth2.0
+authorization code flow. The trunking customer will authenticate with the
+trunking provider. The trunking provider authorizes the access,
+generate an authorization code, and generates a RIPP trunk URI. The
+RIPP trunk URI is included in a new OAuth parameter defined by this
+specification,and is returned as a parameter in the authorization
+response. The trunking consumer trades the authorization code for a
+refresh and access token, and stores the SIP Trunk URI. Finally, the
+trunking consumer mints a bearer token associated with the new RIPP
+trunk, and also mints a RIPP trunk consumer URI for receiving calls
+from the provider on this trunk. Both of these are passed to the
+trunking provider via a POST operation on the RIP trunk URI. 
+
+The usage of the OAuth2.0 flows enables the trunking consumer and
+trunking customer to be the same (i.e., a cloud PBX provider purchases
+services from a telco), or different (i.e., an enterprise customer has
+purchased trunking services from a telco, and wishes to
+provision them into a cloud contact center that acts as the trunking
+consumer). The latter is often referred to informally as "BYOSIP" in
+traditional SIP trunking and is explicitly supported by RIPP using
+OAuth2.0.
+
+Once provisioned, either domain can establish capabilities for the
+RIPP trunk by posting a capabilities declaration to the RIPP trunk URI
+of its peer, using a URI parameter that signals a capability
+declaration. The capabilities declaration is a simple document, whose
+syntax is described in Section XX. It conveys the receive capabilities
+of the entity posting it, and includes parameters like maximum bitrate
+for audio. This process is optional, and each parameter has a
+default. Either side can update its capabilities for the RIPP trunk at
+any time. Capability declarations occur outside of a call, are
+optional, and convey static receive capabilities which are a fixed
+property of the RIPP trunk. Consequenty, capability declaration is
+significantly different from SDP offer/answer.
+
+Either the trunking consumer or provider can intiiate calls by posting
+to the RIPP trunk URI of its peer, using a URI parameter that signals
+a new call. The request contains the target phone number in the
+request URI and an Identity header field in the HTTP Request. The
+Identity header field is identical in syntax and semantics to the SIP
+Identity header field defined in [@RFC8224], just carried in HTTP
+instead of SIP. This request returns a call URI (unique in space and
+time for this call) in the Location header field of a 201 response
+sent by the server. Typically the response will
+also include a session cookie, bound to the call, to facilitate sticky
+session routing in HTTP proxies. This allows all further signaling and
+media to reach the same RIPP server that handled the initial request,
+while facilitating failover should that server go down.
 
 Once a call has been created, a long-lived HTTP transaction is
 initiated from the client to the server for purposes of
 signaling. This transaction enables bidirectional data flow, tunneled
-within the body of a long-running HTTP request and response. This data
-flow is called a byway. A separate byway is established by the client
-for signaling, one for media control, and multiple byways for
-media. HTTP3 ensures zero RTT for setup of these byways.
+within the body of a long-running HTTP request and its long-running
+response. This data flow is called a byway. Each byeway has a
+purpose. One byway is established by the client for signaling, one for
+media control, and multiple byways for media. HTTP3 ensures zero RTT
+for setup of these byways.
 
 Signaling commands are encoded into the signaling byway using
-streaming JSON in both direcitons. The media control and media byways
-carry a simple binary encoding in both directions. 
+streaming JSON in both directions. Each JSON object encodes an event
+and its parameters. Events are defined for alerting, connected, ended,
+migrate, keepalive, and transfer-and-takeback. 
 
-To eliminate HOL blocking for media, a media packet is sent on a media
-byway when it is first established. After the first packet, the client
-cannot be sure a subsequent packet will be delayed due to the ordering
-guarantees provided by HTTP3 within a stream. To combat this, both
-sides acknowledge the receipt of each packet using the media control
-byway. Once a media packet is acknowledged, the media byway can be
-used once again without fear of HOL blocking.
+The media control and media byways carry a simple binary encoding in
+both directions. To eliminate HOL blocking for media, a media packet
+is sent on a media byway when it is first established. After the first
+packet, the client cannot be sure a subsequent packet will be delayed
+due to the ordering guarantees provided by HTTP3 within a stream. To
+combat this, both sides acknowledge the receipt of each packet using
+the media control byway. Once a media packet is acknowledged, the
+media byway can be used once again without fear of HOL
+blocking. Because each media packet is acknowledged independently,
+each side can compute statistics on packet losses and
+delays. Consequently, the equivalent of RTCP sender and receiver
+reports are not needed.
 
-Finally, RIPP provides a simple technique for allowing a call to
+RIPP defines some basic requirements for congestion control at the
+client side. Specifically, clients drop media packets if there are too
+many media byways in the blocked state.
+
+RIPP provides a simple technique for allowing a call to
 seamlessly migrate from one client instance to another on a different
-host, or from one server instance on one host to another. For a
+host, or from one server instance to another on a different host. For a
 client, it need only end the byways in use for the call and
 re-initiate from a different instance. Similarly, a server can request
 migration, and this triggers the client to perform this same
@@ -586,47 +718,117 @@ action. The call state persists independently of the state of the HTTP
 connection or the byways embedded in HTTP transactions, so that a
 reconnect can continue where things left off.
 
+Finally, RIPP trunks can be destroyed by a trunking consumer by
+issuing a DELETE against the RIPP trunk URI. 
+
 
 # Detailed Behaviors
 
 This section provides an overview of the operation of RIPP.
 
-## Discovery and Provisioning
+## Configuration
 
-RIPP does not provide any technique for discovery. It is assumed that
-peering is arranged bilaterally through some out of bands means. For
-example, a RIPP domain can offer a web site through which customers
-can order termination services. This website can provide the RIPP
-client domain with the information needed to inject calls into that
-domain. For bidirectional peering arrangements, each side would need
-to perform this function independently. 
+RIPP configuration happens when a trunking consumer wishes to be able
+to provision, on demand, new RIPP trunks with a trunking
+provider.
 
-Automated techniques for provisioning bidirecitonal peering
-relationships are beyond the scope of this specification.
+One example use case is that of an enterprise, which has deployed an
+IP PBX of some sort within its data centers. Once deployed, the
+enterprise needs to enable the PBX to place and receive calls towards
+the PSTN. The enterprise contracts with a RIPP trunking provider. All
+of this happens as a precursor to configuration. At the end of the
+contracting process, the enterprise administrator will visit the
+configuration web page, and be able to register their enterprise
+PBX. This process MUST return a client-ID, client-secret, and
+authorization endpoint URL. The administrator manually enters these
+into the configuration of their PBX. [[OPEN ISSUE: this seems wrong]]
 
-Two pieces - and only two pieces of information - are required for a
-client domain to initiate calls to a server domain:
+As another example use case, a cloud contact center, cloud PBX
+provider, or any other saas application which wishes to obtain
+trunking services, can contract with a RIPP trunking provider. In a
+similar process to the enterprise case above, the administrator
+obtains a clientID, client-secret, and authorization endpoint URL
+which are configured into their service.
 
-1. The root URI for placing calls,
-2. A valid OAuth token
+In the final use case, an enterprise administrator has purchased
+trunking services from a RIPP trunking provider. They separately have
+purchased cloud PBX, cloud contact center, or another saas service
+which requires connectivity to a RIPP trunk. In this case, the cloud
+PBX, cloud contact center, or other saas service acts as the RIPP
+trunk consumer. The RIPP trunk consumer would configure itself as a
+client with a variety of RIPP trunking providers, and for each, obtain
+the clientID, client-secret and authorization URL. This will allow the
+customers of the RIPP trunking consumer to provision RIPP trunks
+automatically, and point them to the RIPP trunking consumer. 
 
-It is RECOMMENDED that these be provided via a website operated by the
-terminating domain. This also means the process of authentication of
-the originating domain to the terminating domai is fully outside the
-scope of this spceification, and can follow any desired technique by
-the terminating domain that ultimately results in the issuance of an
-OAuth token. 
 
-The root URI MUST be a valid HTTPS URI. The terminating domain MUST be
-compliant with HTTP3 in processing requests. The root URI MAY contain
-a path component, though this is optional.
+## RIPP Trunk Provisioning
 
-All requests to create a new call are initiated by the client towards
-this URI.
+Once a RIPP consumer has been configured as an OAuth client
+application with a RIPP provider, a RIPP customer can provision a RIPP
+trunk on-demand using a web form. RIPP consumers MUST provide a
+self-service web form for such provisioning, since self-service and
+instant provisioning are key goals of RIPP.
 
-As an example, the following is a valid RIPP root URI:
+The RIPP customer visits this web form, and selects their
+provider. The RIPP consumer MUST then initiate an OAuth2.0
+authorization code flow. This MUST utilize the clientID, client-secret
+and authorization endpoint URL configured previously. The RIPP
+customer will authenticate to the RIPP provider, and authorize
+creation of a new RIPP trunk. The RIPP provider SHOULD indicate, via
+the web page it has served, any limitations associated with this RIPP
+trunk (e.g., rate limits or restrictions on services or dialed
+numbers). However, it MUST NOT require any additional input from the
+RIPP customer, since all aspects of the process are automated.
 
-https://telco.com/calls
+Once the RIPP customer authorizes creation of a RIPP trunk, the RIPP
+provider MUST generate an authorization code and follow the procedures
+defined in [@RFC6749] for the authorization code grant
+flow. Furthermore, the RIPP provider MUST mint a new URI identifying
+this new RIPP trunk. This URI MAY contain a path component, but MUST
+NOT contain any URI parameters. This URI MUST be an HTTPS URI, and
+HTTP3 MUST be supported for this URI. 
+
+As an example, the following is a valid RIPP trunk URI:
+
+https://ripp.telco.com/trunks/6ha937fjjj9
+
+This URI MUST be returned in the OAuth2.0 parameter "ripp-trunk", and
+MUST be base64 encoded.
+
+The RIPP consumer MUST follow the procedures defined in [@RFC6749] for
+an OAuth client, trade in its authorization code for both a refresh
+and access token. The RIPP provider MUST issue both refresh and access
+tokens. The refresh token MUST remain valid for no less than a year,
+or for the duration the RIPP trunk remains in existence, whichever
+comes first. The RIPP consumer MUST extract the "ripp-trunk" OAuth
+parameter from the authorization response, decode, and persist it. 
+
+Once the RIPP consumer has obtained an access token, it MUST initiate
+an HTTPS POST request towards the RIPP trunk URI. This request MUST
+include the "ripp-provision" URI parameter. This request MUST contain
+an Authorization header field utilizing the access token just
+obtained. It MUST include a RIPP provisioning object in the body. This
+object is specified in Section XX.
+
+The RIPP provisioning object MUST contain a RIPP Trunk Client URI and
+a RIPP bearer token. The RIPP consumer MUST mint an HTTPS URI for the
+RIPP Trunk Client URI. This URI MUST support HTTP3, and MUST implement
+the behaviors associated with capabilities and new call operations as
+defiend below. This URI MAY have a path component, but MUST NOT
+contain any URI parameters.
+
+In addition, the RIP consumer MUST mint a bearer token to be used by
+the RIPP provider when performing operations against the RIPP Trunk
+Client URI. The bearer token MAY be constructed in any way desired by
+the RIPP consumer. The token and URI MUST remain valid for at least
+one day. The RIPP consumer MUST refresh the provisioning against the
+RIPP trunk at least one hour in advance of the expiration, in order to
+ensure no calls are delayed.
+
+At this point, the RIPP trunk is provisioned. Both the RIPP provider
+and RIPP consumer have a RIPP trunk URI and an Authorization token to
+be used for placing calls in each direction. 
 
 
 ## Initiating Calls
