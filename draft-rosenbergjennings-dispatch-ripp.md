@@ -1388,10 +1388,46 @@ TOOD: need to specify back-off timers and retry algorithms
 To be filled in.
 
 
-# SIP to RIPP Gatewaying
+# SIP Gatewaying
+
+RIPP is designed to be easy to gateway from SIP. The exptectation is
+that RIPP will be implemented in SBCs and softswitches. A SIP to RIPP
+gateway has to be call-stateful, acting as a b2bua, in order to
+gateway to RIPP. Furthermore, a SIP to RIPP gateway has to act as a
+media termination point in SIP. It has to perform any SRTP decryption
+and encryption, and it must de-packaetize RTP packets to extract their
+timestamps, sequence numbers, and codec types.
+
+SIP to RIPP gateways are not transparent. SIP header fields which are
+unknown or do not map to RIPP functionality as described here, MUST be
+discarded.
+
+Any configuration and provisioning for RIPP happens ahead of receipt
+or transmission of SIP calls. Consequently, the logic described here
+applies at the point that a gateway receives a SIP INVITE on the SIP
+side, or receives a POST to the RIPP trunk URI on the RIPP side.
+
+This specification does define some normative procedures for the
+gateway function in order to maximize interoperability. 
 
 
-# RIPP to SIP Gatewaying
+## RIPP to SIP
+
+## SIP to RIPP
+
+When a gateway receives a SIP INVITE and decides it wants to route it
+out on a RIPP trunk, it MUST immediately reply to the incoming SIP
+INVITE with a 183. If the INVITE contained an offer, the 183 MUST
+contain an SDP answer. The gateway MAY choose to either transcode
+incoming audio to G.711 or Opus, or it may pass through the codec
+frames without transcoding. This specification defines procedures for
+passthrough.
+
+Next, the gateway creates an HTTP POST request towards the RIPP trunk
+URI of its peer. If the incoming call was to a phone number, the
+gateway MUST convert it to an E.164 number an include that as a tel
+URI in the target URI parameter of the RIPP request. 
+
 
 # IANA Considerations
 
