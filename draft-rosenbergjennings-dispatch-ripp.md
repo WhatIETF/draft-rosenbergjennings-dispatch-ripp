@@ -157,7 +157,7 @@ protocol required to interconnect voice between a trunking provider
 and a domain wishing to access trunking services.
 
 In order to make use of new HTTP based technologies as described
-above, RIPP uses HTTP/3 [@draft-ietf-quic-http], but is not an
+above, RIPP uses HTTP/3 [@I-D.ietf-quic-http], but is not an
 extension to it. The goal is to ride the coattails of advancement in
 HTTP based technologies without requiring them to do anything special
 for the benefit of VoIP. This means that RIPP inherits the benefits of
@@ -189,7 +189,7 @@ send information to the client in an easy fashion.
 HTTP2 [@RFC7540] addressed the second of these with the introduction of pushes
 and long running requests. However, its usage of TCP was still a
 problem. This has finally been addressed with the arrival of QUIC
-[@draft-ietf-quic-transport] and
+[@I-D.ietf-quic-transport] and
 HTTP3. QUIC is based on UDP, and it introduces the concept of a stream
 that can be set up with zero RTT. These streams are carried over UDP,
 and though are still reliable, there is no head of line blocking
@@ -952,7 +952,7 @@ sip:alice@example.com).
 
 The client MUST add an HTTP Identity header field. This header field
 is defined in Section XX as a new HTTP header field. Its contents MUST
-be a valid Identity header field as defined by [@RFC8824]. This
+be a valid Identity header field as defined by [@RFC8224]. This
 ensures that all calls utilize secure caller ID. A RIPP client MUST
 NOT place the caller ID in any place except for the Identity header
 field in this request. Specifically, a "From", "Contact", or
