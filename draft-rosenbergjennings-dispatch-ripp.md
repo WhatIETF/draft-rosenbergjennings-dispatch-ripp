@@ -678,13 +678,13 @@ a new call. The request contains the target phone number in the
 request URI and an Identity header field in the HTTP Request. The
 Identity header field is identical in syntax and semantics to the SIP
 Identity header field defined in [@RFC8224], just carried in HTTP
-instead of SIP. This request returns a call URI (unique in space and
-time for this call) in the Location header field of a 201 response
-sent by the server. Typically the response will
-also include a session cookie, bound to the call, to facilitate sticky
-session routing in HTTP proxies. This allows all further signalling and
-media to reach the same RIPP server that handled the initial request,
-while facilitating failover should that server go down.
+instead of SIP. This request returns a globally unique call URI in the
+Location header field of a 201 response sent by the server. Typically
+the response will also include a session cookie, bound to the call, to
+facilitate sticky session routing in HTTP proxies. This allows all
+further signalling and media to reach the same RIPP server that
+handled the initial request, while facilitating failover should that
+server go down.
 
 Once a call has been created, a long-lived HTTP transaction is
 initiated from the client to the server for purposes of
@@ -803,8 +803,8 @@ defined in [@RFC6749] for the authorization code grant
 flow. Furthermore, the RIPP provider MUST mint a new URI identifying
 this new RIPP trunk. This URI MUST contain a path component, and MUST
 NOT contain any URI parameters. This URI MUST be an HTTPS URI, and
-HTTP3 MUST be supported for this URI. The path component MUST uniquely
-identify this trunk in space and time, and not depend on the authority
+HTTP3 MUST be supported for this URI. The path component MUST be a
+globally unique identifier for this trunk, and not depend on the authority
 component as part of the namespace for purposes of uniqueness. 
 
 As an example, the following is a valid RIPP trunk URI:
@@ -837,7 +837,7 @@ RIPP Trunk Client URI. This URI MUST support HTTP3, and MUST implement
 the behaviours associated with capabilities and new call operations as
 defined below. This URI MUST have a path component,  MUST NOT
 contain any URI parameters, and MUST have a path segment which is
-globally unique in space and time. 
+globally unique.
 
 In addition, the RIPP consumer MUST mint a bearer token to be used by
 the RIPP provider when performing operations against the RIPP Trunk
@@ -968,7 +968,7 @@ create this call. The server MUST return a 201 Created response, and
 MUST include a Location header field containing an HTTPS URI which
 identifies the call that has been created. The URI identifying the
 call MUST include a path segment which contains a type 4 UUID,
-ensuring that call identifiers are unique across time and space. This
+ensuring that call identifiers are globally unique. This
 URI MUST have a path underneath the RIPP trunk URI, to enable easy
 mapping of calls to trunks.
 
@@ -1153,7 +1153,7 @@ durations as long as 11,930 hours. Rollover of the sequence number is
 not permitted, the client or server MUST end the call before
 rollover. This means that the combination of call URI, direction
 (client to server, or server to client), channel number, and sequence
-number represent a unique identifier in space and time for media
+number represent a unique identifier for media
 packets.
 
 ## Sending and Receiving Media
