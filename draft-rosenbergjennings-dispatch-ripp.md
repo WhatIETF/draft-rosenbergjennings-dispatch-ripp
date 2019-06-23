@@ -731,6 +731,10 @@ Finally, RIPP trunks can be destroyed by a trunking consumer by
 issuing a DELETE against the RIPP trunk URI. 
 
 
+# Example
+
+{{example.md}}
+
 # Detailed Behaviours
 
 This section provides an overview of the operation of RIPP.

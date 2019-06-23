@@ -9,6 +9,11 @@ securitySchemes:
   oauth_2_0: !include securitySchemes/oauth_2_0.raml
 
 types:
+    InboundEndpoint:
+        type: object
+        properties:
+            consumerTrunkURI: string
+            consumerToken: string 
     Event:
         type: object
         properties:
@@ -36,20 +41,25 @@ types:
     Frame:
         seqNumOffset: number
         dataLen: number
-        data: string
+"        data: string
     FrameAck:
         seqNum: number 
-    BywayFlow:
+    BywayPreamble:
         baseSeqNum: number
         baseTime: number
         frameTime: number
         codec:
             enum: [ opus, g711, dtmf, cn, ack ]
+     BywayMedia:
         mediaFrames: array
  
 
 /trunks:
    /{trunkID}:
+      /consumerTrunk:
+        put:
+            description: Set the URI and security token for consumer trunk URI 
+            securedBy: [oauth_2_0]
       /capAdv:
         get:
             description: Get the Capability Advertisement for this trunk
@@ -62,7 +72,7 @@ types:
       /calls:
         post:
             securedBy: [oauth_2_0]
-            description: Create a new call.
+            description: Create a new call. Returns a Call URI 
             responses:
                 202:
                   
@@ -79,14 +89,25 @@ types:
                             application/json:
                                 type: Event
             put:
-                description: Tell server about event
+                description: Tell server about recent event
                 body:
                     application/json:
                         type: Event
                 responses:
                     200:
-        /media:
+        /media-up:
             post:
+                 description: Starts an infinite flow of media frames from client to server 
+                 body:
+                    application/octet-stream:
+                        type: BywayFlow
+                 responses:
+                    200:
+                        application/octet-stream:
+                            type: BywayFlow
+        /media-down:
+            post:
+                 description: Starts an infinite flow of media frames from server to client 
                  body:
                     application/octet-stream:
                         type: BywayFlow
