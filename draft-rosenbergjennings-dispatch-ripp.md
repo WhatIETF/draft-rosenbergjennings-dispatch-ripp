@@ -22,6 +22,14 @@ symrefs = "yes"
 sortrefs = "yes"
 
 [[author]]
+initials = "J."
+surname = "Rosenberg"
+fullname = "Jonathan Rosenberg"
+organization = "Five9"
+  [author.address]
+  email = "jdrosen@jdrosen.net"
+
+[[author]]
 initials = "C."
 surname = "Jennings"
 fullname = "Cullen Jennings"
@@ -29,13 +37,6 @@ organization = "Cisco Systems"
   [author.address]
   email = "fluffy@iii.ca"
 
-[[author]]
-initials = "J."
-surname = "Rosenberg"
-fullname = "Jonathan Rosenberg"
-organization = "Five9"
-  [author.address]
-  email = "jdrosen@jdrosen.net"
 
 %%%
 
