@@ -1254,6 +1254,10 @@ retries, and other race conditions which may deliver the same event
 multiple times, or deliver an event to a server which is not aware of
 the call.
 
+Events are also defined so that the resulting state is uniquely
+defined by the event itself. This ensures that knowing the most recent
+event is sufficient to determine the state of the call. 
+
 This specification defines the following events:
 
 alerting: Passed from server to client, indicating that the recipient
