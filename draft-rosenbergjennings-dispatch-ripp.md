@@ -853,11 +853,21 @@ be used for placing calls in each direction.
 
 ## Capabilities
 
-Once provisioned, either the consumer or provider MAY set capabilities
-for the trunk. To set capabilities, the client performs an HTTP POST
+Once provisioned, either the consumer or provider sets capabilities
+for the trunk. If either side wishes to declare capabilities that are
+not default, it MUST establish capabilities immediately upon trunk
+creation. To do that, the client performs an HTTP POST
 to its peer's RIPP trunk URI. It MUST include the URI parameter
 "ripp-caps". The body MUST be a RIPP capabilities object as defined in
 Section XX.
+
+Once established, either side MAY update the capabilities with a fresh
+POST request. Due to race conditions, it is possible that the client
+may receive calls compliant to the old capabilities document for a
+brief interval. It MUST be prepared for this.
+
+When the trunk resource is destroyed, its associated capabilities are
+also destroyed.
 
 The RIPP capabilities document is a list of name-value pairs, which
 specify a capability. Every capability has a default, so that if no
@@ -908,13 +918,11 @@ In general, an entity MUST declare a capability for any characteristic
 of a call which may result in the call being rejected. This
 requirement facilitates prevention of call failures, along with clear
 indications of why calls have failed when they do. For example, if a
-RIPP trunk provider provisions a trunk without 800 service, but the
-consumer configures its routing to route 800 calls over this trunk,
-the call will be rejected. However, the RIPP client can know this
-ahead of time, without even placing the call towards the RIPP
-provider. This enables validation of route configurations in an
-automated fashion, without placing test calls or calling customer
-support.
+RIPP trunk provider provisions a trunk without support for G.729, but
+the consumer configures their to utilize this codec, this will be
+known as a misconfiguration immediately. This enables validation of
+trunk configurations in an automated fashion, without placing test
+calls or calling customer support.
 
 ## Initiating Calls
 
