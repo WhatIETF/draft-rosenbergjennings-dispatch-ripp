@@ -46,15 +46,15 @@ This document specifies the Realtime Internet Peering Protocol
 provider (such as a telco), and a trunking consumer (such as an
 enterprise, cloud PBX provider, cloud contact center provider, and so
 on). RIPP is an alternative to SIP, SDP and RTP for this use case, and
-is designed to run ontop of HTTP/3. Using HTTP/3 allows trunking
-consumers to more easily build their applications ontop of cloud
+is designed to run on top of HTTP/3. Using HTTP/3 allows trunking
+consumers to more easily build their applications on top of cloud
 platforms, such as AWS, Azure and Google Cloud, all of which are
 heavily focused on HTTP based services. RIPP also addresses many of
 the challenges of traditional SIP-based trunking. Most notably, it
 mandates secure caller ID via STIR, and provides automated trunk
-provisionin as a mandatory protocol component. RIPP supports both
+provisioning as a mandatory protocol component. RIPP supports both
 direct and "BYO" trunk configurations. Since it runs over HTTP/3, it
-works thrugh NATs and firewalls with the same ease as HTTP does, and
+works through NATs and firewalls with the same ease as HTTP does, and
 easily supports load balancing with elastic cluster expansion and
 contraction, including auto-scaling - all because it is nothing more
 than an HTTP application. RIPP also provides built in mechanisms for
@@ -100,7 +100,7 @@ embedded documentation, and so on.
 
 And yet another example are denial-of-service prevention techniques,
 typically done using BGP peering and re-routing. Though in principle
-these technicques can work for VoIP, they are deployed in conjunction
+these techniques can work for VoIP, they are deployed in conjunction
 with the load balancers which represent the entry point into these
 cloud provider networks. Consequently, the protections these cloud
 providers offer do not extend to applications which merely use these
@@ -174,9 +174,9 @@ telecommunications services across the web.
 
 ## Why Now?
 
-The idea of reconverging HTTP and SIP is certainly not new, and indeed
+The idea of re-converging HTTP and SIP is certainly not new, and indeed
 has been discussed in the hallways of IETF for many years. However,
-several significant limitations made this previously infeasibile:
+several significant limitations made this previously infeasible:
 
 1. HTTP utilized TCP, which meant that it created head-of-line
 blocking which would delay lost packets rather than just discard
@@ -270,7 +270,7 @@ authoritative server is beyond the scope of HTTP, and can (and often
 does) include additional HTTP transactions.
 
 Consequently, in order to reside within HTTP, RIPP follows the same
-pattern and only concerns itself with HBH behaviors. Like HTTP, a RIPP
+pattern and only concerns itself with HBH behaviours. Like HTTP, a RIPP
 server can of course act as a RIPP client and further connect calls to
 downstream elements. However, such behavior requires no additional
 specification and is therefore not discussed by RIPP.
@@ -300,7 +300,7 @@ there is no relationship between the two directions.
 ## Signaling and Media Together
 
 One of the most fundamental design properties of SIP was the
-separation of signaling and media. This was fundamental to the success
+separation of signalling and media. This was fundamental to the success
 of SIP, since it enabled high quality, low latency media between
 endpoints inside of an enterprise or consumer domain.
 
@@ -311,12 +311,12 @@ an independent action which can route to any number of backends. In
 essence, the request/response transaction is atomic, and
 consequentially RIPP needs to operate this way as well. 
 
-Though SIP envisioned that signaling and media separation would also apply to
+Though SIP envisioned that signalling and media separation would also apply to
 inter-domain calls, in practice this has not happened. Inter-domain
 interconnect - used primarily for interconnection with the PSTN - is
 done traditionally with SBCs which terminate and re-originate
 media. Since this specification is targeted solely at these peering
-use cases, RIPP fundamentally combines signaling and media together on
+use cases, RIPP fundamentally combines signalling and media together on
 the same connection. To ensure low latency, it uses multiple
 independent request/response transactions - each running in parallel
 over unique QUIC streams - to transmit media. 
@@ -333,26 +333,26 @@ therefore done most of its routing at the connection layer, and not
 the IP layer.
 
 Furthermore, modern cloud platforms are full of NATs and private IP
-space, making them inhospitale to SIP based applications which still
+space, making them inhospitable to SIP based applications which still
 struggle with NAT traversal.
 
 HTTP of course does not suffer from this. In general, "addressing", to
 the degree it exists at all, is done with HTTP URIs. RIPP follows this
-pattern. RIPP - as an application ontop of HTTP3 - does not use or
+pattern. RIPP - as an application on top of HTTP3 - does not use or
 convey any IP addresses or ports. Furthermore, the client never
 provides addressing to the server - all traffic is sent in the reverse
 direction over the connection. 
 
 ## OAuth not MTLS or private IP
 
-When used in peering arrangements today, authentiation for the SIP
+When used in peering arrangements today, authentication for the SIP
 connections is typically done using mutual TLS. It is also often the
 case that security is done at the IP layer, and sometimes even via
-dedicated MPLS connections which requre
-pre-proivisioning. Unfortunately, these techniques are quite
+dedicated MPLS connections which require
+pre-provisioning. Unfortunately, these techniques are quite
 incompatible with how modern cloud platforms work.
 
-HTTP - due to its client-server nature, uses asymmetric technicques
+HTTP - due to its client-server nature, uses asymmetric techniques
 for authentication. Most notably, certificate based authentication is
 done by the client to verify that it is speaking to the server it
 thinks it should be speaking to. For the server to identify the
@@ -383,7 +383,7 @@ some of the SP are looking at not moving to TLS 1.3 and staying on 1.2
 because it breaks their current TLS accelerator solutions 
 
 
-SIP has provided encryption of both signaling and media, through the
+SIP has provided encryption of both signalling and media, through the
 usage of SIP over TLS and SIPS, and SRTP, respectively. Unfortunately,
 these have not been widely deployed. The E2E nature of SRTP has made
 keying an ongoing challenge, with multiple technologies developed over
@@ -393,12 +393,12 @@ peering as an alternative.
 
 Because of the HBH nature of RIPP, security is done fundamentally at
 the connection level - identically to HTTP. Since media is also
-carrier over the HTTP connection, both signaling and media are covered
+carrier over the HTTP connection, both signalling and media are covered
 by the connection security provided by HTTP3 - which is TLS1.3.
 
 Because of the mandatory usage of TLS1.3 with HTTP3, and the expected
-widespread deployment of HTTP3, running VoIP ontop of HTTP3 will bring
-built-in encryption of media and signaling between peering domains,
+widespread deployment of HTTP3, running VoIP on top of HTTP3 will bring
+built-in encryption of media and signalling between peering domains,
 which is a notable improvement over the current deployment
 situation. It is also necessary in order to utilize HTTP3.
 
@@ -417,7 +417,7 @@ E2E media believers - fire away!
 
 Robocalling is seeing a dramatic rise in volume, and efforts to combat
 it continue. One of the causes of this problem is the ease of which
-SIP enables one domain to intiate calls to another domain without
+SIP enables one domain to initiate calls to another domain without
 authenticated caller ID.
 
 With RIPP, we remedy this by requiring the client and servers to
@@ -433,7 +433,7 @@ In SIP, there is a fuzzy relationship between calls and
 connections. In some cases, connection failures cause call
 terminations, and vice a versa.
 
-HTTP, on the otherhand, very clearly separates the state of the
+HTTP, on the other hand, very clearly separates the state of the
 resource being manipulated, with the state of the HTTP connection used
 to manipulate it. This design principle is inherited by
 RIPP. Consequently, call state on both client and server exist
@@ -444,7 +444,7 @@ move between machines in the case of failures.
 ## Path Validation, not ICE
 
 HTTP3 is designed to work through NAT as a client-server protocol. It
-has built in techniques for dealing with NAT rebindings, IP address
+has built in techniques for dealing with NAT re-bindings, IP address
 changes due to a client moving between networks (e.g., wifi to
 cellular data). It has built in path validation that ensures that HTTP
 cannot be used for amplification attacks.
@@ -535,7 +535,7 @@ is any off-the-shelf HTTP load balancer which supports HTTP/3. No
 specific support for RIPP is required. RIPP is just a usage of HTTP. 
 
 Because RIPP clients and servers are nothing more than HTTP3
-applications, the behavior or RIPP is specified entirey by describing
+applications, the behavior or RIPP is specified entirely by describing
 how various RIPP procedures map to the core HTTP3 primitives available
 to applications - opening connections, closing connections, sending
 requests and responses, receiving requests and responses, and setting
@@ -570,7 +570,7 @@ capabilities, including rules such as rate limits, allowed phone
 numbers, and so on.
 
 Call: A VoIP session established by a RIPP client for the purposes of
-exchanging audio and signaling information. A call is always
+exchanging audio and signalling information. A call is always
 associated with a RIPP trunk. 
 
 Trunking Consumer: An administrative entity that utilizes trunking
@@ -581,11 +581,11 @@ enterprise, and the enterprise would be the trunking customer of
 Verizon. A trunking consumer implements a RIPP client to initiate
 calls to the trunking provider, and a RIPP server to receive them. 
 
-Trunking Provider: The administrative entity that provides elephony
+Trunking Provider: The administrative entity that provides telephony
 trunking services to the trunking consumer. The relationship between
 the trunking consumer and trunking provider is static and does not
 vary from call to call. (e.g., Verizon would be the trunking provider
-to an enterprise, and the enterprise woul be the trunking customer of
+to an enterprise, and the enterprise would be the trunking customer of
 Verizon. The trunking provider implements a RIPP server to receive
 calls from the trunking consumer, and a RIPP client to send calls to
 the trunking consumer
@@ -605,9 +605,9 @@ RIPP Trunk Consumer URI: An HTTP URI hosted by the trunking consumer,
 used to receive calls from the trunking provider associated with a
 specific RIPP trunk.
 
-Byway: A bidirectional byte stream between a RIPR providre and
+Byway: A bidirectional byte stream between a RIPR provide and
 consumer. A Byway passes its data through a long-running HTTP request
-and a long-running HTTP response. Byways are used for signaling, media
+and a long-running HTTP response. Byways are used for signalling, media
 control, and media.
 
 
@@ -636,7 +636,7 @@ is the RIPP implementation in the trunking provider.
 
 To provision a RIPP trunk, the trunking customer will visit a web page
 hosted by the trunking consumer, and typically click on a button labeled
-with their trunking provider. This will begin the Oauth2.0
+with their trunking provider. This will begin the OAuth 2
 authorization code flow. The trunking customer will authenticate with the
 trunking provider. The trunking provider authorizes the access,
 generate an authorization code, and generates a RIPP trunk URI. The
@@ -668,10 +668,10 @@ for audio. This process is optional, and each parameter has a
 default. Either side can update its capabilities for the RIPP trunk at
 any time. Capability declarations occur outside of a call, are
 optional, and convey static receive capabilities which are a fixed
-property of the RIPP trunk. Consequenty, capability declaration is
+property of the RIPP trunk. Consequently, capability declaration is
 significantly different from SDP offer/answer.
 
-Either the trunking consumer or provider can intiiate calls by posting
+Either the trunking consumer or provider can initiate calls by posting
 to the RIPP trunk URI of its peer, using a URI parameter that signals
 a new call. The request contains the target phone number in the
 request URI and an Identity header field in the HTTP Request. The
@@ -681,20 +681,20 @@ instead of SIP. This request returns a call URI (unique in space and
 time for this call) in the Location header field of a 201 response
 sent by the server. Typically the response will
 also include a session cookie, bound to the call, to facilitate sticky
-session routing in HTTP proxies. This allows all further signaling and
+session routing in HTTP proxies. This allows all further signalling and
 media to reach the same RIPP server that handled the initial request,
 while facilitating failover should that server go down.
 
 Once a call has been created, a long-lived HTTP transaction is
 initiated from the client to the server for purposes of
-signaling. This transaction enables bidirectional data flow, tunneled
+signalling. This transaction enables bidirectional data flow, tunneled
 within the body of a long-running HTTP request and its long-running
-response. This data flow is called a byway. Each byeway has a
-purpose. One byway is established by the client for signaling, one for
+response. This data flow is called a byway. Each byway has a
+purpose. One byway is established by the client for signalling, one for
 media control, and multiple byways for media. HTTP3 ensures zero RTT
 for setup of these byways.
 
-Signaling commands are encoded into the signaling byway using
+Signaling commands are encoded into the signalling byway using
 streaming JSON in both directions. Each JSON object encodes an event
 and its parameters. Events are defined for alerting, connected, ended,
 migrate, keepalive, and transfer-and-takeback. 
@@ -730,7 +730,7 @@ Finally, RIPP trunks can be destroyed by a trunking consumer by
 issuing a DELETE against the RIPP trunk URI. 
 
 
-# Detailed Behaviors
+# Detailed Behaviours
 
 This section provides an overview of the operation of RIPP.
 
@@ -824,8 +824,8 @@ object is specified in Section XX.
 The RIPP provisioning object MUST contain a RIPP Trunk Client URI and
 a RIPP bearer token. The RIPP consumer MUST mint an HTTPS URI for the
 RIPP Trunk Client URI. This URI MUST support HTTP3, and MUST implement
-the behaviors associated with capabilities and new call operations as
-defiend below. This URI MUST have a path component,  MUST NOT
+the behaviours associated with capabilities and new call operations as
+defined below. This URI MUST have a path component,  MUST NOT
 contain any URI parameters, and MUST have a path segment which is
 globally unique in space and time. 
 
@@ -1023,11 +1023,11 @@ Neither the request, nor the response, contain bodies.
 
 ## Establishing the Signaling and Media Control Byways
 
-To perform signaling and media control for this call, the client MUST
+To perform signalling and media control for this call, the client MUST
 initiate, in paralle, two HTTP requests towards the call URI that it
-just obtaind. One for signaling, and the other for media control. 
+just obtained. One for signalling, and the other for media control. 
 
-Both the media control and signaling transactions are long
+Both the media control and signalling transactions are long
 running. This means that the client initiates the connections, sends
 the headers, and then sends the body as a long-running stream (e.g.,
 streaming requests). Similarly, the server receives the request, and
@@ -1038,20 +1038,20 @@ client, and the server. This bidirectional stream is an ordered byte
 stream, and is called a byway. RIPP specific information is carried in
 the byway.
 
-To initiate a signaling byway, the client MUST initiate a POST
+To initiate a signalling byway, the client MUST initiate a POST
 request to the call URI, and MUST include the URI parameter
-"signaling". To initiate a media control byway, it MUST initiate a
+"signalling". To initiate a media control byway, it MUST initiate a
 POST request to the call URI and MUST include the URI parameter
 "mediactl".  These requests MUST NOT include any other URI
 parameters.
 
-The signaling byway utilizes a streaming JSON format, specified in
-XXX. This begins with an open curly bracked, and after that is a
+The signalling byway utilizes a streaming JSON format, specified in
+XXX. This begins with an open curly bracket, and after that is a
 series of JSON objects, each starting with a curly bracket, and ending
 with a curly bracket. Consequently, each side MUST immediately send
 their respective open brackets after the HTTP header fields. We
-utilize streaming JSON in order to faciltate usage of tools like CURL
-for signaling operations. 
+utilize streaming JSON in order to facilitate usage of tools like CURL
+for signalling operations. 
 
 The media control byway utilizes a binary encoding format. It consists
 of a variable length length field, followed by a payload, which is a
@@ -1104,7 +1104,7 @@ different byway for that codec.
 
 ## Opening Media Byways
 
-The client bears the responsibiity for opening media byways. These
+The client bears the responsibility for opening media byways. These
 byways will be used for sending media in both
 directions. Consequently, the server is strongly dependent on the
 client opening these byways; it cannot send media unless they've been
@@ -1121,7 +1121,7 @@ of RIPP. This is because, as describe below, media frames are sprayed
 across these byways in order to ensure that there is never
 head-of-line blocking. This is possible because, in HTTP3, each
 transaction is carried over a separate QUIC stream, and QUIC streams
-run ontop of UDP. Furthemore, a QUIC stream does not require a
+run on top of UDP. Furthermore, a QUIC stream does not require a
 handshake to be established - creation of new QUIC streams is a 0-RTT
 process. 
 
@@ -1129,7 +1129,7 @@ The requests to create these transactions MUST include headers for any
 applicable session cookies.
 
 To open a  media transaction, the client MUST include a RIPP-Media
-header field in the request headers. Simiarly, the server MUST include
+header field in the request headers. Similarly, the server MUST include
 this header in the response headers. This header contains the shared
 properties for the byway - the sequence number base it will send with,
 the timestamp base for packets it sends, and the name of the codec it is
@@ -1150,7 +1150,7 @@ implementations MUST support [@RFC2833] for DTMF, and MUST support
 
 The sequence number space is unique for each direction, channel, and
 call (as identified by the call URI). Each side MUST start the
-sequence number at zero, and MUST inccrement it by one for each
+sequence number at zero, and MUST increment it by one for each
 subsequent media frame. The sequence number base is represented as a
 string corresponding to a 32 bit unsigned integer, and the sequence
 number offset in the media frame is variable length, representing an
@@ -1177,7 +1177,7 @@ immediately marks the byway as blocked. At that point, it SHOULD NOT
 send another media frame on that byway. The client or server notes the
 sequence number and channel number for that media frame. Once it
 receives an acknowledgement on the media control channel for that
-corresponding media frame, it markes the byway as UNBLOCKED. A client
+corresponding media frame, it marks the byway as UNBLOCKED. A client
 or server MAY send a media frame on any unblocked byway.
 
 The sequence number for the media frame is computed based on the rules
@@ -1188,14 +1188,14 @@ once the number of blocked byways goes above a threshold. If a the
 number of blocked byways hits 75% of the total, this is a signal that
 congestion has occurred. In such a case, the client or server MUST
 either drop packets at the application layer, or buffer them for later
-transmission. [[TODO: can we play with QUIC priorities to prioriteze
+transmission. [[TODO: can we play with QUIC priorities to prioritize
 newer media frames over older?]]
 
 When a client or server receives a media frame, it MUST send an
 acknowledge message on the media control byway. This acknowledgement
 message MUST contain the full sequence number and channel number for
 the media packet that was received. It MUST also contain the
-timestamp, represnted as wallclock time, at which the media packet was
+timestamp, represented as wallclock time, at which the media packet was
 received.
 
 If the server has marked 75% of the media byways
@@ -1209,7 +1209,7 @@ sent or received packets on that byway for 5 or more
 seconds. This is to clean up unused byways.
 
 There is no need for sender or receiver reports. The equivalent
-information is knowable from the application layer acks.  
+information is knowable from the application layer acknowledgements.
 
 
 ## Terminating and Re-establishing Connections and  Byways
@@ -1217,13 +1217,13 @@ information is knowable from the application layer acks.
 The state of the connection, the QUIC streams, and byways, is separate
 from the state of the call. The client MAY terminate an HTTP
 connection or byway at any time, and re-establish it. Similarly, the
-server or cient may end the a byway at any time.
+server or client may end the a byway at any time.
 
 If a byway ends or the connection breaks or is migrated, the client
 MUST re-initiate the byways immediately, or risk loss of media
-and signaling events. However, to deal with the fact that
+and signalling events. However, to deal with the fact that
 re-establishment takes time, both client and server MUST buffer their
-signaling and media streams for at least 5 seconds, and then once the
+signalling and media streams for at least 5 seconds, and then once the
 connections and byways are re-established, it sends all buffered data
 immediately.
 
@@ -1234,7 +1234,7 @@ byways are re-established if they fail unexpectedly.
 ## Signaling - Events
 
 Signaling is performed by having the client and server exchange
-events. Each event is a JSON object embedded in the signaling
+events. Each event is a JSON object embedded in the signalling
 stream, which conveys the event as perceived by the client or
 server. Each event has a sequence number, which starts at zero for a
 call, and increases by one for each event. The sequence number space
@@ -1253,7 +1253,7 @@ Finally, there is an event type field, which conveys the type of
 event. This is followed by additional fields which are specific to the
 event type.
 
-This structure means that each event carried in the signaling is
+This structure means that each event carried in the signalling is
 totally self-describing, irregardless of the enclosing connection and
 stream. This greatly facilitates logging, debugging, retransmissions,
 retries, and other race conditions which may deliver the same event
@@ -1262,7 +1262,7 @@ the call.
 
 This specification defines the following events:
 
-alerting: Passed from server to client, indicating that the recipint
+alerting: Passed from server to client, indicating that the recipient
 is alerting.
 
 accepted: Passed from server to client, indicating that the call was
@@ -1289,7 +1289,7 @@ MUST be rejected by the server. The call end event SHOULD contain a
 reason, using the Reason codes defined for SIP.
 
 migrate: sent from server to client, it instructs the client to
-terminate the connections and restablish them to a new URI which
+terminate the connections and re-establish them to a new URI which
 replaces the URI for the call. The event contains the new URI to
 use. This new URI MUST utilize the same path components, and MUST have
 a different authority component. 
@@ -1310,16 +1310,16 @@ state.
 
 A server MUST maintain a timer, with a value equal to 5 seconds, for
 which it will hold the call in its current state without any active
-signaling byway. If the server does not receive a signaling
+signalling byway. If the server does not receive a signalling
 byway before the expiration of this timer, it MUST consider the
 call as ended. 
 
-If the server receives a signaling or media byway for a call that
+If the server receives a signalling or media byway for a call that
 is in the TERMINATED, it MUST reject the transaction with an XX
 response code.
 
 Note that the call resource itself - the URI - still exists. POST
-transactions for signaling and media are not permitted against it once
+transactions for signalling and media are not permitted against it once
 the call is in an ended state. However, a server MUST maintain the
 resource for at least one day, to facilitate a GET request against
 it. As described below, a GET request against a call resource allows
@@ -1331,7 +1331,7 @@ stateless migration of clients.
 A client MAY initiate a GET request against the call URI at any
 time. This returns the current state of the resource. This request
 returns an object which is the concatenation of all call events, sent
-by the server and received by the server, in the order in whch the
+by the server and received by the server, in the order in which the
 server applied them to the state machine.
 
 The response also contains a summary of media packet statistics up to
@@ -1343,13 +1343,13 @@ To facilitate operational maintenance, the protocol has built in
 support for allowing a server instance to drain all active calls to
 another server instance.
 
-The server can issue a migrate event over the signaling byway,
+The server can issue a migrate event over the signalling byway,
 which includes a new call URI that the peer should use. Once received,
 the client closes all transactions to the current call URI. It then
-establishes new signaling, media and media control byways to the URI
+establishes new signalling, media and media control byways to the URI
 it just received. All media that the client wishes to transmit, but
 was unable to do so during the migration, is buffered and then sent in
-a burst once the media byways are restablished. This ensures there
+a burst once the media byways are re-established. This ensures there
 is no packet loss (though there will be jitter) during the migration
 period. 
 
@@ -1363,7 +1363,7 @@ network changes and not likely to be exposed to applications.
 
 Clients can move a call from one client instance to another easily. No
 commands are required. The client simply ends the in-progress
-transactions for signaling and media, and then reinitiates them to the
+transactions for signalling and media, and then reinitiates them to the
 existing call URI from whatever server is to take over. Note that the
 client MUST do this within 5s or the server will end the call. 
 
@@ -1376,8 +1376,8 @@ network failures, and other related problems.
 Failure detection falls entirely at the hands of the client. A failure
 situation is detected when any one of the following happens:
 
-1. The QUIC connection closss unexpectedly
-2. Any outstanding signaling or media byway is reset by the
+1. The QUIC connection closes unexpectedly
+2. Any outstanding signalling or media byway is reset by the
 peer
 3. No media packets are received from the peer for 5s
 4. No acknowledgements are received for packets that have been sent in
@@ -1385,25 +1385,25 @@ the last 5s
 
 If the client detects such a failure, it MUST abort all ongoing
 transactions to the server, terminate the QUIC connection, and then
-establish a new connection using 0-RTT, and re-establish signaling and
+establish a new connection using 0-RTT, and re-establish signalling and
 media transactions.
 
 TOOD: need to specify back-off timers and retry algorithms
 
 
-# Syntx
+# Syntax
 
 To be filled in.
 
 
-# SIP Gatewaying
+# SIP Gateway 
 
-RIPP is designed to be easy to gateway from SIP. The exptectation is
+RIPP is designed to be easy to gateway from SIP. The expectation is
 that RIPP will be implemented in SBCs and softswitches. A SIP to RIPP
 gateway has to be call-stateful, acting as a b2bua, in order to
 gateway to RIPP. Furthermore, a SIP to RIPP gateway has to act as a
 media termination point in SIP. It has to perform any SRTP decryption
-and encryption, and it must de-packaetize RTP packets to extract their
+and encryption, and it must de-packetize RTP packets to extract their
 timestamps, sequence numbers, and codec types.
 
 SIP to RIPP gateways are not transparent. SIP header fields which are
