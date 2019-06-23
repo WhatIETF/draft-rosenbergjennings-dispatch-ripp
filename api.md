@@ -19,7 +19,7 @@ NO PUT <byway-uri> send media
 
 ACKs go back on any open byway. 
 
-Event is JSON object with timestamp,  alerting, connected, ended
+Event is JSON object with timestamp,  alerting, connected,channe num / id , codec name,  ended
 
 Perhaps have migrate or do other way - prefer a 3xx redirect response to GET <call-uri>/event
 
