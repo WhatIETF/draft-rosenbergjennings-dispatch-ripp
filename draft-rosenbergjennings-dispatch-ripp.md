@@ -1368,7 +1368,7 @@ Clients can move a call from one client instance to another easily. No
 commands are required. The client simply ends the in-progress
 transactions for signalling and media, and then reinitiates them to the
 existing call URI from whatever server is to take over. Note that the
-client MUST do this within 5s or the server will end the call. 
+client MUST do this within 1s or the server will end the call. 
 
 ## Ungraceful Call Migration
 
@@ -1382,16 +1382,18 @@ situation is detected when any one of the following happens:
 1. The QUIC connection closes unexpectedly
 2. Any outstanding signalling or media byway is reset by the
 peer
-3. No media packets are received from the peer for 5s
+3. No media packets are received from the peer for 1s
 4. No acknowledgements are received for packets that have been sent in
-the last 5s
+the last 1s
 
 If the client detects such a failure, it MUST abort all ongoing
 transactions to the server, terminate the QUIC connection, and then
-establish a new connection using 0-RTT, and re-establish signalling and
-media transactions.
+establish a new connection using 0-RTT, and re-establish signalling
+and media transactions. If this retry fails, the client MUST consider
+the call terminated. It SHOULD NOT a further attempt to re-establish
+the call.
 
-TOOD: need to specify back-off timers and retry algorithms
+
 
 
 # Syntax
