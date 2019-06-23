@@ -985,7 +985,11 @@ An example URI that identifies a call is:
 
 https://ripp.telco.com/trunks/6ha937fjjj9/calls/ha8d7f6fso29s88clzopa
 
-The server MAY include an HTTP session cookie in the 201 response. 
+The server MAY include an HTTP session cookie in the 201 response. The
+client MUST support receipt of cookies [@RFC6265]. It MUST be prepared
+to receive up to 10 cookies per call. The client MUST destroy all
+cookies associated with a call, when the call has ended. Cookies MUST
+NOT be larger the 5K.
 
 The usage of an HTTP URI to identify the call itself, combined with
 session cookies, gives the terminating RIPP domain a great deal of
