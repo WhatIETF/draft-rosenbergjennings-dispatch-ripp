@@ -1,0 +1,97 @@
+#%RAML 1.0
+---
+title: RIPP
+baseUri: http://ripp.example.net/{version}
+version: v1
+protocols: [ HTTPS ]
+securedBy: [ oauth_2_0 ]
+securitySchemes:
+  oauth_2_0: !include securitySchemes/oauth_2_0.raml
+
+types:
+    Event:
+        type: object
+        properties:
+            name:
+                enum: [ alerting, accepted, rejected, failed, tnt, migrate, terminated ] 
+            ended:
+                type: boolean
+            timeStamp:
+                type: datetime
+            tntDestination:
+                type: string
+                note: only in events with name tnt
+            migrateToURl:
+                type: string 
+                note: only in events with name migrate
+     Advertisement:
+        type object
+        properties:
+            max-bitrate: number
+            max-samplerate: number
+            max-channels: number
+            non-e164: boolean
+            force-cbr: boolean
+            tnt: boolean
+    Frame:
+        seqNumOffset: number
+        dataLen: number
+        data: string
+    FrameAck:
+        seqNum: number 
+    BywayFlow:
+        baseSeqNum: number
+        baseTime: number
+        frameTime: number
+        codec:
+            enum: [ opus, g711, dtmf, cn, ack ]
+        mediaFrames: array
+ 
+
+/trunks:
+   /{trunkID}:
+      /capAdv:
+        get:
+            description: Get the Capability Advertisement for this trunk
+            securedBy: [oauth_2_0]
+            responses:
+                200:
+                    body:
+                         application/json:
+                            type: Advertisement
+      /calls:
+        post:
+            securedBy: [oauth_2_0]
+            description: Create a new call.
+            responses:
+                202:
+                  
+
+
+/call:
+    /{callID}:
+        /event:
+            get:
+                description: Retreive the most recent event from server
+                responses:
+                    200:
+                        body:
+                            application/json:
+                                type: Event
+            put:
+                description: Tell server about event
+                body:
+                    application/json:
+                        type: Event
+                responses:
+                    200:
+        /media:
+            post:
+                 body:
+                    application/octet-stream:
+                        type: BywayFlow
+                 responses:
+                    200:
+                        application/octet-stream:
+                            type: BywayFlow
+            
