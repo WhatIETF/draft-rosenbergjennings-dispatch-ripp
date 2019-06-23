@@ -329,6 +329,11 @@ the other.
 
 ## TLS1.3 not SRTP or SIPS
 
+* CFJ - I have some preference for just saying TLS without a version as
+some of the SP are looking at not moving to TLS 1.3 and staying on 1.2
+because it breaks their current TLS accelerator solutions 
+
+
 SIP has provided encryption of both signaling and media, through the
 usage of SIP over TLS and SIPS, and SRTP, respectively. Unfortunately,
 these have not been widely deployed. The E2E nature of SRTP has made
@@ -354,6 +359,9 @@ before sending it over RIPP. This matches existing practice in any
 case. 
 
 E2E media believers - fire away!
+
+* CFJ - I think I would point out this is about PSTN interconnect and
+  PSTN is not going E2E. 
 
 
 ## Authenticated CallerID
