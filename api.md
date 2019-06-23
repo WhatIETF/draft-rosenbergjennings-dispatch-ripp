@@ -10,7 +10,7 @@ POST <trunk-uri>/calls/<phone-number> to create call. returns <call-uri>
 POST  <call-uri>/byways with JSON object with base seq, time, codec. Returns set of <byway-URI>
 GET   <call-uri>/event to get most resent event
 PUT   <call-uri>/event to update most resent even 
-DELETE <call-uri> to end call
+NO DELETE <call-uri> to end call
 
 PUT <call-uri>/media - with JSON object with base seq, time, codec. followed by media  
 
