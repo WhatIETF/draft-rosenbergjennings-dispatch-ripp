@@ -935,15 +935,15 @@ obtained out-of-band. For the RIPP trunk consumer, this is the OAuth
 token. For the RIPP trunk provider, it is the bearer token learned
 through the provisioning POST operation.
 
-The client MUST also add the "target" URI parameter. This URI MUST be
-an E.164 tel URI, unless the peer has indicated via capabilities that
-it supports user@domain based SIP addressing, in which case it MAY be
-a user@domain SIP URI. Note that calls to E.164 numbers MUST use the
-tel URI. The SIP form, where the E.164 number is placed in the user
-part of the SIP URI, MUST NOT be used. The SIP URI is only for calling
-to private extensions valid within a domain (e.g., sip:100@acme.com),
-or to end users that have email-like SIP URI (e.g.,
-sip:alice@example.com).
+The client MUST also add the "target" URI parameter. This parameter
+MUST be of the form user@domain. If the target is a phone number on
+the PSTN, this must take the form <e164>@e164.arpa, where <e164> is a
+valid E.164 number. RIPP also supports private trunks, in which case
+the it MUST take the form <number>@<domain>, where the number is a
+non-E164 number scoped to be valid within the domain. This form MUST
+NOT be used for E.164 numbers. Finally, RIPP can be used to place call
+to application services - such as a recorder - in which case the
+parameter would take the form of an RFC822 email address.
 
 The client MUST add an HTTP Identity header field. This header field
 is defined in Section XX as a new HTTP header field. Its contents MUST
@@ -1426,8 +1426,8 @@ passthrough.
 
 Next, the gateway creates an HTTP POST request towards the RIPP trunk
 URI of its peer. If the incoming call was to a phone number, the
-gateway MUST convert it to an E.164 number an include that as a tel
-URI in the target URI parameter of the RIPP request. 
+gateway MUST convert it to an E.164 number an include that in the
+target URI parameter of the RIPP request.
 
 
 # IANA Considerations
