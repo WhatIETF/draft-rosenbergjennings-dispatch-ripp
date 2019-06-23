@@ -2,10 +2,10 @@
 
 
 
-Network Working Group                                        C. Jennings
-Internet-Draft                                             Cisco Systems
-Intended status: Standards Track                            J. Rosenberg
-Expires: December 25, 2019                                         Five9
+Network Working Group                                       J. Rosenberg
+Internet-Draft                                                     Five9
+Intended status: Standards Track                             C. Jennings
+Expires: December 25, 2019                                 Cisco Systems
                                                            June 23, 2019
 
 
@@ -53,7 +53,7 @@ Status of This Memo
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019               [Page 1]
+Rosenberg & Jennings    Expires December 25, 2019               [Page 1]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019               [Page 2]
+Rosenberg & Jennings    Expires December 25, 2019               [Page 2]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -165,7 +165,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019               [Page 3]
+Rosenberg & Jennings    Expires December 25, 2019               [Page 3]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -221,7 +221,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019               [Page 4]
+Rosenberg & Jennings    Expires December 25, 2019               [Page 4]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -277,7 +277,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019               [Page 5]
+Rosenberg & Jennings    Expires December 25, 2019               [Page 5]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -333,7 +333,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019               [Page 6]
+Rosenberg & Jennings    Expires December 25, 2019               [Page 6]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -389,7 +389,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019               [Page 7]
+Rosenberg & Jennings    Expires December 25, 2019               [Page 7]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -445,7 +445,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019               [Page 8]
+Rosenberg & Jennings    Expires December 25, 2019               [Page 8]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -501,7 +501,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019               [Page 9]
+Rosenberg & Jennings    Expires December 25, 2019               [Page 9]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -557,7 +557,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 10]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 10]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -613,7 +613,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 11]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 11]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -669,7 +669,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 12]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 12]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -725,7 +725,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 13]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 13]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -781,7 +781,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 14]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 14]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -837,7 +837,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 15]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 15]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -893,7 +893,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 16]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 16]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -949,7 +949,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 17]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 17]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -986,11 +986,12 @@ Internet-Draft                    RIPP                         June 2019
    The RIPP consumer MUST follow the procedures defined in [RFC6749] for
    an OAuth client, trade in its authorization code for both a refresh
    and access token.  The RIPP provider MUST issue both refresh and
-   access tokens.  The refresh token MUST remain valid for no less than
-   a year, or for the duration the RIPP trunk remains in existence,
-   whichever comes first.  The RIPP consumer MUST extract the "ripp-
-   trunk" OAuth parameter from the authorization response, decode, and
-   persist it.
+   access tokens.  It is expected that the refresh token will last a
+   long time, in order to avoid the resource owner needing to manually
+   re-authorize.  The trunk consumer MUST be prepared for its access and
+   refresh tokens to be invalidated at any time.  The RIPP consumer MUST
+   extract the "ripp-trunk" OAuth parameter from the authorization
+   response, decode, and persist it.
 
    Once the RIPP consumer has obtained an access token, it MUST initiate
    an HTTPS POST request towards the RIPP trunk URI.  This request MUST
@@ -1001,15 +1002,15 @@ Internet-Draft                    RIPP                         June 2019
 
    The RIPP provisioning object MUST contain a RIPP Trunk Client URI and
    a RIPP bearer token.  The RIPP consumer MUST mint an HTTPS URI for
-   the RIPP Trunk Client URI.  This URI MUST support HTTP3, and MUST
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 18]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 18]
 
 Internet-Draft                    RIPP                         June 2019
 
 
+   the RIPP Trunk Client URI.  This URI MUST support HTTP3, and MUST
    implement the behaviours associated with capabilities and new call
    operations as defined below.  This URI MUST have a path component,
    MUST NOT contain any URI parameters, and MUST have a path segment
@@ -1060,8 +1061,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-
-Jennings & Rosenberg    Expires December 25, 2019              [Page 19]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 19]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -1117,7 +1117,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 20]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 20]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -1173,7 +1173,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 21]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 21]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -1199,6 +1199,10 @@ Internet-Draft                    RIPP                         June 2019
    ha8d7f6fso29s88clzopa>
 
    The server MAY include an HTTP session cookie in the 201 response.
+   The client MUST support receipt of cookies [RFC6265].  It MUST be
+   prepared to receive up to 10 cookies per call.  The client MUST
+   destroy all cookies associated with a call, when the call has ended.
+   Cookies MUST NOT be larger the 5K.
 
    The usage of an HTTP URI to identify the call itself, combined with
    session cookies, gives the terminating RIPP domain a great deal of
@@ -1222,17 +1226,16 @@ Internet-Draft                    RIPP                         June 2019
 
    which always resolves to 1.2.3.4, the VIP shared amongst the SBC
    farm.  Consequently, a request to this RIPP trunk would hit a
-   specific SBC behind the VIP.  This SBC would then create the call and
-   return a call URL which points to its actual IP, using DNS
 
 
 
-
-
-Jennings & Rosenberg    Expires December 25, 2019              [Page 22]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 22]
 
 Internet-Draft                    RIPP                         June 2019
 
+
+   specific SBC behind the VIP.  This SBC would then create the call and
+   return a call URL which points to its actual IP, using DNS
 
    <https://sbc23.sbc-farm.telco.com/trunks/6ha937fjjj9/calls/
    ha8d7f6fso29s88clzopa>
@@ -1278,18 +1281,19 @@ Internet-Draft                    RIPP                         June 2019
    fields.  We utilize streaming JSON in order to facilitate usage of
    tools like CURL for signalling operations.
 
-   The media control byway utilizes a binary encoding format.  It
-   consists of a variable length length field, followed by a payload,
-   which is a byte sequence of that length.  Each payload starts with a
-   variable length type field, followed by a format which is type
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 23]
+
+Rosenberg & Jennings    Expires December 25, 2019              [Page 23]
 
 Internet-Draft                    RIPP                         June 2019
 
 
+   The media control byway utilizes a binary encoding format.  It
+   consists of a variable length length field, followed by a payload,
+   which is a byte sequence of that length.  Each payload starts with a
+   variable length type field, followed by a format which is type
    specific.  Once the client initiates the transaction to open the
    media control byway, it MUST send a HELLO media control command.
    Similarly, the RIPP server MUST send a HELLO media control command in
@@ -1333,18 +1337,17 @@ Internet-Draft                    RIPP                         June 2019
 
    RIPP does not support gaps in the media sequence due to silence.
    Something must be transmitted for each time interval.  If a RIPP
-   implementation wishes to change codecs, it MUST utilize a different
-   byway for that codec.
 
 
 
 
-
-
-Jennings & Rosenberg    Expires December 25, 2019              [Page 24]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 24]
 
 Internet-Draft                    RIPP                         June 2019
 
+
+   implementation wishes to change codecs, it MUST utilize a different
+   byway for that codec.
 
 7.7.  Opening Media Byways
 
@@ -1391,17 +1394,17 @@ Internet-Draft                    RIPP                         June 2019
    All implementations MUST support [RFC2833] for DTMF, and MUST support
    [RFC3389] for comfort noise, for both sending and receiving.
 
-   The sequence number space is unique for each direction, channel, and
-   call (as identified by the call URI).  Each side MUST start the
-   sequence number at zero, and MUST increment it by one for each
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 25]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 25]
 
 Internet-Draft                    RIPP                         June 2019
 
 
+   The sequence number space is unique for each direction, channel, and
+   call (as identified by the call URI).  Each side MUST start the
+   sequence number at zero, and MUST increment it by one for each
    subsequent media frame.  The sequence number base is represented as a
    string corresponding to a 32 bit unsigned integer, and the sequence
    number offset in the media frame is variable length, representing an
@@ -1448,16 +1451,15 @@ Internet-Draft                    RIPP                         June 2019
    timestamp, represented as wallclock time, at which the media packet
    was received.
 
-   If the server has marked 75% of the media byways as blocked, it MUST
-   send a command on the media control byway instructing the client to
 
 
-
-Jennings & Rosenberg    Expires December 25, 2019              [Page 26]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 26]
 
 Internet-Draft                    RIPP                         June 2019
 
 
+   If the server has marked 75% of the media byways as blocked, it MUST
+   send a command on the media control byway instructing the client to
    open another media byway.  Once this command is received, the client
    MUST open a new byway, unless the total number of byways has reached
    20.
@@ -1507,9 +1509,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-
-
-Jennings & Rosenberg    Expires December 25, 2019              [Page 27]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 27]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -1565,7 +1565,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 28]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 28]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -1621,7 +1621,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 29]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 29]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -1646,7 +1646,7 @@ Internet-Draft                    RIPP                         June 2019
    No commands are required.  The client simply ends the in-progress
    transactions for signalling and media, and then reinitiates them to
    the existing call URI from whatever server is to take over.  Note
-   that the client MUST do this within 5s or the server will end the
+   that the client MUST do this within 1s or the server will end the
    call.
 
 7.15.  Ungraceful Call Migration
@@ -1662,22 +1662,22 @@ Internet-Draft                    RIPP                         June 2019
 
    2.  Any outstanding signalling or media byway is reset by the peer
 
-   3.  No media packets are received from the peer for 5s
+   3.  No media packets are received from the peer for 1s
 
    4.  No acknowledgements are received for packets that have been sent
-       in the last 5s
+       in the last 1s
 
    If the client detects such a failure, it MUST abort all ongoing
    transactions to the server, terminate the QUIC connection, and then
    establish a new connection using 0-RTT, and re-establish signalling
-   and media transactions.
-
-   TOOD: need to specify back-off timers and retry algorithms
-
-
+   and media transactions.  If this retry fails, the client MUST
+   consider the call terminated.  It SHOULD NOT a further attempt to re-
+   establish the call.
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 30]
+
+
+Rosenberg & Jennings    Expires December 25, 2019              [Page 30]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -1733,7 +1733,7 @@ Internet-Draft                    RIPP                         June 2019
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 31]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 31]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -1779,17 +1779,17 @@ Internet-Draft                    RIPP                         June 2019
               Applications", STD 64, RFC 3550, DOI 10.17487/RFC3550,
               July 2003, <https://www.rfc-editor.org/info/rfc3550>.
 
+   [RFC6265]  Barth, A., "HTTP State Management Mechanism", RFC 6265,
+              DOI 10.17487/RFC6265, April 2011,
+              <https://www.rfc-editor.org/info/rfc6265>.
+
    [RFC6749]  Hardt, D., Ed., "The OAuth 2.0 Authorization Framework",
               RFC 6749, DOI 10.17487/RFC6749, October 2012,
               <https://www.rfc-editor.org/info/rfc6749>.
 
 
 
-
-
-
-
-Jennings & Rosenberg    Expires December 25, 2019              [Page 32]
+Rosenberg & Jennings    Expires December 25, 2019              [Page 32]
 
 Internet-Draft                    RIPP                         June 2019
 
@@ -1807,18 +1807,16 @@ Internet-Draft                    RIPP                         June 2019
 
 Authors' Addresses
 
-   Cullen Jennings
-   Cisco Systems
-
-   Email: fluffy@iii.ca
-
-
    Jonathan Rosenberg
    Five9
 
    Email: jdrosen@jdrosen.net
 
 
+   Cullen Jennings
+   Cisco Systems
+
+   Email: fluffy@iii.ca
 
 
 
@@ -1845,4 +1843,6 @@ Authors' Addresses
 
 
 
-Jennings & Rosenberg    Expires December 25, 2019              [Page 33]
+
+
+Rosenberg & Jennings    Expires December 25, 2019              [Page 33]
