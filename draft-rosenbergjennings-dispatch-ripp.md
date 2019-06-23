@@ -810,10 +810,12 @@ MUST be base64 encoded.
 The RIPP consumer MUST follow the procedures defined in [@RFC6749] for
 an OAuth client, trade in its authorization code for both a refresh
 and access token. The RIPP provider MUST issue both refresh and access
-tokens. The refresh token MUST remain valid for no less than a year,
-or for the duration the RIPP trunk remains in existence, whichever
-comes first. The RIPP consumer MUST extract the "ripp-trunk" OAuth
-parameter from the authorization response, decode, and persist it. 
+tokens. It is expected that the refresh token will last a long time,
+in order to avoid the resource owner needing to manually
+re-authorize. The trunk consumer MUST be prepared for its access and
+refresh tokens to be invalidated at any time. The RIPP consumer MUST
+extract the "ripp-trunk" OAuth parameter from the authorization
+response, decode, and persist it.
 
 Once the RIPP consumer has obtained an access token, it MUST initiate
 an HTTPS POST request towards the RIPP trunk URI. This request MUST
