@@ -1,4 +1,7 @@
 #draft*.html
 draft*.xml
 #draft*.txt
-draft-rosenbergjennings-dispatch-ripp.md~
+*~
+ripp-api.html
+ripp-api.md
+

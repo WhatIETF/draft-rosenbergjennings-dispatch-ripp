@@ -423,7 +423,7 @@
   <meta name="generator" content="xml2rfc version 2.8.4 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
-  <meta name="dct.creator" content="Jennings, C. and J. Rosenberg" />
+  <meta name="dct.creator" content="Rosenberg, J. and C. Jennings" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-rosenbergjennings-dispatch-ripp-00" />
   <meta name="dct.issued" scheme="ISO8601" content="2019-6-23" />
   <meta name="dct.abstract" content="This document specifies the Realtime Internet Peering Protocol (RIPP). RIPP is used to provide telephony peering between a trunking provider (such as a telco), and a trunking consumer (such as an enterprise, cloud PBX provider, cloud contact center provider, and so on). RIPP is an alternative to SIP, SDP and RTP for this use case, and is designed to run on top of HTTP/3. Using HTTP/3 allows trunking consumers to more easily build their applications on top of cloud platforms, such as AWS, Azure and Google Cloud, all of which are heavily focused on HTTP based services. RIPP also addresses many of the challenges of traditional SIP-based trunking. Most notably, it mandates secure caller ID via STIR, and provides automated trunk provisioning as a mandatory protocol component. RIPP supports both direct and &quot;BYO&quot; trunk configurations. Since it runs over HTTP/3, it works through NATs and firewalls with the same ease as HTTP does, and easily supports load balancing with elastic cluster expansion and contraction, including auto-scaling - all because it is nothing more than an HTTP application. RIPP also provides built in mechanisms for migrations of calls between RIPP client and server instances, enabling failover with call preservation.  " />
@@ -438,19 +438,19 @@
     
     	<tr>
 <td class="left">Network Working Group</td>
-<td class="right">C. Jennings</td>
-</tr>
-<tr>
-<td class="left">Internet-Draft</td>
-<td class="right">Cisco Systems</td>
-</tr>
-<tr>
-<td class="left">Intended status: Standards Track</td>
 <td class="right">J. Rosenberg</td>
 </tr>
 <tr>
-<td class="left">Expires: December 25, 2019</td>
+<td class="left">Internet-Draft</td>
 <td class="right">Five9</td>
+</tr>
+<tr>
+<td class="left">Intended status: Standards Track</td>
+<td class="right">C. Jennings</td>
+</tr>
+<tr>
+<td class="left">Expires: December 25, 2019</td>
+<td class="right">Cisco Systems</td>
 </tr>
 <tr>
 <td class="left"></td>
@@ -815,7 +815,7 @@
 <p id="rfc.section.7.2.p.4">As an example, the following is a valid RIPP trunk URI: </p>
 <p><span>&lt;</span><a href="https://ripp.telco.com/trunks/6ha937fjjj9">https://ripp.telco.com/trunks/6ha937fjjj9</a><span>&gt;</span> </p>
 <p id="rfc.section.7.2.p.6">This URI MUST be returned in the OAuth2.0 parameter "ripp-trunk", and MUST be base64 encoded.  </p>
-<p id="rfc.section.7.2.p.7">The RIPP consumer MUST follow the procedures defined in <a href="#RFC6749" class="xref">[RFC6749]</a> for an OAuth client, trade in its authorization code for both a refresh and access token. The RIPP provider MUST issue both refresh and access tokens. The refresh token MUST remain valid for no less than a year, or for the duration the RIPP trunk remains in existence, whichever comes first. The RIPP consumer MUST extract the "ripp-trunk" OAuth parameter from the authorization response, decode, and persist it.  </p>
+<p id="rfc.section.7.2.p.7">The RIPP consumer MUST follow the procedures defined in <a href="#RFC6749" class="xref">[RFC6749]</a> for an OAuth client, trade in its authorization code for both a refresh and access token. The RIPP provider MUST issue both refresh and access tokens. It is expected that the refresh token will last a long time, in order to avoid the resource owner needing to manually re-authorize. The trunk consumer MUST be prepared for its access and refresh tokens to be invalidated at any time. The RIPP consumer MUST extract the "ripp-trunk" OAuth parameter from the authorization response, decode, and persist it.  </p>
 <p id="rfc.section.7.2.p.8">Once the RIPP consumer has obtained an access token, it MUST initiate an HTTPS POST request towards the RIPP trunk URI. This request MUST include the "ripp-provision" URI parameter. This request MUST contain an Authorization header field utilizing the access token just obtained. It MUST include a RIPP provisioning object in the body. This object is specified in Section XX.  </p>
 <p id="rfc.section.7.2.p.9">The RIPP provisioning object MUST contain a RIPP Trunk Client URI and a RIPP bearer token. The RIPP consumer MUST mint an HTTPS URI for the RIPP Trunk Client URI. This URI MUST support HTTP3, and MUST implement the behaviours associated with capabilities and new call operations as defined below. This URI MUST have a path component,  MUST NOT contain any URI parameters, and MUST have a path segment which is globally unique in space and time.  </p>
 <p id="rfc.section.7.2.p.10">In addition, the RIPP consumer MUST mint a bearer token to be used by the RIPP provider when performing operations against the RIPP Trunk Client URI. The bearer token MAY be constructed in any way desired by the RIPP consumer. The token and URI MUST remain valid for at least one day. The RIPP consumer MUST refresh the provisioning against the RIPP trunk at least one hour in advance of the expiration, in order to ensure no calls are delayed.  </p>
@@ -857,7 +857,7 @@
 <p id="rfc.section.7.4.p.8">The server MUST validate the OAuth token, MUST act as the verifying party to verify the Identity header field, and then authorize the creation of a new call, and then either accept or reject the request. If accepted, it indicates that the server is willing to create this call. The server MUST return a 201 Created response, and MUST include a Location header field containing an HTTPS URI which identifies the call that has been created. The URI identifying the call MUST include a path segment which contains a type 4 UUID, ensuring that call identifiers are unique across time and space. This URI MUST have a path underneath the RIPP trunk URI, to enable easy mapping of calls to trunks.  </p>
 <p id="rfc.section.7.4.p.9">An example URI that identifies a call is: </p>
 <p><span>&lt;</span><a href="https://ripp.telco.com/trunks/6ha937fjjj9/calls/ha8d7f6fso29s88clzopa">https://ripp.telco.com/trunks/6ha937fjjj9/calls/ha8d7f6fso29s88clzopa</a><span>&gt;</span> </p>
-<p id="rfc.section.7.4.p.11">The server MAY include an HTTP session cookie in the 201 response.  </p>
+<p id="rfc.section.7.4.p.11">The server MAY include an HTTP session cookie in the 201 response. The client MUST support receipt of cookies <a href="#RFC6265" class="xref">[RFC6265]</a>. It MUST be prepared to receive up to 10 cookies per call. The client MUST destroy all cookies associated with a call, when the call has ended. Cookies MUST NOT be larger the 5K.  </p>
 <p id="rfc.section.7.4.p.12">The usage of an HTTP URI to identify the call itself, combined with session cookies, gives the terminating RIPP domain a great deal of flexibility in how it manages state for the call. In traditional softswitch designs, call and media state is held in-memory in the server and not placed into databases. In such a design, a RIPP server can use the session cookie in combination with sticky session routing in the load balancers to ensure that subsequent requests for the same call go to the same call server. Alternatively, if the server is not using any kind of HTTP load balancer at all, it can use a specific hostname in the URI to route all requests for this call to a specific instance of the server. This technique is particularly useful for telcos who have not deployed HTTP infrastructure, but do have SBCs that sit behind a single VIP. The root URI can use a domain whose A record maps to this IP. Once a call has landed on a particular SBC, the call URI can indicate the specific IP of the SBC.  </p>
 <p id="rfc.section.7.4.p.13">For example, the RIPP trunk URI for such a telco operator might be: </p>
 <p><span>&lt;</span><a href="https://sbc-farm.telco.com/trunks/6ha937fjjj9">https://sbc-farm.telco.com/trunks/6ha937fjjj9</a><span>&gt;</span> </p>
@@ -956,7 +956,7 @@
 <h1 id="rfc.section.7.14">
 <a href="#rfc.section.7.14">7.14.</a> <a href="#graceful-call-migration-client" id="graceful-call-migration-client">Graceful Call Migration: Client</a>
 </h1>
-<p id="rfc.section.7.14.p.1">Clients can move a call from one client instance to another easily. No commands are required. The client simply ends the in-progress transactions for signalling and media, and then reinitiates them to the existing call URI from whatever server is to take over. Note that the client MUST do this within 5s or the server will end the call.  </p>
+<p id="rfc.section.7.14.p.1">Clients can move a call from one client instance to another easily. No commands are required. The client simply ends the in-progress transactions for signalling and media, and then reinitiates them to the existing call URI from whatever server is to take over. Note that the client MUST do this within 1s or the server will end the call.  </p>
 <h1 id="rfc.section.7.15">
 <a href="#rfc.section.7.15">7.15.</a> <a href="#ungraceful-call-migration" id="ungraceful-call-migration">Ungraceful Call Migration</a>
 </h1>
@@ -967,13 +967,12 @@
 <ol>
 <li>The QUIC connection closes unexpectedly</li>
 <li>Any outstanding signalling or media byway is reset by the peer</li>
-<li>No media packets are received from the peer for 5s</li>
-<li>No acknowledgements are received for packets that have been sent in the last 5s</li>
+<li>No media packets are received from the peer for 1s</li>
+<li>No acknowledgements are received for packets that have been sent in the last 1s</li>
 </ol>
 
 <p> </p>
-<p id="rfc.section.7.15.p.4">If the client detects such a failure, it MUST abort all ongoing transactions to the server, terminate the QUIC connection, and then establish a new connection using 0-RTT, and re-establish signalling and media transactions.  </p>
-<p id="rfc.section.7.15.p.5">TOOD: need to specify back-off timers and retry algorithms </p>
+<p id="rfc.section.7.15.p.4">If the client detects such a failure, it MUST abort all ongoing transactions to the server, terminate the QUIC connection, and then establish a new connection using 0-RTT, and re-establish signalling and media transactions. If this retry fails, the client MUST consider the call terminated. It SHOULD NOT a further attempt to re-establish the call.  </p>
 <h1 id="rfc.section.8">
 <a href="#rfc.section.8">8.</a> <a href="#syntax" id="syntax">Syntax</a>
 </h1>
@@ -1041,6 +1040,11 @@
 <a>Schulzrinne, H.</a>, <a>Casner, S.</a>, <a>Frederick, R.</a> and <a>V. Jacobson</a>, "<a href="https://tools.ietf.org/html/rfc3550">RTP: A Transport Protocol for Real-Time Applications</a>", STD 64, RFC 3550, DOI 10.17487/RFC3550, July 2003.</td>
 </tr>
 <tr>
+<td class="reference"><b id="RFC6265">[RFC6265]</b></td>
+<td class="top">
+<a>Barth, A.</a>, "<a href="https://tools.ietf.org/html/rfc6265">HTTP State Management Mechanism</a>", RFC 6265, DOI 10.17487/RFC6265, April 2011.</td>
+</tr>
+<tr>
 <td class="reference"><b id="RFC6749">[RFC6749]</b></td>
 <td class="top">
 <a>Hardt, D.</a>, "<a href="https://tools.ietf.org/html/rfc6749">The OAuth 2.0 Authorization Framework</a>", RFC 6749, DOI 10.17487/RFC6749, October 2012.</td>
@@ -1060,27 +1064,6 @@
 <div class="avoidbreak">
   <address class="vcard">
 	<span class="vcardline">
-	  <span class="fn">Cullen Jennings</span> 
-	  <span class="n hidden">
-		<span class="family-name">Jennings</span>
-	  </span>
-	</span>
-	<span class="org vcardline">Cisco Systems</span>
-	<span class="adr">
-	  
-	  <span class="vcardline">
-		<span class="locality"></span> 
-		<span class="region"></span>
-		<span class="code"></span>
-	  </span>
-	  <span class="country-name vcardline"></span>
-	</span>
-	<span class="vcardline">EMail: <a href="mailto:fluffy@iii.ca">fluffy@iii.ca</a></span>
-
-  </address>
-</div><div class="avoidbreak">
-  <address class="vcard">
-	<span class="vcardline">
 	  <span class="fn">Jonathan Rosenberg</span> 
 	  <span class="n hidden">
 		<span class="family-name">Rosenberg</span>
@@ -1097,6 +1080,27 @@
 	  <span class="country-name vcardline"></span>
 	</span>
 	<span class="vcardline">EMail: <a href="mailto:jdrosen@jdrosen.net">jdrosen@jdrosen.net</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Cullen Jennings</span> 
+	  <span class="n hidden">
+		<span class="family-name">Jennings</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Cisco Systems</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:fluffy@iii.ca">fluffy@iii.ca</a></span>
 
   </address>
 </div>
