@@ -879,39 +879,23 @@ extensible through an IANA registry.
 * two-channel: Indicates whether the entity supports receiving two
   audio channels or not. Two channel audio is specifically used for
   RIPP trunks meant to convey listen-only media for the purposes of
-  recording, similar to SIPREC. It MUST be either "true" or
+  recording, similar to SIPREC [@RFC7866]. It MUST be either "true" or
   "false". The default is "false".
-
-* sip-uri: Indicates whether the entity supports receiving calls to
-  SIP URIs of the form sip:user@domain, where user is not a numeric
-  number. Traditional telcos would set this to "false". The value MUST
-  be "true" or "false". The default is "false".
 
 * tnt: Indicates whether the entity supports the takeback-and-transfer
   command. Telcos supporting this feature on a trunk would set it to
   "true". The value MUST be "true" or "false". The default is "false".
 
-* tollfree: Indicates whether the entity supports receiving calls
-  targeted at toll free numbers, such as 1-800 and 1-888 in the
-  U.S. The value MUST be "true" or "false". The default is "false".
-
-* international: Indicates whether the entity supports receiving calls
-  targeted at E.164 numbers outside of the country to which the trunk
-  is associated. The value MUST be "true" or "false". The default is
-  "true". 
-
-* allowed-numbers: If the entity only allows inbound calls to a fixed
-  set of numbers, it can include this capability object. This would
-  typically be the case for a consuming domain that represents users
-  that have been provisioned with E.164 numbers, such as a cloud
-  contact center or cloud PBX. The value of this parameter MUST be a
-  base64 encoded version of the STIR certificate which declares the
-  set of numbers valid for the entity. If absent, the default is any
-  number. 
-
-[TODO: probably need a bunch more of these representing common trunk
-capabilities]
-
+In addition, codecs can be listed as capabilities. This is done by
+using the media type and subtype, separated by a "/", as the
+capability name. Media type and subtype values are taken from the IANA
+registry for RTP payload format media types, as defined in
+[@RFC4855]. The value of the capability is "true" if the codec is
+supported, "false" if it is not. The default is "false" for all codecs
+except for "audio/PCMU", "audio/opus", "audio/telephone-event" and
+"audio/CN", for which the default is "true". Because codec
+capabilities are receive-only, it is possible, and totally acceptable,
+for there to be different audio codecs used in each direction.
 
 In general, an entity MUST declare a capability for any characteristic
 of a call which may result in the call being rejected. This
@@ -923,7 +907,7 @@ the call will be rejected. However, the RIPP client can know this
 ahead of time, without even placing the call towards the RIPP
 provider. This enables validation of route configurations in an
 automated fashion, without placing test calls or calling customer
-support. 
+support.
 
 ## Initiating Calls
 
