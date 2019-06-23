@@ -1292,10 +1292,11 @@ open-reverse: sent from server to client, it instructs the client to
 open an additional set of reverse media byways. 
 
 tnt: send from consumer to provider, it invokes a
-takeback-and-transfer operation. The behavior of the provider upon
-receipt of this command is not subject to specification. This command
-merely invokes the feature as it has been implemented by the
-provider. 
+takeback-and-transfer operation. It includes the phone number to which
+the call should be transferred. The provide will then transfer the
+call to the target number. This event is meant to invoke the feature
+as it has been implemented by the provider. RIPP does not define
+additional behaviors.
 
 ## Call Termination
 
