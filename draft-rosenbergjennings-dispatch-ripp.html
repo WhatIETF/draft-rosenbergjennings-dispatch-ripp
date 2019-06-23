@@ -402,7 +402,7 @@
 <link href="#rfc.section.8.2" rel="Chapter" title="8.2 RIPP Trunk Provisioning">
 <link href="#rfc.section.8.3" rel="Chapter" title="8.3 Capabilities">
 <link href="#rfc.section.8.4" rel="Chapter" title="8.4 Initiating Calls">
-<link href="#rfc.section.8.5" rel="Chapter" title="8.5 Establishing the Signaling and Media Control Byways">
+<link href="#rfc.section.8.5" rel="Chapter" title="8.5 Establishing the Signaling Byway">
 <link href="#rfc.section.8.6" rel="Chapter" title="8.6 The Media Sequence">
 <link href="#rfc.section.8.7" rel="Chapter" title="8.7 Opening Media Byways">
 <link href="#rfc.section.8.8" rel="Chapter" title="8.8 Sending and Receiving Media">
@@ -417,10 +417,11 @@
 <link href="#rfc.section.10" rel="Chapter" title="10 SIP Gateway">
 <link href="#rfc.section.10.1" rel="Chapter" title="10.1 RIPP to SIP">
 <link href="#rfc.section.10.2" rel="Chapter" title="10.2 SIP to RIPP">
-<link href="#rfc.section.11" rel="Chapter" title="11 IANA Considerations">
-<link href="#rfc.section.12" rel="Chapter" title="12 Security Considerations">
-<link href="#rfc.section.13" rel="Chapter" title="13 Acknowledgements">
-<link href="#rfc.references" rel="Chapter" title="14 Informative References">
+<link href="#rfc.section.11" rel="Chapter" title="11 RAML API">
+<link href="#rfc.section.12" rel="Chapter" title="12 IANA Considerations">
+<link href="#rfc.section.13" rel="Chapter" title="13 Security Considerations">
+<link href="#rfc.section.14" rel="Chapter" title="14 Acknowledgements">
+<link href="#rfc.references" rel="Chapter" title="15 Informative References">
 <link href="#rfc.authors" rel="Chapter">
 
 
@@ -540,7 +541,7 @@
 </li>
 <li>8.4.   <a href="#rfc.section.8.4">Initiating Calls</a>
 </li>
-<li>8.5.   <a href="#rfc.section.8.5">Establishing the Signaling and Media Control Byways</a>
+<li>8.5.   <a href="#rfc.section.8.5">Establishing the Signaling Byway</a>
 </li>
 <li>8.6.   <a href="#rfc.section.8.6">The Media Sequence</a>
 </li>
@@ -570,13 +571,15 @@
 </li>
 <li>10.2.   <a href="#rfc.section.10.2">SIP to RIPP</a>
 </li>
-</ul><li>11.   <a href="#rfc.section.11">IANA Considerations</a>
+</ul><li>11.   <a href="#rfc.section.11">RAML API</a>
 </li>
-<li>12.   <a href="#rfc.section.12">Security Considerations</a>
+<li>12.   <a href="#rfc.section.12">IANA Considerations</a>
 </li>
-<li>13.   <a href="#rfc.section.13">Acknowledgements</a>
+<li>13.   <a href="#rfc.section.13">Security Considerations</a>
 </li>
-<li>14.   <a href="#rfc.references">Informative References</a>
+<li>14.   <a href="#rfc.section.14">Acknowledgements</a>
+</li>
+<li>15.   <a href="#rfc.references">Informative References</a>
 </li>
 <li><a href="#rfc.authors">Authors' Addresses</a>
 </li>
@@ -791,7 +794,7 @@
 <p id="rfc.section.5.p.12">Trunking Customer: The administrative entity which purchases trunking services from the trunking provider. The trunking customer may be the same as the trunking consumer - such as an enterprise purchasing and then consuming trunking services from a telco. Or, it can be different - such as an enterprise purchasing trunking services from a telco, and then authorizing a cloud PBX or cloud contact center provider to consume those trunking services on their behalf.  </p>
 <p id="rfc.section.5.p.13">RIPP Trunk URI: An HTTP URI hosted by the trunking provider, which represents RIPP trunk.  </p>
 <p id="rfc.section.5.p.14">RIPP Trunk Consumer URI: An HTTP URI hosted by the trunking consumer, used to receive calls from the trunking provider associated with a specific RIPP trunk.  </p>
-<p id="rfc.section.5.p.15">Byway: A bidirectional byte stream between a RIPR provide and consumer. A Byway passes its data through a long-running HTTP request and a long-running HTTP response. Byways are used for signalling, media control, and media.  </p>
+<p id="rfc.section.5.p.15">Byway: A bidirectional byte stream between a RIPR provide and consumer. A Byway passes its data through a long-running HTTP request and a long-running HTTP response. Byways are used for signalling and media.  </p>
 <h1 id="rfc.section.6">
 <a href="#rfc.section.6">6.</a> <a href="#overview-of-operation" id="overview-of-operation">Overview of Operation</a>
 </h1>
@@ -800,10 +803,10 @@
 <p id="rfc.section.6.p.3">To provision a RIPP trunk, the trunking customer will visit a web page hosted by the trunking consumer, and typically click on a button labeled with their trunking provider. This will begin the OAuth 2 authorization code flow. The trunking customer will authenticate with the trunking provider. The trunking provider authorizes the access, generate an authorization code, and generates a RIPP trunk URI. The RIPP trunk URI is included in a new OAuth parameter defined by this specification,and is returned as a parameter in the authorization response. The trunking consumer trades the authorization code for a refresh and access token, and stores the SIP Trunk URI. Finally, the trunking consumer mints a bearer token associated with the new RIPP trunk, and also mints a RIPP trunk consumer URI for receiving calls from the provider on this trunk. Both of these are passed to the trunking provider via a POST operation on the RIP trunk URI.  </p>
 <p id="rfc.section.6.p.4">The usage of the OAuth2.0 flows enables the trunking consumer and trunking customer to be the same (i.e., a cloud PBX provider purchases services from a telco), or different (i.e., an enterprise customer has purchased trunking services from a telco, and wishes to provision them into a cloud contact center that acts as the trunking consumer). The latter is often referred to informally as "BYOSIP" in traditional SIP trunking and is explicitly supported by RIPP using OAuth2.0.  </p>
 <p id="rfc.section.6.p.5">Once provisioned, either domain can establish capabilities for the RIPP trunk by posting a capabilities declaration to the RIPP trunk URI of its peer, using a URI parameter that signals a capability declaration. The capabilities declaration is a simple document, whose syntax is described in Section XX. It conveys the receive capabilities of the entity posting it, and includes parameters like maximum bitrate for audio. This process is optional, and each parameter has a default. Either side can update its capabilities for the RIPP trunk at any time. Capability declarations occur outside of a call, are optional, and convey static receive capabilities which are a fixed property of the RIPP trunk. Consequently, capability declaration is significantly different from SDP offer/answer.  </p>
-<p id="rfc.section.6.p.6">Either the trunking consumer or provider can initiate calls by posting to the RIPP trunk URI of its peer, using a URI parameter that signals a new call. The request contains the target phone number in the request URI and an Identity header field in the HTTP Request. The Identity header field is identical in syntax and semantics to the SIP Identity header field defined in <a href="#RFC8224" class="xref">[RFC8224]</a>, just carried in HTTP instead of SIP. This request returns a call URI (unique in space and time for this call) in the Location header field of a 201 response sent by the server. Typically the response will also include a session cookie, bound to the call, to facilitate sticky session routing in HTTP proxies. This allows all further signalling and media to reach the same RIPP server that handled the initial request, while facilitating failover should that server go down.  </p>
-<p id="rfc.section.6.p.7">Once a call has been created, a long-lived HTTP transaction is initiated from the client to the server for purposes of signalling. This transaction enables bidirectional data flow, tunneled within the body of a long-running HTTP request and its long-running response. This data flow is called a byway. Each byway has a purpose. One byway is established by the client for signalling, one for media control, and multiple byways for media. HTTP3 ensures zero RTT for setup of these byways.  </p>
+<p id="rfc.section.6.p.6">Either the trunking consumer or provider can initiate calls by posting to the RIPP trunk URI of its peer, using a URI parameter that signals a new call. The request contains the target phone number in the request URI and an Identity header field in the HTTP Request. The Identity header field is identical in syntax and semantics to the SIP Identity header field defined in <a href="#RFC8224" class="xref">[RFC8224]</a>, just carried in HTTP instead of SIP. This request returns a globally unique call URI in the Location header field of a 201 response sent by the server. Typically the response will also include a session cookie, bound to the call, to facilitate sticky session routing in HTTP proxies. This allows all further signalling and media to reach the same RIPP server that handled the initial request, while facilitating failover should that server go down.  </p>
+<p id="rfc.section.6.p.7">Once a call has been created, a long-lived HTTP transaction is initiated from the client to the server for purposes of signalling. This transaction enables bidirectional data flow, tunneled within the body of a long-running HTTP request and its long-running response. This data flow is called a byway. Each byway has a purpose. One byway is established by the client for signalling, and multiple byways for media. HTTP3 ensures zero RTT for setup of these byways.  </p>
 <p id="rfc.section.6.p.8">Signaling commands are encoded into the signalling byway using streaming JSON in both directions. Each JSON object encodes an event and its parameters. Events are defined for alerting, connected, ended, migrate, keepalive, and transfer-and-takeback.  </p>
-<p id="rfc.section.6.p.9">The media control and media byways carry a simple binary encoding in both directions. To eliminate HOL blocking for media, a media packet is sent on a media byway when it is first established. After the first packet, the client cannot be sure a subsequent packet will be delayed due to the ordering guarantees provided by HTTP3 within a stream. To combat this, both sides acknowledge the receipt of each packet using the media control byway. Once a media packet is acknowledged, the media byway can be used once again without fear of HOL blocking. Because each media packet is acknowledged independently, each side can compute statistics on packet losses and delays. Consequently, the equivalent of RTCP sender and receiver reports are not needed.  </p>
+<p id="rfc.section.6.p.9">The media byways carry a simple binary encoding in both directions. Even though data can flow in both directions, a media byway is unidirectional in terms of media transmission. A forward media byway carries media from the client to the server, and a reverse byway carries media from the server to the client. To eliminate HOL blocking for media, a media packet is sent on a media byway when it is first established. After the first packet, the client cannot be sure a subsequent packet will be delayed due to the ordering guarantees provided by HTTP3 within a stream. To combat this, both sides acknowledge the receipt of each packet using an ACK message sent over the media byways, in the opposite direction of the media. Consequently, in a forward media byway, ACK messages are carried from server to client, and in a reverse media byway, they are carried from client to server.  Once a media packet is acknowledged, the media byway can be used once again without fear of HOL blocking. Because each media packet is acknowledged independently, each side can compute statistics on packet losses and delays. Consequently, the equivalent of RTCP sender and receiver reports are not needed.  </p>
 <p id="rfc.section.6.p.10">RIPP defines some basic requirements for congestion control at the client side. Specifically, clients drop media packets if there are too many media byways in the blocked state.  </p>
 <p id="rfc.section.6.p.11">RIPP provides a simple technique for allowing a call to seamlessly migrate from one client instance to another on a different host, or from one server instance to another on a different host. For a client, it need only end the byways in use for the call and re-initiate from a different instance. Similarly, a server can request migration, and this triggers the client to perform this same action. The call state persists independently of the state of the HTTP connection or the byways embedded in HTTP transactions, so that a reconnect can continue where things left off.  </p>
 <p id="rfc.section.6.p.12">Finally, RIPP trunks can be destroyed by a trunking consumer by issuing a DELETE against the RIPP trunk URI.  </p>
@@ -854,29 +857,31 @@
 <a href="#rfc.section.8.1">8.1.</a> <a href="#configuration" id="configuration">Configuration</a>
 </h1>
 <p id="rfc.section.8.1.p.1">RIPP configuration happens when a trunking consumer wishes to be able to provision, on demand, new RIPP trunks with a trunking provider.  </p>
-<p id="rfc.section.8.1.p.2">One example use case is that of an enterprise, which has deployed an IP PBX of some sort within its data centers. Once deployed, the enterprise needs to enable the PBX to place and receive calls towards the PSTN. The enterprise contracts with a RIPP trunking provider. All of this happens as a precursor to configuration. At the end of the contracting process, the enterprise administrator will visit the configuration web page, and be able to register their enterprise PBX. This process MUST return a client-ID, client-secret, and authorization endpoint URL. The administrator manually enters these into the configuration of their PBX. [[OPEN ISSUE: this seems wrong]] </p>
+<p id="rfc.section.8.1.p.2">One example use case is that of an enterprise, which has deployed an IP PBX of some sort within its data centers. Once deployed, the enterprise needs to enable the PBX to place and receive calls towards the PSTN. The enterprise contracts with a RIPP trunking provider. All of this happens as a precursor to configuration. At the end of the contracting process, the enterprise administrator will visit the configuration web page, and be able to register their enterprise PBX. This process will typically return a client-ID, client-secret, and authorization endpoint URL. The administrator manually enters these into the configuration of their PBX. [[OPEN ISSUE: OpenID connect?]] </p>
 <p id="rfc.section.8.1.p.3">As another example use case, a cloud contact center, cloud PBX provider, or any other saas application which wishes to obtain trunking services, can contract with a RIPP trunking provider. In a similar process to the enterprise case above, the administrator obtains a clientID, client-secret, and authorization endpoint URL which are configured into their service.  </p>
 <p id="rfc.section.8.1.p.4">In the final use case, an enterprise administrator has purchased trunking services from a RIPP trunking provider. They separately have purchased cloud PBX, cloud contact center, or another saas service which requires connectivity to a RIPP trunk. In this case, the cloud PBX, cloud contact center, or other saas service acts as the RIPP trunk consumer. The RIPP trunk consumer would configure itself as a client with a variety of RIPP trunking providers, and for each, obtain the clientID, client-secret and authorization URL. This will allow the customers of the RIPP trunking consumer to provision RIPP trunks automatically, and point them to the RIPP trunking consumer.  </p>
 <h1 id="rfc.section.8.2">
 <a href="#rfc.section.8.2">8.2.</a> <a href="#ripp-trunk-provisioning" id="ripp-trunk-provisioning">RIPP Trunk Provisioning</a>
 </h1>
-<p id="rfc.section.8.2.p.1">Once a RIPP consumer has been configured as an OAuth client application with a RIPP provider, a RIPP customer can provision a RIPP trunk on-demand using a web form. RIPP consumers MUST provide a self-service web form for such provisioning, since self-service and instant provisioning are key goals of RIPP.  </p>
-<p id="rfc.section.8.2.p.2">The RIPP customer visits this web form, and selects their provider. The RIPP consumer MUST then initiate an OAuth2.0 authorization code flow. This MUST utilize the clientID, client-secret and authorization endpoint URL configured previously. The RIPP customer will authenticate to the RIPP provider, and authorize creation of a new RIPP trunk. The RIPP provider SHOULD indicate, via the web page it has served, any limitations associated with this RIPP trunk (e.g., rate limits or restrictions on services or dialed numbers). However, it MUST NOT require any additional input from the RIPP customer, since all aspects of the process are automated.  </p>
-<p id="rfc.section.8.2.p.3">Once the RIPP customer authorizes creation of a RIPP trunk, the RIPP provider MUST generate an authorization code and follow the procedures defined in <a href="#RFC6749" class="xref">[RFC6749]</a> for the authorization code grant flow. Furthermore, the RIPP provider MUST mint a new URI identifying this new RIPP trunk. This URI MUST contain a path component, and MUST NOT contain any URI parameters. This URI MUST be an HTTPS URI, and HTTP3 MUST be supported for this URI. The path component MUST uniquely identify this trunk in space and time, and not depend on the authority component as part of the namespace for purposes of uniqueness.  </p>
+<p id="rfc.section.8.2.p.1">Once a RIPP consumer has been configured as an OAuth client application with a RIPP provider, a RIPP customer can provision a RIPP trunk on-demand using a web form. RIPP consumers will typically provide a self-service web form for such provisioning, since self-service and instant provisioning are key goals of RIPP.  </p>
+<p id="rfc.section.8.2.p.2">The RIPP customer visits this web form, and selects their provider. The RIPP consumer would then initiate an OAuth2.0 authorization code flow. This utilizes the clientID, client-secret and authorization endpoint URL configured previously. The RIPP customer will authenticate to the RIPP provider, and authorize creation of a new RIPP trunk.  </p>
+<p id="rfc.section.8.2.p.3">Once the RIPP customer authorizes creation of a RIPP trunk, the RIPP provider MUST generate an authorization code and follow the procedures defined in <a href="#RFC6749" class="xref">[RFC6749]</a> for the authorization code grant flow. Furthermore, the RIPP provider MUST mint a new URI identifying this new RIPP trunk. This URI MUST contain a path component, and MUST NOT contain any URI parameters. This URI MUST be an HTTPS URI, and HTTP3 MUST be supported for this URI. The path component MUST be a globally unique identifier for this trunk, and not depend on the authority component as part of the namespace for purposes of uniqueness.  </p>
 <p id="rfc.section.8.2.p.4">As an example, the following is a valid RIPP trunk URI: </p>
 <p><span>&lt;</span><a href="https://ripp.telco.com/trunks/6ha937fjjj9">https://ripp.telco.com/trunks/6ha937fjjj9</a><span>&gt;</span> </p>
 <p id="rfc.section.8.2.p.6">This URI MUST be returned in the OAuth2.0 parameter "ripp-trunk", and MUST be base64 encoded.  </p>
 <p id="rfc.section.8.2.p.7">The RIPP consumer MUST follow the procedures defined in <a href="#RFC6749" class="xref">[RFC6749]</a> for an OAuth client, trade in its authorization code for both a refresh and access token. The RIPP provider MUST issue both refresh and access tokens. It is expected that the refresh token will last a long time, in order to avoid the resource owner needing to manually re-authorize. The trunk consumer MUST be prepared for its access and refresh tokens to be invalidated at any time. The RIPP consumer MUST extract the "ripp-trunk" OAuth parameter from the authorization response, decode, and persist it.  </p>
 <p id="rfc.section.8.2.p.8">Once the RIPP consumer has obtained an access token, it MUST initiate an HTTPS POST request towards the RIPP trunk URI. This request MUST include the "ripp-provision" URI parameter. This request MUST contain an Authorization header field utilizing the access token just obtained. It MUST include a RIPP provisioning object in the body. This object is specified in Section XX.  </p>
-<p id="rfc.section.8.2.p.9">The RIPP provisioning object MUST contain a RIPP Trunk Client URI and a RIPP bearer token. The RIPP consumer MUST mint an HTTPS URI for the RIPP Trunk Client URI. This URI MUST support HTTP3, and MUST implement the behaviours associated with capabilities and new call operations as defined below. This URI MUST have a path component,  MUST NOT contain any URI parameters, and MUST have a path segment which is globally unique in space and time.  </p>
+<p id="rfc.section.8.2.p.9">The RIPP provisioning object MUST contain a RIPP Trunk Client URI and a RIPP bearer token. The RIPP consumer MUST mint an HTTPS URI for the RIPP Trunk Client URI. This URI MUST support HTTP3, and MUST implement the behaviours associated with capabilities and new call operations as defined below. This URI MUST have a path component,  MUST NOT contain any URI parameters, and MUST have a path segment which is globally unique.  </p>
 <p id="rfc.section.8.2.p.10">In addition, the RIPP consumer MUST mint a bearer token to be used by the RIPP provider when performing operations against the RIPP Trunk Client URI. The bearer token MAY be constructed in any way desired by the RIPP consumer. The token and URI MUST remain valid for at least one day. The RIPP consumer MUST refresh the provisioning against the RIPP trunk at least one hour in advance of the expiration, in order to ensure no calls are delayed.  </p>
 <p id="rfc.section.8.2.p.11">At this point, the RIPP trunk is provisioned. Both the RIPP provider and RIPP consumer have a RIPP trunk URI and an Authorization token to be used for placing calls in each direction.  </p>
 <h1 id="rfc.section.8.3">
 <a href="#rfc.section.8.3">8.3.</a> <a href="#capabilities" id="capabilities">Capabilities</a>
 </h1>
-<p id="rfc.section.8.3.p.1">Once provisioned, either the consumer or provider MAY set capabilities for the trunk. To set capabilities, the client performs an HTTP POST to its peer's RIPP trunk URI. It MUST include the URI parameter "ripp-caps". The body MUST be a RIPP capabilities object as defined in Section XX.  </p>
-<p id="rfc.section.8.3.p.2">The RIPP capabilities document is a list of name-value pairs, which specify a capability. Every capability has a default, so that if no document is posted, or it is posted but a specific capability is not included, the capability for the peer is understood. Capabilities are receive only, and specify what the entity is willing to receive. Capabilities MAY be changed at any time by posting a new capability document. Capabilities are bound to the RIPP trunk, and are destroyed when the RIPP trunk is destroyed.  </p>
-<p id="rfc.section.8.3.p.3">This specification defines the following capability set. This set is extensible through an IANA registry.  </p>
+<p id="rfc.section.8.3.p.1">Once provisioned, either the consumer or provider sets capabilities for the trunk. If either side wishes to declare capabilities that are not default, it MUST establish capabilities immediately upon trunk creation. To do that, the client performs an HTTP POST to its peer's RIPP trunk URI. It MUST include the URI parameter "ripp-caps". The body MUST be a RIPP capabilities object as defined in Section XX.  </p>
+<p id="rfc.section.8.3.p.2">Once established, either side MAY update the capabilities with a fresh POST request. Due to race conditions, it is possible that the client may receive calls compliant to the old capabilities document for a brief interval. It MUST be prepared for this.  </p>
+<p id="rfc.section.8.3.p.3">When the trunk resource is destroyed, its associated capabilities are also destroyed.  </p>
+<p id="rfc.section.8.3.p.4">The RIPP capabilities document is a list of name-value pairs, which specify a capability. Every capability has a default, so that if no document is posted, or it is posted but a specific capability is not included, the capability for the peer is understood. Capabilities are receive only, and specify what the entity is willing to receive. Capabilities MAY be changed at any time by posting a new capability document. Capabilities are bound to the RIPP trunk, and are destroyed when the RIPP trunk is destroyed.  </p>
+<p id="rfc.section.8.3.p.5">This specification defines the following capability set. This set is extensible through an IANA registry.  </p>
 <p></p>
 
 <ul>
@@ -884,17 +889,13 @@
 </li>
 <li>max-opus-samplerate: The maximum sample rate for Opus audio. This is specified in Hz. It MUST be greater than or equal to 8000. Its default is 8000.</li>
 <li>opus-vbr: Indicates whether the entity supports receiving variable rate Opus audio. It MUST be either "true" or "false". The default is "true". If "false", the sender MUST send constant rate audio.</li>
-<li>two-channel: Indicates whether the entity supports receiving two audio channels or not. Two channel audio is specifically used for RIPP trunks meant to convey listen-only media for the purposes of recording, similar to SIPREC. It MUST be either "true" or "false". The default is "false".</li>
-<li>sip-uri: Indicates whether the entity supports receiving calls to SIP URIs of the form sip:user@domain, where user is not a numeric number. Traditional telcos would set this to "false". The value MUST be "true" or "false". The default is "false".</li>
+<li>two-channel: Indicates whether the entity supports receiving two audio channels or not. Two channel audio is specifically used for RIPP trunks meant to convey listen-only media for the purposes of recording, similar to SIPREC <a href="#RFC7866" class="xref">[RFC7866]</a>. It MUST be either "true" or "false". The default is "false".</li>
 <li>tnt: Indicates whether the entity supports the takeback-and-transfer command. Telcos supporting this feature on a trunk would set it to "true". The value MUST be "true" or "false". The default is "false".</li>
-<li>tollfree: Indicates whether the entity supports receiving calls targeted at toll free numbers, such as 1-800 and 1-888 in the U.S. The value MUST be "true" or "false". The default is "false".</li>
-<li>international: Indicates whether the entity supports receiving calls targeted at E.164 numbers outside of the country to which the trunk is associated. The value MUST be "true" or "false". The default is "true".</li>
-<li>allowed-numbers: If the entity only allows inbound calls to a fixed set of numbers, it can include this capability object. This would typically be the case for a consuming domain that represents users that have been provisioned with E.164 numbers, such as a cloud contact center or cloud PBX. The value of this parameter MUST be a base64 encoded version of the STIR certificate which declares the set of numbers valid for the entity. If absent, the default is any number.</li>
 </ul>
 
 <p> </p>
-<p id="rfc.section.8.3.p.5">[TODO: probably need a bunch more of these representing common trunk capabilities] </p>
-<p id="rfc.section.8.3.p.6">In general, an entity MUST declare a capability for any characteristic of a call which may result in the call being rejected. This requirement facilitates prevention of call failures, along with clear indications of why calls have failed when they do. For example, if a RIPP trunk provider provisions a trunk without 800 service, but the consumer configures its routing to route 800 calls over this trunk, the call will be rejected. However, the RIPP client can know this ahead of time, without even placing the call towards the RIPP provider. This enables validation of route configurations in an automated fashion, without placing test calls or calling customer support.  </p>
+<p id="rfc.section.8.3.p.7">In addition, codecs can be listed as capabilities. This is done by using the media type and subtype, separated by a "/", as the capability name. Media type and subtype values are taken from the IANA registry for RTP payload format media types, as defined in <a href="#RFC4855" class="xref">[RFC4855]</a>. The value of the capability is "true" if the codec is supported, "false" if it is not. The default is "false" for all codecs except for "audio/PCMU", "audio/opus", "audio/telephone-event" and "audio/CN", for which the default is "true". Because codec capabilities are receive-only, it is possible, and totally acceptable, for there to be different audio codecs used in each direction.  </p>
+<p id="rfc.section.8.3.p.8">In general, an entity MUST declare a capability for any characteristic of a call which may result in the call being rejected. This requirement facilitates prevention of call failures, along with clear indications of why calls have failed when they do. For example, if a RIPP trunk provider provisions a trunk without support for G.729, but the consumer configures their to utilize this codec, this will be known as a misconfiguration immediately. This enables validation of trunk configurations in an automated fashion, without placing test calls or calling customer support.  </p>
 <h1 id="rfc.section.8.4">
 <a href="#rfc.section.8.4">8.4.</a> <a href="#initiating-calls" id="initiating-calls">Initiating Calls</a>
 </h1>
@@ -903,9 +904,9 @@
 <p id="rfc.section.8.4.p.3">The client MUST append the RIPP trunk URI with the attribute "newcall". For example: </p>
 <p><span>&lt;</span><a href="https://ripp.telco.com/trunks/6ha937fjjj9?newcall">https://ripp.telco.com/trunks/6ha937fjjj9?newcall</a><span>&gt;</span> </p>
 <p id="rfc.section.8.4.p.5">This request MUST contain the token that the client has obtained out-of-band. For the RIPP trunk consumer, this is the OAuth token. For the RIPP trunk provider, it is the bearer token learned through the provisioning POST operation.  </p>
-<p id="rfc.section.8.4.p.6">The client MUST also add the "target" URI parameter. This URI MUST be an E.164 tel URI, unless the peer has indicated via capabilities that it supports user@domain based SIP addressing, in which case it MAY be a user@domain SIP URI. Note that calls to E.164 numbers MUST use the tel URI. The SIP form, where the E.164 number is placed in the user part of the SIP URI, MUST NOT be used. The SIP URI is only for calling to private extensions valid within a domain (e.g., sip:100@acme.com), or to end users that have email-like SIP URI (e.g., sip:alice@example.com).  </p>
+<p id="rfc.section.8.4.p.6">The client MUST also add the "target" URI parameter. This parameter MUST be of the form user@domain. If the target is a phone number on the PSTN, this must take the form @e164.arpa, where  is a valid E.164 number. RIPP also supports private trunks, in which case the it MUST take the form @, where the number is a non-E164 number scoped to be valid within the domain. This form MUST NOT be used for E.164 numbers. Finally, RIPP can be used to place call to application services - such as a recorder - in which case the parameter would take the form of an RFC822 email address.  </p>
 <p id="rfc.section.8.4.p.7">The client MUST add an HTTP Identity header field. This header field is defined in Section XX as a new HTTP header field. Its contents MUST be a valid Identity header field as defined by <a href="#RFC8224" class="xref">[RFC8224]</a>. This ensures that all calls utilize secure caller ID. A RIPP client MUST NOT place the caller ID in any place except for the Identity header field in this request. Specifically, a "From", "Contact", or "P-Asserted-ID" header field MUST NOT ever appear.  </p>
-<p id="rfc.section.8.4.p.8">The server MUST validate the OAuth token, MUST act as the verifying party to verify the Identity header field, and then authorize the creation of a new call, and then either accept or reject the request. If accepted, it indicates that the server is willing to create this call. The server MUST return a 201 Created response, and MUST include a Location header field containing an HTTPS URI which identifies the call that has been created. The URI identifying the call MUST include a path segment which contains a type 4 UUID, ensuring that call identifiers are unique across time and space. This URI MUST have a path underneath the RIPP trunk URI, to enable easy mapping of calls to trunks.  </p>
+<p id="rfc.section.8.4.p.8">The server MUST validate the OAuth token, MUST act as the verifying party to verify the Identity header field, and then authorize the creation of a new call, and then either accept or reject the request. If accepted, it indicates that the server is willing to create this call. The server MUST return a 201 Created response, and MUST include a Location header field containing an HTTPS URI which identifies the call that has been created. The URI identifying the call MUST include a path segment which contains a type 4 UUID, ensuring that call identifiers are globally unique. This URI MUST have a path underneath the RIPP trunk URI, to enable easy mapping of calls to trunks.  </p>
 <p id="rfc.section.8.4.p.9">An example URI that identifies a call is: </p>
 <p><span>&lt;</span><a href="https://ripp.telco.com/trunks/6ha937fjjj9/calls/ha8d7f6fso29s88clzopa">https://ripp.telco.com/trunks/6ha937fjjj9/calls/ha8d7f6fso29s88clzopa</a><span>&gt;</span> </p>
 <p id="rfc.section.8.4.p.11">The server MAY include an HTTP session cookie in the 201 response. The client MUST support receipt of cookies <a href="#RFC6265" class="xref">[RFC6265]</a>. It MUST be prepared to receive up to 10 cookies per call. The client MUST destroy all cookies associated with a call, when the call has ended. Cookies MUST NOT be larger the 5K.  </p>
@@ -917,17 +918,16 @@
 <p id="rfc.section.8.4.p.17">However, the HTTP URI for the call MUST NOT contain an IP address; it MUST utilize a valid host or domain name. This is to ensure that TLS certificate validation functions properly without manual configuration of certificates (a practice which is required still for SIP based peering).  </p>
 <p id="rfc.section.8.4.p.18">Neither the request, nor the response, contain bodies.  </p>
 <h1 id="rfc.section.8.5">
-<a href="#rfc.section.8.5">8.5.</a> <a href="#establishing-the-signaling-and-media-control-byways" id="establishing-the-signaling-and-media-control-byways">Establishing the Signaling and Media Control Byways</a>
+<a href="#rfc.section.8.5">8.5.</a> <a href="#establishing-the-signaling-byway" id="establishing-the-signaling-byway">Establishing the Signaling Byway</a>
 </h1>
-<p id="rfc.section.8.5.p.1">To perform signalling and media control for this call, the client MUST initiate, in paralle, two HTTP requests towards the call URI that it just obtained. One for signalling, and the other for media control.  </p>
-<p id="rfc.section.8.5.p.2">Both the media control and signalling transactions are long running. This means that the client initiates the connections, sends the headers, and then sends the body as a long-running stream (e.g., streaming requests). Similarly, the server receives the request, and if it accepts the request, immediately generates a 200 response and begins streaming the response body back towards the client. This has the property of creating a bidirectional data stream between the client, and the server. This bidirectional stream is an ordered byte stream, and is called a byway. RIPP specific information is carried in the byway.  </p>
-<p id="rfc.section.8.5.p.3">To initiate a signalling byway, the client MUST initiate a POST request to the call URI, and MUST include the URI parameter "signalling". To initiate a media control byway, it MUST initiate a POST request to the call URI and MUST include the URI parameter "mediactl".  These requests MUST NOT include any other URI parameters.  </p>
+<p id="rfc.section.8.5.p.1">To perform signalling for this call, the client MUST initiate an HTTP request towards the call URI that it just obtained.  </p>
+<p id="rfc.section.8.5.p.2">The signaling is accomplished by a long running HTTP transaction.  This means that the client initiates the connection, sends the headers, and then sends the body as a long-running stream (e.g., streaming requests). Similarly, the server receives the request, and if it accepts the request, immediately generates a 200 response and begins streaming the response body back towards the client. This has the property of creating a bidirectional data stream between the client, and the server. This bidirectional stream is an ordered byte stream, and is called a byway. RIPP specific information is carried in the byway.  </p>
+<p id="rfc.section.8.5.p.3">To initiate a signalling byway, the client MUST initiate a POST request to the call URI, and MUST include the URI parameter "signalling". This request MUST NOT include any other URI parameters.  </p>
 <p id="rfc.section.8.5.p.4">The signalling byway utilizes a streaming JSON format, specified in XXX. This begins with an open curly bracket, and after that is a series of JSON objects, each starting with a curly bracket, and ending with a curly bracket. Consequently, each side MUST immediately send their respective open brackets after the HTTP header fields. We utilize streaming JSON in order to facilitate usage of tools like CURL for signalling operations.  </p>
-<p id="rfc.section.8.5.p.5">The media control byway utilizes a binary encoding format. It consists of a variable length length field, followed by a payload, which is a byte sequence of that length. Each payload starts with a variable length type field, followed by a format which is type specific. Once the client initiates the transaction to open the media control byway, it MUST send a HELLO media control command. Similarly, the RIPP server MUST send a HELLO media control command in return once the request has been received. This causes the HTTP client and server to transmit the data, rather than waiting for more. [OPEN ISSUE: do we need this??] </p>
 <h1 id="rfc.section.8.6">
 <a href="#rfc.section.8.6">8.6.</a> <a href="#the-media-sequence" id="the-media-sequence">The Media Sequence</a>
 </h1>
-<p id="rfc.section.8.6.p.1">In RIPP, media is represented as a continuous sequence of RIPP media frames embedded in a media byway. Each ripp media frame has a variable length sequence number offset, followed by a variable length length field, followed by a codec frame equal to that length. The media byway itself, when created, includes properties that are shared across all media frames within that byway. These parameters include the sequence number base, the timestamp base, the codec type, and the frame size in milliseconds for the codec.  </p>
+<p id="rfc.section.8.6.p.1">In RIPP, media is represented as a continuous sequence of RIPP media frames embedded in a media byway. Each ripp media frame encodes a variable length sequence number offset, followed by a variable length length field, followed by a codec frame equal to that length. The media byway itself, when created, includes properties that are shared across all media frames within that byway. These parameters include the sequence number base, the timestamp base, the codec type, and the frame size in milliseconds for the codec.  </p>
 <p id="rfc.section.8.6.p.2">This is a significantly different design than RTP, which conveys many repeated parameters (such as the payload type and timestamp) in every packet. Instead, RIPP extracts information that will be shared across many packets and associates it with the byway itself. This means the media frames only contain the information which varies - the sequence number and length. [[OPEN ISSUE: we could maybe even eliminate the sequence number by computing it from offset in the stream. Worried about sync problems though?]] </p>
 <p id="rfc.section.8.6.p.3">Consequently, each media frame has the following properties: </p>
 <p></p>
@@ -943,24 +943,26 @@
 <h1 id="rfc.section.8.7">
 <a href="#rfc.section.8.7">8.7.</a> <a href="#opening-media-byways" id="opening-media-byways">Opening Media Byways</a>
 </h1>
-<p id="rfc.section.8.7.p.1">The client bears the responsibility for opening media byways. These byways will be used for sending media in both directions. Consequently, the server is strongly dependent on the client opening these byways; it cannot send media unless they've been opened.  </p>
-<p id="rfc.section.8.7.p.2">A client MUST open a new byway whenever it has a media frame to send, all existing byways (if any) are in the blocked state, and the client has not yet opened 20 byways. Furthermore, the client MUST keep a minimum of 10 byways open at all times. This ensures the server can send data.  </p>
-<p id="rfc.section.8.7.p.3">The use of multiple media byways is essential to low latency operation of RIPP. This is because, as describe below, media frames are sprayed across these byways in order to ensure that there is never head-of-line blocking. This is possible because, in HTTP3, each transaction is carried over a separate QUIC stream, and QUIC streams run on top of UDP. Furthermore, a QUIC stream does not require a handshake to be established - creation of new QUIC streams is a 0-RTT process.  </p>
-<p id="rfc.section.8.7.p.4">The requests to create these transactions MUST include headers for any applicable session cookies.  </p>
-<p id="rfc.section.8.7.p.5">To open a  media transaction, the client MUST include a RIPP-Media header field in the request headers. Similarly, the server MUST include this header in the response headers. This header contains the shared properties for the byway - the sequence number base it will send with, the timestamp base for packets it sends, and the name of the codec it is using to send with.  </p>
-<p id="rfc.section.8.7.p.6">RIPP supports multiple channels, meant for handling stereo audio. Each channel MUST be on a separate byway. When stereo is being used, both the client and server MUST include the multi-channel parameter and MUST include the channel number, starting at 1. As with all other parameters, these are declared unilaterally on each side. It is not required for the server to send media for channel 1 in the same byway for which it is receiving it. The channel parameter indicates the channel for media the entity is sending.  </p>
-<p id="rfc.section.8.7.p.7">All RIPP implementations MUST support G.711 and Opus audio codecs. All implementations MUST support <a href="#RFC2833" class="xref">[RFC2833]</a> for DTMF, and MUST support <a href="#RFC3389" class="xref">[RFC3389]</a> for comfort noise, for both sending and receiving.  </p>
-<p id="rfc.section.8.7.p.8">The sequence number space is unique for each direction, channel, and call (as identified by the call URI). Each side MUST start the sequence number at zero, and MUST increment it by one for each subsequent media frame. The sequence number base is represented as a string corresponding to a 32 bit unsigned integer, and the sequence number offset in the media frame is variable length, representing an unsigned integer. Consequently, the sequence number space for a media stream within a call has a total space of 32 bits. With a minimum frame size of 10ms, RIPP can support call durations as long as 11,930 hours. Rollover of the sequence number is not permitted, the client or server MUST end the call before rollover. This means that the combination of call URI, direction (client to server, or server to client), channel number, and sequence number represent a unique identifier in space and time for media packets.  </p>
+<p id="rfc.section.8.7.p.1">The client bears the responsibility for opening media byways - both forward and reverse. Consequently, the server is strongly dependent on the client opening reverse  byways; it cannot send media unless they've been opened.  </p>
+<p id="rfc.section.8.7.p.2">A client MUST open a new forward byway whenever it has a media frame to send, all existing forward byways (if any) are in the blocked state, and the client has not yet opened 20 byways.  </p>
+<p id="rfc.section.8.7.p.3">Furthermore, the client MUST keep a minimum of 10 reverse byways open at all times. This ensures the server can send media. The client MUST open these byways immediately, in parallel.  </p>
+<p id="rfc.section.8.7.p.4">The use of multiple media byways in either direction is essential to low latency operation of RIPP. This is because, as describe below, media frames are sprayed across these byways in order to ensure that there is never head-of-line blocking. This is possible because, in HTTP3, each transaction is carried over a separate QUIC stream, and QUIC streams run on top of UDP. Furthermore, a QUIC stream does not require a handshake to be established - creation of new QUIC streams is a 0-RTT process.  </p>
+<p id="rfc.section.8.7.p.5">The requests to create these transactions MUST include Cookie headers for any applicable session cookies.  </p>
+<p id="rfc.section.8.7.p.6">To initiate a signalling byway, the client MUST initiate a POST request to the call URI, and MUST include the URI parameter "signalling". This request MUST NOT include any other URI parameters.  </p>
+<p id="rfc.section.8.7.p.7">To open a forward media byway, the client MUST initiate a POST request to the call URI, and MUST include the URI parameter "fwd-media". It MUST include a RIPP-Media header field in the request headers. Similarly, to open a reverse media byway, the client MUST initiate a POST request to the call URI, and MUST include the URI parameter "rev-media". It MUST NOT includea a RIPP-Media header field in the request headers. The server MUST include the RIPP-Media header in the response headers. The RIPP-Media header contains the properties for the byway - the sequence number base, the timestamp base, and the name of the codec.  </p>
+<p id="rfc.section.8.7.p.8">RIPP supports multiple channels, meant for SIPREC use cases.  Each channel MUST be on a separate byway. When multi-channel audio is being used, the client MUST include the multi-channel parameter and MUST include the channel number, starting at 1.  </p>
+<p id="rfc.section.8.7.p.9">All RIPP implementations MUST support G.711 and Opus audio codecs. All implementations MUST support <a href="#RFC2833" class="xref">[RFC2833]</a> for DTMF, and MUST support <a href="#RFC3389" class="xref">[RFC3389]</a> for comfort noise, for both sending and receiving.  </p>
+<p id="rfc.section.8.7.p.10">The sequence number space is unique for each direction, channel, and call (as identified by the call URI). Each side MUST start the sequence number at zero, and MUST increment it by one for each subsequent media frame. The sequence number base is represented as a string corresponding to a 32 bit unsigned integer, and the sequence number offset in the media frame is variable length, representing an unsigned integer. Consequently, the sequence number space for a media stream within a call has a total space of 32 bits. With a minimum frame size of 10ms, RIPP can support call durations as long as 11,930 hours. Rollover of the sequence number is not permitted, the client or server MUST end the call before rollover. This means that the combination of call URI, direction (client to server, or server to client), channel number, and sequence number represent a unique identifier for media packets.  </p>
 <h1 id="rfc.section.8.8">
 <a href="#rfc.section.8.8">8.8.</a> <a href="#sending-and-receiving-media" id="sending-and-receiving-media">Sending and Receiving Media</a>
 </h1>
 <p id="rfc.section.8.8.p.1">The approach for media is media striping.  </p>
-<p id="rfc.section.8.8.p.2">To avoid HOL blocking, we cannot send a second media packet on a byway until we are sure the first media packet was received. This is why the client opens multiple media byways.  </p>
-<p id="rfc.section.8.8.p.3">When either the client or server sends a media frame on a byway, it immediately marks the byway as blocked. At that point, it SHOULD NOT send another media frame on that byway. The client or server notes the sequence number and channel number for that media frame. Once it receives an acknowledgement on the media control channel for that corresponding media frame, it marks the byway as UNBLOCKED. A client or server MAY send a media frame on any unblocked byway.  </p>
+<p id="rfc.section.8.8.p.2">To avoid HOL blocking, we cannot send a second media packet on a byway until we are sure the prior media packet was received. This is why the client opens multiple media byways.  </p>
+<p id="rfc.section.8.8.p.3">When either the client or server sends a media frame on a byway, it immediately marks the byway as blocked. At that point, it SHOULD NOT send another media frame on that byway. The client or server notes the sequence number and channel number for that media frame. Once it receives an acknowledgement for that corresponding media frame, it marks the byway as UNBLOCKED. A client or server MAY send a media frame on any unblocked byway.  </p>
 <p id="rfc.section.8.8.p.4">The sequence number for the media frame is computed based on the rules described above.  </p>
-<p id="rfc.section.8.8.p.5">Per the logic described above, the client will open additional byways once the number of blocked byways goes above a threshold. If a the number of blocked byways hits 75% of the total, this is a signal that congestion has occurred. In such a case, the client or server MUST either drop packets at the application layer, or buffer them for later transmission. [[TODO: can we play with QUIC priorities to prioritize newer media frames over older?]] </p>
-<p id="rfc.section.8.8.p.6">When a client or server receives a media frame, it MUST send an acknowledge message on the media control byway. This acknowledgement message MUST contain the full sequence number and channel number for the media packet that was received. It MUST also contain the timestamp, represented as wallclock time, at which the media packet was received.  </p>
-<p id="rfc.section.8.8.p.7">If the server has marked 75% of the media byways as blocked, it MUST send a command on the media control byway instructing the client to open another media byway. Once this command is received, the client MUST open a new byway, unless the total number of byways has reached 20.  </p>
+<p id="rfc.section.8.8.p.5">Per the logic described above, the client will open additional byways once the number of blocked byways goes above a threshold. If a the number of blocked byways in either direction hits 75% of the total for that direction, this is a signal that congestion has occurred. In such a case, the client or server MUST either drop packets at the application layer, or buffer them for later transmission. [[TODO: can we play with QUIC priorities to prioritize newer media frames over older?]] </p>
+<p id="rfc.section.8.8.p.6">When a client or server receives a media frame, it MUST send an acknowledge message. This message MUST be sent on the same byway on which the media was received. This acknowledgement message MUST contain the full sequence number and channel number for the media packet that was received. It MUST also contain the timestamp, represented as wallclock time, at which the media packet was received.  </p>
+<p id="rfc.section.8.8.p.7">If the server has marked 75% of the reverse media byways as blocked, it MUST send a signaling event instructing the client to open another reverse media byway. Once this command is received, the client MUST open a new reverse byway, unless the total number of byways has reached 20.  </p>
 <p id="rfc.section.8.8.p.8">A client MAY terminate media byways gracefully if they have not sent or received packets on that byway for 5 or more seconds. This is to clean up unused byways.  </p>
 <p id="rfc.section.8.8.p.9">There is no need for sender or receiver reports. The equivalent information is knowable from the application layer acknowledgements.  </p>
 <h1 id="rfc.section.8.9">
@@ -976,34 +978,34 @@
 <p id="rfc.section.8.10.p.2">It also contains a call field, which contains the URI of the call in question.  </p>
 <p id="rfc.section.8.10.p.3">Finally, there is an event type field, which conveys the type of event. This is followed by additional fields which are specific to the event type.  </p>
 <p id="rfc.section.8.10.p.4">This structure means that each event carried in the signalling is totally self-describing, irregardless of the enclosing connection and stream. This greatly facilitates logging, debugging, retransmissions, retries, and other race conditions which may deliver the same event multiple times, or deliver an event to a server which is not aware of the call.  </p>
-<p id="rfc.section.8.10.p.5">This specification defines the following events: </p>
-<p id="rfc.section.8.10.p.6">alerting: Passed from server to client, indicating that the recipient is alerting.  </p>
-<p id="rfc.section.8.10.p.7">accepted: Passed from server to client, indicating that the call was accepted.  </p>
-<p id="rfc.section.8.10.p.8">rejected: Passed from server to client, indicating that the call was rejected by the user.  </p>
-<p id="rfc.section.8.10.p.9">failed: Passed from server to client, indicating that the call was rejected by server or downstream servers, not by the user, but due to some kind of error condition. This event contains a response code and reason phrase, which are identical to the response codes and reason phrases in SIP.  </p>
-<p id="rfc.section.8.10.p.10">noanswer: Passed from server to client, indicating that the call was delivered to the receiving user but was not answered, and the server or a downstream server timed out the call.  </p>
-<p id="rfc.section.8.10.p.11">end: initiated by either client or server, it indicates that the call is to be terminated. Note that this does NOT delete the HTTP resource, it merely changes its state to call end. Furthermore, a call cannot be ended with a DELETE against the call URI; DELETE is not permitted and MUST be rejected by the server. The call end event SHOULD contain a reason, using the Reason codes defined for SIP.  </p>
-<p id="rfc.section.8.10.p.12">migrate: sent from server to client, it instructs the client to terminate the connections and re-establish them to a new URI which replaces the URI for the call. The event contains the new URI to use. This new URI MUST utilize the same path components, and MUST have a different authority component.  </p>
-<p id="rfc.section.8.10.p.13">tnt: send from consumer to provider, it invokes a takeback-and-transfer operation. The behavior of the provider upon receipt of this command is not subject to specification. This command merely invokes the feature as it has been implemented by the provider.  </p>
+<p id="rfc.section.8.10.p.5">Events are also defined so that the resulting state is uniquely defined by the event itself. This ensures that knowing the most recent event is sufficient to determine the state of the call.  </p>
+<p id="rfc.section.8.10.p.6">This specification defines the following events: </p>
+<p id="rfc.section.8.10.p.7">alerting: Passed from server to client, indicating that the recipient is alerting.  </p>
+<p id="rfc.section.8.10.p.8">accepted: Passed from server to client, indicating that the call was accepted.  </p>
+<p id="rfc.section.8.10.p.9">rejected: Passed from server to client, indicating that the call was rejected by the user.  </p>
+<p id="rfc.section.8.10.p.10">failed: Passed from server to client, indicating that the call was rejected by server or downstream servers, not by the user, but due to some kind of error condition. This event contains a response code and reason phrase, which are identical to the response codes and reason phrases in SIP.  </p>
+<p id="rfc.section.8.10.p.11">noanswer: Passed from server to client, indicating that the call was delivered to the receiving user but was not answered, and the server or a downstream server timed out the call.  </p>
+<p id="rfc.section.8.10.p.12">end: initiated by either client or server, it indicates that the call is to be terminated. Note that this does NOT delete the HTTP resource, it merely changes its state to call end. Furthermore, a call cannot be ended with a DELETE against the call URI; DELETE is not permitted and MUST be rejected by the server. The call end event SHOULD contain a reason, using the Reason codes defined for SIP.  </p>
+<p id="rfc.section.8.10.p.13">migrate: sent from server to client, it instructs the client to terminate the connections and re-establish them to a new URI which replaces the URI for the call. The event contains the new URI to use. This new URI MUST utilize the same path components, and MUST have a different authority component.  </p>
+<p id="rfc.section.8.10.p.14">open-reverse: sent from server to client, it instructs the client to open an additional set of reverse media byways.  </p>
+<p id="rfc.section.8.10.p.15">tnt: send from consumer to provider, it invokes a takeback-and-transfer operation. It includes the phone number to which the call should be transferred. The provide will then transfer the call to the target number. This event is meant to invoke the feature as it has been implemented by the provider. RIPP does not define additional behaviors.  </p>
 <h1 id="rfc.section.8.11">
 <a href="#rfc.section.8.11">8.11.</a> <a href="#call-termination" id="call-termination">Call Termination</a>
 </h1>
 <p id="rfc.section.8.11.p.1">Signaling allows an application layer call end to be sent. This will also cause each side to terminate the the outstanding transactions using end flags per HTTP3 specs. However, the opposite is not true - ending of the transactions or connection does not impact the call state.  </p>
-<p id="rfc.section.8.11.p.2">A server MUST maintain a timer, with a value equal to 5 seconds, for which it will hold the call in its current state without any active signalling byway. If the server does not receive a signalling byway before the expiration of this timer, it MUST consider the call as ended.  </p>
+<p id="rfc.section.8.11.p.2">A server MUST maintain a timer, with a value equal to one second, for which it will hold the call in its current state without any active signalling byway. If the server does not receive a signalling byway before the expiration of this timer, it MUST consider the call as ended.  </p>
 <p id="rfc.section.8.11.p.3">If the server receives a signalling or media byway for a call that is in the TERMINATED, it MUST reject the transaction with an XX response code.  </p>
-<p id="rfc.section.8.11.p.4">Note that the call resource itself - the URI - still exists. POST transactions for signalling and media are not permitted against it once the call is in an ended state. However, a server MUST maintain the resource for at least one day, to facilitate a GET request against it. As described below, a GET request against a call resource allows the client to catch up with the state of the call, facilitating stateless migration of clients.  </p>
+<p id="rfc.section.8.11.p.4">Once the call has ended, the call resource SHOULD be destroyed.  </p>
 <h1 id="rfc.section.8.12">
 <a href="#rfc.section.8.12">8.12.</a> <a href="#get-transactions" id="get-transactions">GET Transactions</a>
 </h1>
-<p id="rfc.section.8.12.p.1">A client MAY initiate a GET request against the call URI at any time. This returns the current state of the resource. This request returns an object which is the concatenation of all call events, sent by the server and received by the server, in the order in which the server applied them to the state machine.  </p>
-<p id="rfc.section.8.12.p.2">The response also contains a summary of media packet statistics up to that point ((TODO: specify)).  </p>
+<p id="rfc.section.8.12.p.1">A client MAY initiate a GET request against the call URI at any time. This returns the current state of the resource. This request returns the most recent event, either sent by the server or received by the server.  </p>
 <h1 id="rfc.section.8.13">
 <a href="#rfc.section.8.13">8.13.</a> <a href="#graceful-call-migration-server" id="graceful-call-migration-server">Graceful Call Migration: Server</a>
 </h1>
 <p id="rfc.section.8.13.p.1">To facilitate operational maintenance, the protocol has built in support for allowing a server instance to drain all active calls to another server instance.  </p>
 <p id="rfc.section.8.13.p.2">The server can issue a migrate event over the signalling byway, which includes a new call URI that the peer should use. Once received, the client closes all transactions to the current call URI. It then establishes new signalling, media and media control byways to the URI it just received. All media that the client wishes to transmit, but was unable to do so during the migration, is buffered and then sent in a burst once the media byways are re-established. This ensures there is no packet loss (though there will be jitter) during the migration period.  </p>
-<p id="rfc.section.8.13.p.3">If the server receives a GET request to the old call URI, it MUST return a 3xx response redirecting to the new call URI.  </p>
-<p id="rfc.section.8.13.p.4">We dont use QUIC layer connection migration, as that is triggered by network changes and not likely to be exposed to applications.  </p>
+<p id="rfc.section.8.13.p.3">We dont use QUIC layer connection migration, as that is triggered by network changes and not likely to be exposed to applications.  </p>
 <h1 id="rfc.section.8.14">
 <a href="#rfc.section.8.14">8.14.</a> <a href="#graceful-call-migration-client" id="graceful-call-migration-client">Graceful Call Migration: Client</a>
 </h1>
@@ -1042,18 +1044,142 @@
 <a href="#rfc.section.10.2">10.2.</a> <a href="#sip-to-ripp" id="sip-to-ripp">SIP to RIPP</a>
 </h1>
 <p id="rfc.section.10.2.p.1">When a gateway receives a SIP INVITE and decides it wants to route it out on a RIPP trunk, it MUST immediately reply to the incoming SIP INVITE with a 183. If the INVITE contained an offer, the 183 MUST contain an SDP answer. The gateway MAY choose to either transcode incoming audio to G.711 or Opus, or it may pass through the codec frames without transcoding. This specification defines procedures for passthrough.  </p>
-<p id="rfc.section.10.2.p.2">Next, the gateway creates an HTTP POST request towards the RIPP trunk URI of its peer. If the incoming call was to a phone number, the gateway MUST convert it to an E.164 number an include that as a tel URI in the target URI parameter of the RIPP request.  </p>
+<p id="rfc.section.10.2.p.2">Next, the gateway creates an HTTP POST request towards the RIPP trunk URI of its peer. If the incoming call was to a phone number, the gateway MUST convert it to an E.164 number an include that in the target URI parameter of the RIPP request.  </p>
 <h1 id="rfc.section.11">
-<a href="#rfc.section.11">11.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a>
+<a href="#rfc.section.11">11.</a> <a href="#raml-api" id="raml-api">RAML API</a>
 </h1>
+<pre>
+#%RAML 1.0
+---
+title: RIPP
+baseUri: http://ripp.example.net/{version}
+version: v1
+protocols: [ HTTPS ]
+securedBy: [ oauth_2_0 ]
+securitySchemes:
+  oauth_2_0: !include securitySchemes/oauth_2_0.raml
+
+types:
+    InboundEndpoint:
+        type: object
+        properties:
+            consumerTrunkURI: string
+            consumerToken: string 
+    Event:
+        type: object
+        properties:
+            name:
+                enum: [ alerting, accepted, rejected, failed, tnt, migrate, terminated ] 
+            ended:
+                type: boolean
+            timeStamp:
+                type: datetime
+            tntDestination:
+                type: string
+                note: only in events with name tnt
+            migrateToURl:
+                type: string 
+                note: only in events with name migrate
+     Advertisement:
+        type object
+        properties:
+            max-bitrate: number
+            max-samplerate: number
+            max-channels: number
+            non-e164: boolean
+            force-cbr: boolean
+            tnt: boolean
+    Frame:
+        seqNumOffset: number
+        dataLen: number
+"        data: string
+    FrameAck:
+        seqNum: number 
+    BywayPreamble:
+        baseSeqNum: number
+        baseTime: number
+        frameTime: number
+        codec:
+            enum: [ opus, g711, dtmf, cn, ack ]
+     BywayMedia:
+        mediaFrames: array
+ 
+
+/trunks:
+   /{trunkID}:
+      /consumerTrunk:
+        put:
+            description: Set the URI and security token for consumer trunk URI 
+            securedBy: [oauth_2_0]
+      /capAdv:
+        get:
+            description: Get the Capability Advertisement for this trunk
+            securedBy: [oauth_2_0]
+            responses:
+                200:
+                    body:
+                         application/json:
+                            type: Advertisement
+      /calls:
+        post:
+            securedBy: [oauth_2_0]
+            description: Create a new call. Returns a Call URI 
+            responses:
+                202:
+                  
+
+
+/call:
+    /{callID}:
+        /event:
+            get:
+                description: Retreive the most recent event from server
+                responses:
+                    200:
+                        body:
+                            application/json:
+                                type: Event
+            put:
+                description: Tell server about recent event
+                body:
+                    application/json:
+                        type: Event
+                responses:
+                    200:
+        /media-up:
+            post:
+                 description: Starts an infinite flow of media frames from client to server 
+                 body:
+                    application/octet-stream:
+                        type: BywayFlow
+                 responses:
+                    200:
+                        application/octet-stream:
+                            type: BywayFlow
+        /media-down:
+            post:
+                 description: Starts an infinite flow of media frames from server to client 
+                 body:
+                    application/octet-stream:
+                        type: BywayFlow
+                 responses:
+                    200:
+                        application/octet-stream:
+                            type: BywayFlow
+            
+</pre>
+<p></p>
 <h1 id="rfc.section.12">
-<a href="#rfc.section.12">12.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a>
+<a href="#rfc.section.12">12.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a>
 </h1>
 <h1 id="rfc.section.13">
-<a href="#rfc.section.13">13.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a>
+<a href="#rfc.section.13">13.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a>
+</h1>
+<h1 id="rfc.section.14">
+<a href="#rfc.section.14">14.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a>
 </h1>
 <h1 id="rfc.references">
-<a href="#rfc.references">14.</a> Informative References</h1>
+<a href="#rfc.references">15.</a> Informative References</h1>
 <table><tbody>
 <tr>
 <td class="reference"><b id="I-D.ietf-quic-http">[I-D.ietf-quic-http]</b></td>
@@ -1091,6 +1217,11 @@
 <a>Schulzrinne, H.</a>, <a>Casner, S.</a>, <a>Frederick, R.</a> and <a>V. Jacobson</a>, "<a href="https://tools.ietf.org/html/rfc3550">RTP: A Transport Protocol for Real-Time Applications</a>", STD 64, RFC 3550, DOI 10.17487/RFC3550, July 2003.</td>
 </tr>
 <tr>
+<td class="reference"><b id="RFC4855">[RFC4855]</b></td>
+<td class="top">
+<a>Casner, S.</a>, "<a href="https://tools.ietf.org/html/rfc4855">Media Type Registration of RTP Payload Formats</a>", RFC 4855, DOI 10.17487/RFC4855, February 2007.</td>
+</tr>
+<tr>
 <td class="reference"><b id="RFC6265">[RFC6265]</b></td>
 <td class="top">
 <a>Barth, A.</a>, "<a href="https://tools.ietf.org/html/rfc6265">HTTP State Management Mechanism</a>", RFC 6265, DOI 10.17487/RFC6265, April 2011.</td>
@@ -1104,6 +1235,11 @@
 <td class="reference"><b id="RFC7540">[RFC7540]</b></td>
 <td class="top">
 <a>Belshe, M.</a>, <a>Peon, R.</a> and <a>M. Thomson</a>, "<a href="https://tools.ietf.org/html/rfc7540">Hypertext Transfer Protocol Version 2 (HTTP/2)</a>", RFC 7540, DOI 10.17487/RFC7540, May 2015.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC7866">[RFC7866]</b></td>
+<td class="top">
+<a>Portman, L.</a>, <a>Lum, H.</a>, <a>Eckel, C.</a>, <a>Johnston, A.</a> and <a>A. Hutton</a>, "<a href="https://tools.ietf.org/html/rfc7866">Session Recording Protocol</a>", RFC 7866, DOI 10.17487/RFC7866, May 2016.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC8224">[RFC8224]</b></td>
