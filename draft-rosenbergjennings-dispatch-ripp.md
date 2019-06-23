@@ -755,9 +755,9 @@ the PSTN. The enterprise contracts with a RIPP trunking provider. All
 of this happens as a precursor to configuration. At the end of the
 contracting process, the enterprise administrator will visit the
 configuration web page, and be able to register their enterprise
-PBX. This process MUST return a client-ID, client-secret, and
+PBX. This process will typically return a client-ID, client-secret, and
 authorization endpoint URL. The administrator manually enters these
-into the configuration of their PBX. [[OPEN ISSUE: this seems wrong]]
+into the configuration of their PBX. [[OPEN ISSUE: OpenID connect?]]
 
 As another example use case, a cloud contact center, cloud PBX
 provider, or any other saas application which wishes to obtain
@@ -782,20 +782,16 @@ automatically, and point them to the RIPP trunking consumer.
 
 Once a RIPP consumer has been configured as an OAuth client
 application with a RIPP provider, a RIPP customer can provision a RIPP
-trunk on-demand using a web form. RIPP consumers MUST provide a
+trunk on-demand using a web form. RIPP consumers will typically provide a
 self-service web form for such provisioning, since self-service and
 instant provisioning are key goals of RIPP.
 
 The RIPP customer visits this web form, and selects their
-provider. The RIPP consumer MUST then initiate an OAuth2.0
-authorization code flow. This MUST utilize the clientID, client-secret
+provider. The RIPP consumer would then initiate an OAuth2.0
+authorization code flow. This utilizes the clientID, client-secret
 and authorization endpoint URL configured previously. The RIPP
 customer will authenticate to the RIPP provider, and authorize
-creation of a new RIPP trunk. The RIPP provider SHOULD indicate, via
-the web page it has served, any limitations associated with this RIPP
-trunk (e.g., rate limits or restrictions on services or dialed
-numbers). However, it MUST NOT require any additional input from the
-RIPP customer, since all aspects of the process are automated.
+creation of a new RIPP trunk. 
 
 Once the RIPP customer authorizes creation of a RIPP trunk, the RIPP
 provider MUST generate an authorization code and follow the procedures
