@@ -377,12 +377,7 @@ the customer domain to automatically create a bearer token for inbound
 calls and pass it to the provider.
 
 
-## TLS1.3 not SRTP or SIPS
-
-* CJ - I have some preference for just saying TLS without a version as
-some of the SP are looking at not moving to TLS 1.3 and staying on 1.2
-because it breaks their current TLS accelerator solutions 
-
+## TLS not SRTP or SIPS
 
 SIP has provided encryption of both signalling and media, through the
 usage of SIP over TLS and SIPS, and SRTP, respectively. Unfortunately,
@@ -407,12 +402,6 @@ Because of this, RIPP does not support SRTP. If a client receives a
 SIP call with SRTP, it must terminate the SRTP and decrypt media
 before sending it over RIPP. This matches existing practice in many
 cases. 
-
-E2E media believers - fire away!
-
-* CJ - I think I would point out this is about PSTN interconnect and
-  PSTN is not going E2E. 
-
 
 ## Authenticated CallerID
 
@@ -567,10 +556,11 @@ discussion.
 This specification defines the following additional terms:
 
 RIPP Trunk: A container for calls between a trunking provider and
-trunking consumer. A RIPP trunk is identified by an HTTP URI hosted by
-the trunking provider. RIPP trunks act as a unit of policy and
-capabilities, including rules such as rate limits, allowed phone
-numbers, and so on.
+trunking consumer. A RIPP trunk is identified by a pair of URI - the
+RIPP Trunk Provider URI (hosted by the trunking provider) and the RIPP
+Trunk Consumer URI (hosted by the trunking consumer). RIPP trunks act
+as a unit of policy and capabilities, including rules such as rate
+limits, allowed phone numbers, and so on.
 
 Call: A VoIP session established by a RIPP client for the purposes of
 exchanging audio and signalling information. A call is always
@@ -602,11 +592,10 @@ then authorizing a cloud PBX or cloud contact center provider to
 consume those trunking services on their behalf.
 
 RIPP Trunk Provider URI: An HTTP URI hosted by the trunking provider, which
-represents RIPP trunk.
+represents the RIPP trunk from its perspective.
 
-RIPP Trunk Consumer URI: An HTTP URI hosted by the trunking consumer,
-used to receive calls from the trunking provider associated with a
-specific RIPP trunk.
+RIPP Trunk Consumer URI: An HTTP URI hosted by the trunking consumer, which
+represents the RIPP trunk from its perspective.
 
 Byway: A bidirectional byte stream between a RIPR provide and
 consumer. A Byway passes its data through a long-running HTTP request
