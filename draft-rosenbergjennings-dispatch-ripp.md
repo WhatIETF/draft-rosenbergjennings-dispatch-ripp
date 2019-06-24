@@ -627,19 +627,20 @@ RIPP implementation within the trunking consumer. The resource server
 is the RIPP implementation in the trunking provider.
 
 To provision a RIPP trunk, the trunking customer will visit a web page
-hosted by the trunking consumer, and typically click on a button labeled
-with their trunking provider. This will begin the OAuth 2
-authorization code flow. The trunking customer will authenticate with the
-trunking provider. The trunking provider authorizes the access,
-generate an authorization code, and generates a RIPP trunk URI. The
-RIPP trunk URI is included in a new OAuth parameter defined by this
-specification,and is returned as a parameter in the authorization
+hosted by the trunking consumer, and typically click on a button
+labeled with their trunking provider. This will begin the OAuth 2
+authorization code flow. The trunking customer will authenticate with
+the trunking provider. The trunking provider authorizes the access,
+generates an authorization code, and generates a RIPP trunk provider
+URI. The provider URI is included in a new OAuth parameter defined by
+this specification,and is returned as a parameter in the authorization
 response. The trunking consumer trades the authorization code for a
-refresh and access token, and stores the SIP Trunk URI. Finally, the
+refresh and access token, and stores the provider URI. Finally, the
 trunking consumer mints a bearer token associated with the new RIPP
 trunk, and also mints a RIPP trunk consumer URI for receiving calls
 from the provider on this trunk. Both of these are passed to the
-trunking provider via a POST operation on the RIP trunk URI. 
+trunking provider via a POST operation to /consumerTrunk on the RIPP
+trunk provider URI. 
 
 The usage of the OAuth2.0 flows enables the trunking consumer and
 trunking customer to be the same (i.e., a cloud PBX provider purchases
@@ -650,22 +651,22 @@ consumer). The latter is often referred to informally as "BYOSIP" in
 traditional SIP trunking and is explicitly supported by RIPP using
 OAuth2.0.
 
-Once provisioned, either domain can establish capabilities for the
-RIPP trunk by posting a capabilities declaration to the RIPP trunk URI
-of its peer, using a URI parameter that signals a capability
-declaration. The capabilities declaration is a simple document, whose
-syntax is described in Section XX. It conveys the receive capabilities
-of the entity posting it, and includes parameters like maximum bitrate
+Once provisioned, both sides obtain capability declarations for the
+RIPP trunk by performing a GET to /capAdv of its peers trunk URI. The
+capabilities declaration is a simple document, whose syntax is
+described in Section (#syntax). It conveys the receive capabilities of
+the entity sending it, and includes parameters like maximum bitrate
 for audio. This process is optional, and each parameter has a
 default. Either side can update its capabilities for the RIPP trunk at
-any time. Capability declarations occur outside of a call, are
-optional, and convey static receive capabilities which are a fixed
-property of the RIPP trunk. Consequently, capability declaration is
-significantly different from SDP offer/answer.
+any time, and trigger a fresh GET via an HTTP push. Capability
+declarations occur outside of a call, are optional, and convey static
+receive capabilities which are a fixed property of the RIPP
+trunk. Consequently, capability declaration is significantly different
+from SDP offer/answer.
 
 Either the trunking consumer or provider can initiate calls by posting
-to the RIPP trunk URI of its peer, using a URI parameter that signals
-a new call. The request contains the target phone number in the
+to the /calls on RIPP trunk URI of its peer.
+The request contains the target phone number in the
 request URI and an Identity header field in the HTTP Request. The
 Identity header field is identical in syntax and semantics to the SIP
 Identity header field defined in [@RFC8224], just carried in HTTP
@@ -677,14 +678,13 @@ further signalling and media to reach the same RIPP server that
 handled the initial request, while facilitating failover should that
 server go down.
 
-Once a call has been created, a long-lived HTTP transaction is
-initiated from the client to the server for purposes of
-signalling. This transaction enables bidirectional data flow, tunneled
-within the body of a long-running HTTP request and its long-running
-response. This data flow is called a byway. Each byway has a
-purpose. One byway is established by the client for signalling, and
-multiple byways for media. HTTP3 ensures zero RTT for setup of these
-byways.
+Once a call has been created, a pair of long-lived HTTP transactions
+is initiated from the client to the server for purposes of
+signalling. One is a GET, retrieving call events from its peer. THe
+other is a PUT, sending call events to its peer. Each of these
+produces a unidirectional data stream, one in the forwards direction,
+one in the reverse. These are called byways. HTTP3
+ensures zero RTT for setup of these byways.
 
 Signaling commands are encoded into the signalling byway using
 streaming JSON in both directions. Each JSON object encodes an event
@@ -726,25 +726,25 @@ connection or the byways embedded in HTTP transactions, so that a
 reconnect can continue where things left off.
 
 Finally, RIPP trunks can be destroyed by a trunking consumer by
-issuing a DELETE against the RIPP trunk URI. 
+issuing a DELETE against the RIPP trunk provider URI. 
 
 
 # Example
 
 This section describes a typical example where one company, Acme, is
-using a cloud call service, Webex, and gets PSTN trying from the
+using a cloud calling service -  Webex - and gets PSTN trunking from the
 provider Comcast.
 
-The first stage is the Webex set up their service to be able to work as
-an OAuth Resource Server working with ComCast as the Authorization
-Server and understand the baseURI that ComCast uses for RIPP. Assume
+The first stage is for Webex to set up their service to be able to work as
+an OAuth Resource Server, working with ComCast as the Authorization
+Server, and to obtain the baseURI that ComCast uses for RIPP authorization. Assume
 that this is "https\://ripp.comcast.com". The next stage is the admin
-from ACME logs on the Webex account and selects Comcast as the RIPP
+from ACME logs on to their Webex account and selects Comcast as the RIPP
 provider.  This will cause the OAUTH dance and the admin will end up
 having approved WebEX to use Acme's account at ComCast for RIPP. Webex
 will have received an OAuth access and refresh token from ComCast and be
-redirected to the new Provider Trunk URI. At this point, the pre setup
-is read and RIPP can start. Assume the base provider trunk returned is
+passed the new Provider Trunk URI. At this point, provisioning is complete
+and calls can start. Assume the provider trunk URI returned is
 "https\://ripp.comcast.com/trunks/wbx234acme".
 
 Webex will start by setting up for incoming calls at
@@ -760,8 +760,8 @@ body of:
 }
 ~~~
 
-The ComCast server will then validate the token and URI are correct as
-well as find out the advertised capability of the Webex trunk by doing a
+The ComCast server will then find out the advertised capability of the
+Webex trunk by doing a 
 GET to https\://ripp.webex/trunks/acme123/capAdv and using the
 secret1234 as an authorization token. Webex supports the default values
 but also support G.729 as an additional codec. It returns a JSON body of:
@@ -770,28 +770,35 @@ but also support G.729 as an additional codec. It returns a JSON body of:
 {  "audio/g729": true }
 ~~~
 
+Similarly, the Webex server will find out the advertised capability of
+the trunk by doing a GET to
+https:\://ripp.comcast.com/trunks/wbx234acme/capAdv, using its OAuth
+token. In this case, the response is empty, indicating that the
+capabilities are all default.
+
 At this point we are ready for inbound or outbound calls.
 
 ## Inbound Call
 
 A PSTN calls arrives at Comcast that is routed to the this trunk via a
 Comcast SBC that will convert it from SIP to RIPP. The SBC knows which
-codecs the trunk the support and can immediately send the SIP answer in
-a 183 then can make HTTP post to the consumer trunk URI to set up the
+codecs the trunk supports (G.729, Opus and G.711) and can immediately send the SIP answer in
+a 183. It can then can make an HTTP post to the consumer trunk URI to set up the
 incoming call. This is does by doing a POST to
-"https\://ripp.webex/trunks/acme123/calls/14085551212@e164.arpa" using the authorization token
+"https\://ripp.webex/trunks/acme123/calls&target=14085551212@e164.arpa" using the authorization token
 "secret1234". This will return a new call URI for this call of
 https\://ripp.webex/call/c567.
 
-At this point the SBC can make a long poll GET to
-"https\://ripp.webex/call/c567/events" to get any update events about
-this call. The SBC will also open a number of byways by making POST
-requests to "https\://ripp.webex/call/c567/media-up" and
-"https\://ripp.webex/call/c567/media-down" to send and receive media.
+At this point the SBC can make a long poll GET and PUT to
+"https\://ripp.webex/call/c567/events" to receive and send signaling
+events for
+this call. The SBC will also open a number of media byways by making POST
+requests to "https\://ripp.webex/call/c567/media-forward" and
+"https\://ripp.webex/call/c567/media-reverse" to send and receive media.
 
-For each of the media-up byways, the Comcast SBC will send BywayPreamble
+For each of the media-forward byways, the Comcast SBC will send a BywayPreamble
 that tells the other side meta data about what will be sent on this
-byway. For the media-down byways, the Webex server will sen the
+byway. For the media-reverse byways, the Webex server will send the
 BywayPreamble. The BywayPreamble contains the name of the codec, the
 base sequence number, frameTime, and baseTime. After this BywayPreamble,
 media frames can be sent that contain a seqOffset number, media length,
@@ -813,7 +820,7 @@ call, the event returned would look like:
 For Webex to make it outbound call, it is the same as the inbound call
 other than the provider trunk URI is used. The Webex server would act as
 a client and do a HTTP POST to
-"https\://ripp.comcast.com/trunks/wbx234acme/calls/14085551212@e164.arpa" to create a call URI
+"https\://ripp.comcast.com/trunks/wbx234acme/calls&target=14085551212@e164.arpa" to create a call URI
 of "http\s://ripp.comcast.com/call/c789". From that point the flow is
 roughly the same as inbound with the client and server roles reversed.
 
@@ -915,15 +922,14 @@ extract the "ripp-trunk" OAuth parameter from the authorization
 response, decode, and persist it.
 
 Once the RIPP consumer has obtained an access token, it MUST initiate
-an HTTPS POST request towards the RIPP trunk URI. This request MUST
-include the "ripp-provision" URI parameter. This request MUST contain
+an HTTPS PUT request towards /consumerTrunk on the provider trunk URI. This request MUST contain
 an Authorization header field utilizing the access token just
 obtained. It MUST include a RIPP provisioning object in the body. This
-object is specified in Section XX.
+object is specified in Section (#syntax).
 
-The RIPP provisioning object MUST contain a RIPP Trunk Client URI and
+The RIPP provisioning object MUST contain a RIPP trunk consumer URI and
 a RIPP bearer token. The RIPP consumer MUST mint an HTTPS URI for the
-RIPP Trunk Client URI. This URI MUST support HTTP3, and MUST implement
+RIPP Trunk consumer URI. This URI MUST support HTTP3, and MUST implement
 the behaviours associated with capabilities and new call operations as
 defined below. This URI MUST have a path component,  MUST NOT
 contain any URI parameters, and MUST have a path segment which is
@@ -944,16 +950,14 @@ be used for placing calls in each direction.
 
 ## Capabilities
 
-Once provisioned, either the consumer or provider sets capabilities
-for the trunk. If either side wishes to declare capabilities that are
-not default, it MUST establish capabilities immediately upon trunk
-creation. To do that, the client performs an HTTP POST
-to its peer's RIPP trunk URI. It MUST include the URI parameter
-"ripp-caps". The body MUST be a RIPP capabilities object as defined in
-Section XX.
+Once provisioned, each side obtains receive capabilities about the
+trunk from its peer. To do that, each client performs an HTTP GET
+to /capAdv on its peer's RIPP trunk URI. The response body MUST be a
+RIPP capabilities object as defined in Section (#syntax).
 
-Once established, either side MAY update the capabilities with a fresh
-POST request. Due to race conditions, it is possible that the client
+Once established, either side MAY update the capabilities by sending
+an HTTP push to trigger its peer to fetch a fresh capability
+document. Due to race conditions, it is possible that the client
 may receive calls compliant to the old capabilities document for a
 brief interval. It MUST be prepared for this.
 
@@ -965,40 +969,32 @@ specify a capability. Every capability has a default, so that if no
 document is posted, or it is posted but a specific capability is not
 included, the capability for the peer is understood. Capabilities are
 receive only, and specify what the entity is willing to
-receive. Capabilities MAY be changed at any time by posting a new
-capability document. Capabilities are bound to the RIPP trunk, and are
+receive. Capabilities are bound to the RIPP trunk, and are
 destroyed when the RIPP trunk is destroyed.
 
 This specification defines the following capability set. This set is
 extensible through an IANA registry.
 
-* max-opus-bitrate: The maximum bitrate for receiving Opus voice. This is
+* max-bitrate: The maximum bitrate for receiving voice. This is
   specified in bits per second. It MUST be greater than or equal to
   32000. Its default is 32000.
 
-* CJ - I would prefer to just scope all these to audio and not opus and
-make them apply to any audio codec.
-
-* max-opus-samplerate: The maximum sample rate for Opus audio. This is
+* max-samplerate: The maximum sample rate for audio. This is
   specified in Hz. It MUST be greater than or equal to 8000. Its
   default is 8000.
 
-* CJ - I think we need a max sample size as well - default 16 bit
+* max-samplesize: The maximum sample size for audio. This is specified
+  in bits. It MUST be greater than or equal to 8. The default is 16. 
 
-
-* opus-vbr: Indicates whether the entity supports receiving variable
-  rate Opus audio. It MUST be either "true" or "false". The default is
-  "true". If "false", the sender MUST send constant rate audio.
-
-* CJ - I would prefer to flip that to "force-cbr".
+* force-cbr: Indicates whether the entity requires CBR media only. It
+  MUST be either "true" or "false". The default is 
+  "false". If "true", the sender MUST send constant rate audio.
 
 * two-channel: Indicates whether the entity supports receiving two
   audio channels or not. Two channel audio is specifically used for
   RIPP trunks meant to convey listen-only media for the purposes of
   recording, similar to SIPREC [@RFC7866]. It MUST be either "true" or
   "false". The default is "false".
-
-* CJ - I woulr prefer to just have max-channels
 
 * tnt: Indicates whether the entity supports the takeback-and-transfer
   command. Telcos supporting this feature on a trunk would set it to
@@ -1034,17 +1030,13 @@ HTTP connection is open. RIPP clients SHOULD also utilize 0-RTT HTTP
 procedures in order to speed up call setup times. 
 
 To initiate a new call, a RIPP client creates an HTTPS POST request to
-the RIPP trunk URI of its peer. For a trunking consumer, this is the
+/calls endpoint on the RIPP trunk URI of its peer. For a trunking
+consumer, this is the 
 RIPP trunk URI provisioned during the OAuth2.0 flow. For the trunking
-provider, it is the RIPP trunk client URI learned through the
+provider, it is the RIPP trunk consumer URI learned through the
 provisioning POST operation. This MUST be an HTTP/3 transaction. The
 client MUST validate that the TLS certificate that is returned matches
 the authority component of the RIPP trunk URI. 
-
-The client MUST append the RIPP trunk URI with the attribute
-"newcall". For example:
-
-https://ripp.telco.com/trunks/6ha937fjjj9?newcall
 
 This request MUST contain the token that the client has
 obtained out-of-band. For the RIPP trunk consumer, this is the OAuth
@@ -1060,8 +1052,6 @@ non-E164 number scoped to be valid within the domain. This form MUST
 NOT be used for E.164 numbers. Finally, RIPP can be used to place call
 to application services - such as a recorder - in which case the
 parameter would take the form of an RFC822 email address.
-
-* CJ - I think the target should just be in the URI - see examples 
 
 The client MUST add an HTTP Identity header field. This header field
 is defined in Section XX as a new HTTP header field. Its contents MUST
@@ -1081,13 +1071,7 @@ create this call. The server MUST return a 201 Created response, and
 MUST include a Location header field containing an HTTPS URI which
 identifies the call that has been created. The URI identifying the
 call MUST include a path segment which contains a type 4 UUID,
-ensuring that call identifiers are globally unique. This
-URI MUST have a path underneath the RIPP trunk URI, to enable easy
-mapping of calls to trunks.
-
-An example URI that identifies a call is:
-
-https://ripp.telco.com/trunks/6ha937fjjj9/calls/ha8d7f6fso29s88clzopa
+ensuring that call identifiers are globally unique.
 
 The server MAY include HTTP session cookies in the 201 response. The
 client MUST support receipt of cookies [@RFC6265]. It MUST be prepared
@@ -1121,7 +1105,7 @@ farm. Consequently, a request to this RIPP trunk would hit a specific
 SBC behind the VIP. This SBC would then create the call and return a
 call URL which points to its actual IP, using DNS
 
-https://sbc23.sbc-farm.telco.com/trunks/6ha937fjjj9/calls/ha8d7f6fso29s88clzopa
+https://sbc23.sbc-farm.telco.com/call/ha8d7f6fso29s88clzopa
 
 However, the HTTP URI for the call MUST NOT contain an IP address; it
 MUST utilize a valid host or domain name. This is to ensure that TLS
@@ -1132,30 +1116,17 @@ SIP based peering).
 Neither the request, nor the response, contain bodies.
 
 
-## Establishing the Signaling Byway
+## Establishing the Signaling Byways
 
 To perform signalling for this call, the client MUST
-initiate an HTTP request towards the call URI that it
-just obtained. 
+initiate an HTTP GET and PUT request towards the call URI that it
+just obtained, targeted at the /event endpoint. 
 
-The signaling is accomplished by a long running HTTP transaction.
-This means that the client initiates the connection, sends
-the headers, and then sends the body as a long-running stream (e.g.,
-streaming requests). Similarly, the server receives the request, and
-if it accepts the request, immediately generates a 200 response and
-begins streaming the response body back towards the client. This has
-the property of creating a bidirectional data stream between the
-client, and the server. This bidirectional stream is an ordered byte
-stream, and is called a byway. RIPP specific information is carried in
-the byway.
+The signaling is accomplished by a long running HTTP transaction, with
+a stream of JSON in the PUT request, and a stream of JSON in the GET
+response.
 
-To initiate a signalling byway, the client MUST initiate a POST
-request to the call URI, and MUST include the URI parameter
-"signalling". This request MUST NOT include any other URI
-parameters.
-
-The signalling byway utilizes a streaming JSON format, specified in
-XXX. This begins with an open curly bracket, and after that is a
+The body begins with an open curly bracket, and after that is a
 series of JSON objects, each starting with a curly bracket, and ending
 with a curly bracket. Consequently, each side MUST immediately send
 their respective open brackets after the HTTP header fields. We
@@ -1228,23 +1199,17 @@ is a 0-RTT process.
 The requests to create these transactions MUST include Cookie headers for any
 applicable session cookies.
 
-To initiate a signalling byway, the client MUST initiate a POST
-request to the call URI, and MUST include the URI parameter
-"signalling". This request MUST NOT include any other URI
-parameters.
-
 To open a forward media byway, the client MUST initiate a POST request
-to the call URI, and MUST include the URI parameter "fwd-media". It
-MUST include a RIPP-Media header field in the request
+to the /media-forward endpoint on the call URI, and MUST include a RIPP-Media header field in the request
 headers. Similarly, to open a reverse media byway, the client MUST
-initiate a POST request to the call URI, and MUST include the URI
-parameter "rev-media". It MUST NOT includea a RIPP-Media header field
+initiate a POST request to the /media-reverse endpoint of the call
+URI. It MUST NOT includea a RIPP-Media header field
 in the request headers. The server MUST include the RIPP-Media header
 in the response headers. The RIPP-Media header contains the properties for the
 byway - the sequence number base, the timestamp base, and the name of
 the codec.
 
-RIPP supports multiple channels, meant for SIPREC use cases.  Each
+RIPP supports multiple audio channels, meant for SIPREC use cases.  Each
 channel MUST be on a separate byway. When multi-channel audio is being
 used, the client MUST include the multi-channel parameter and MUST
 include the channel number, starting at 1.
@@ -1509,10 +1474,6 @@ the call.
 
 
 
-# Syntax
-
-To be filled in.
-
 
 # SIP Gateway 
 
@@ -1541,20 +1502,8 @@ gateway function in order to maximize interoperability.
 
 ## SIP to RIPP
 
-When a gateway receives a SIP INVITE and decides it wants to route it
-out on a RIPP trunk, it MUST immediately reply to the incoming SIP
-INVITE with a 183. If the INVITE contained an offer, the 183 MUST
-contain an SDP answer. The gateway MAY choose to either transcode
-incoming audio to G.711 or Opus, or it may pass through the codec
-frames without transcoding. This specification defines procedures for
-passthrough.
 
-Next, the gateway creates an HTTP POST request towards the RIPP trunk
-URI of its peer. If the incoming call was to a phone number, the
-gateway MUST convert it to an E.164 number an include that in the
-target URI parameter of the RIPP request.
-
-# RAML API
+# RAML API {#syntax}
 
 <{{ripp-api.raml}}
 
