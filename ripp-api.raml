@@ -69,7 +69,7 @@ types:
                     body:
                          application/json:
                             type: Advertisement
-      /calls:
+      /calls/{destination}:
         post:
             securedBy: [oauth_2_0]
             description: Create a new call. Returns a Call URI 
@@ -80,9 +80,17 @@ types:
 
 /call:
     /{callID}:
+        /prevEvent:
+            get:
+                description: Retreive the previous event from server
+                responses:
+                    200:
+                        body:
+                            application/json:
+                                type: Event
         /event:
             get:
-                description: Retreive the most recent event from server
+                description: Wait for next event then retreive the most recent event from server
                 responses:
                     200:
                         body:

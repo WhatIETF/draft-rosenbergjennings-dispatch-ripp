@@ -359,7 +359,7 @@ done by the client to verify that it is speaking to the server it
 thinks it should be speaking to. For the server to identify the
 client, modern platforms make use of OAuth2.0. Though OAuth is not
 actually an authentication protocol, the use of OAuth has allowed
-authentication to be done out of band via separate login servers which
+authentication to be done out of band via separate identity servers which
 produce OAuth tokens which can then be used for authentication of the
 client.
 
@@ -379,7 +379,7 @@ calls and pass it to the provider.
 
 ## TLS1.3 not SRTP or SIPS
 
-* CFJ - I have some preference for just saying TLS without a version as
+* CJ - I have some preference for just saying TLS without a version as
 some of the SP are looking at not moving to TLS 1.3 and staying on 1.2
 because it breaks their current TLS accelerator solutions 
 
@@ -395,7 +395,7 @@ peering as an alternative.
 Because of the HBH nature of RIPP, security is done fundamentally at
 the connection level - identically to HTTP. Since media is also
 carrier over the HTTP connection, both signalling and media are covered
-by the connection security provided by HTTP3 - which is TLS1.3.
+by the connection security provided by HTTP3.
 
 Because of the mandatory usage of TLS1.3 with HTTP3, and the expected
 widespread deployment of HTTP3, running VoIP on top of HTTP3 will bring
@@ -405,12 +405,12 @@ situation. It is also necessary in order to utilize HTTP3.
 
 Because of this, RIPP does not support SRTP. If a client receives a
 SIP call with SRTP, it must terminate the SRTP and decrypt media
-before sending it over RIPP. This matches existing practice in any
-case. 
+before sending it over RIPP. This matches existing practice in many
+cases. 
 
 E2E media believers - fire away!
 
-* CFJ - I think I would point out this is about PSTN interconnect and
+* CJ - I think I would point out this is about PSTN interconnect and
   PSTN is not going E2E. 
 
 
@@ -427,6 +427,8 @@ not client-to-server connections), STIR is applicable. RIPP clients
 must either insert a signed passport, or pass one through if it
 exists. Similarly, RIPP servers must act as verifying parties and
 reject any calls that omit a passport.
+
+* CJ - Need to check we have all the things needed in an Passport.
 
 ## Calls Separate from Connections
 
@@ -599,7 +601,7 @@ then consuming trunking services from a telco. Or, it can be different
 then authorizing a cloud PBX or cloud contact center provider to
 consume those trunking services on their behalf.
 
-RIPP Trunk URI: An HTTP URI hosted by the trunking provider, which
+RIPP Trunk Provider URI: An HTTP URI hosted by the trunking provider, which
 represents RIPP trunk.
 
 RIPP Trunk Consumer URI: An HTTP URI hosted by the trunking consumer,
@@ -773,11 +775,10 @@ The ComCast server will then validate the token and URI are correct as
 well as find out the advertised capability of the Webex trunk by doing a
 GET to https\://ripp.webex/trunks/acme123/capAdv and using the
 secret1234 as an authorization token. Webex supports the default values
-but also support G.729 as an additional codec so it needs to return the
-list of codecs supported. It returns a JSON body of:
+but also support G.729 as an additional codec. It returns a JSON body of:
 
 ~~~
-{ "codec":  [ "opus", "g711", "dtmf", "cn", "g729" ] }
+{  "audio/g729": true }
 ~~~
 
 At this point we are ready for inbound or outbound calls.
@@ -789,7 +790,7 @@ Comcast SBC that will convert it from SIP to RIPP. The SBC knows which
 codecs the trunk the support and can immediately send the SIP answer in
 a 183 then can make HTTP post to the consumer trunk URI to set up the
 incoming call. This is does by doing a POST to
-"https\://ripp.webex/trunks/acme123/calls" using the authorization token
+"https\://ripp.webex/trunks/acme123/calls/14085551212@e164.arpa" using the authorization token
 "secret1234". This will return a new call URI for this call of
 https\://ripp.webex/call/c567.
 
@@ -823,7 +824,7 @@ call, the event returned would look like:
 For Webex to make it outbound call, it is the same as the inbound call
 other than the provider trunk URI is used. The Webex server would act as
 a client and do a HTTP POST to
-"https\://ripp.comcast.com/trunks/wbx234acme/calls" to create a call URI
+"https\://ripp.comcast.com/trunks/wbx234acme/calls/14085551212@e164.arpa" to create a call URI
 of "http\s://ripp.comcast.com/call/c789". From that point the flow is
 roughly the same as inbound with the client and server roles reversed.
 
@@ -942,8 +943,9 @@ globally unique.
 In addition, the RIPP consumer MUST mint a bearer token to be used by
 the RIPP provider when performing operations against the RIPP Trunk
 Client URI. The bearer token MAY be constructed in any way desired by
-the RIPP consumer. The token and URI MUST remain valid for at least
-one day. The RIPP consumer MUST refresh the provisioning against the
+the RIPP consumer. The token and URI SHOULD remain valid for at least
+one day, however, a security problem could cuase them to be invalidated.
+The RIPP consumer MUST refresh the provisioning against the
 RIPP trunk at least one hour in advance of the expiration, in order to
 ensure no calls are delayed.
 
@@ -985,19 +987,29 @@ extensible through an IANA registry.
   specified in bits per second. It MUST be greater than or equal to
   32000. Its default is 32000.
 
+* CJ - I would prefer to just scope all these to audio and not opus and
+make them apply to any audio codec.
+
 * max-opus-samplerate: The maximum sample rate for Opus audio. This is
   specified in Hz. It MUST be greater than or equal to 8000. Its
   default is 8000.
 
+* CJ - I think we need a max sample size as well - default 16 bit
+
+
 * opus-vbr: Indicates whether the entity supports receiving variable
   rate Opus audio. It MUST be either "true" or "false". The default is
   "true". If "false", the sender MUST send constant rate audio.
+
+* CJ - I would prefer to flip that to "force-cbr".
 
 * two-channel: Indicates whether the entity supports receiving two
   audio channels or not. Two channel audio is specifically used for
   RIPP trunks meant to convey listen-only media for the purposes of
   recording, similar to SIPREC [@RFC7866]. It MUST be either "true" or
   "false". The default is "false".
+
+* CJ - I woulr prefer to just have max-channels
 
 * tnt: Indicates whether the entity supports the takeback-and-transfer
   command. Telcos supporting this feature on a trunk would set it to
@@ -1060,13 +1072,17 @@ NOT be used for E.164 numbers. Finally, RIPP can be used to place call
 to application services - such as a recorder - in which case the
 parameter would take the form of an RFC822 email address.
 
+* CJ - I think the target should just be in the URI - see examples 
+
 The client MUST add an HTTP Identity header field. This header field
 is defined in Section XX as a new HTTP header field. Its contents MUST
 be a valid Identity header field as defined by [@RFC8224]. This
 ensures that all calls utilize secure caller ID. A RIPP client MUST
 NOT place the caller ID in any place except for the Identity header
 field in this request. Specifically, a "From", "Contact", or
-"P-Asserted-ID" header field MUST NOT ever appear. 
+"P-Asserted-ID" header field MUST NOT ever appear.
+
+* CJ - I would prefer to add this another way without using a header. 
 
 The server MUST validate the OAuth token, MUST act as the verifying
 party to verify the Identity header field, and then authorize the
@@ -1084,7 +1100,7 @@ An example URI that identifies a call is:
 
 https://ripp.telco.com/trunks/6ha937fjjj9/calls/ha8d7f6fso29s88clzopa
 
-The server MAY include an HTTP session cookie in the 201 response. The
+The server MAY include HTTP session cookies in the 201 response. The
 client MUST support receipt of cookies [@RFC6265]. It MUST be prepared
 to receive up to 10 cookies per call. The client MUST destroy all
 cookies associated with a call, when the call has ended. Cookies MUST
@@ -1102,7 +1118,7 @@ using any kind of HTTP load balancer at all, it can use a specific
 hostname in the URI to route all requests for this call to a specific
 instance of the server. This technique is particularly useful for
 telcos who have not deployed HTTP infrastructure, but do have SBCs
-that sit behind a single VIP. The root URI can use a domain whose A
+that sit behind a single virtual IP address. The root URI can use a domain whose A
 record maps to this IP. Once a call has landed on
 a particular SBC, the call URI can indicate the specific IP of
 the SBC.
@@ -1394,6 +1410,11 @@ ended with a DELETE against the call URI; DELETE is not permitted and
 MUST be rejected by the server. The call end event SHOULD contain a
 reason, using the Reason codes defined for SIP.
 
+* CJ - Not keen on SIP reason codes - they did not conatin enough info
+  for all the Q950 stuff and were not particually extensible. I think it
+  would be better to define a set here with clear mapping to SIP and SIP
+  +Q950 reasons. 
+
 migrate: sent from server to client, it instructs the client to
 terminate the connections and re-establish them to a new URI which
 replaces the URI for the call. The event contains the new URI to
@@ -1401,7 +1422,10 @@ use. This new URI MUST utilize the same path components, and MUST have
 a different authority component.
 
 open-reverse: sent from server to client, it instructs the client to
-open an additional set of reverse media byways. 
+open an additional set of reverse media byways.
+
+* CJ - would it work to have this all far simplier and just have the
+  trunk cap advertisemtn say how many to open up ? 
 
 tnt: send from consumer to provider, it invokes a
 takeback-and-transfer operation. It includes the phone number to which
@@ -1436,6 +1460,10 @@ A client MAY initiate a GET request against the call URI at any
 time. This returns the current state of the resource. This request
 returns the most recent event, either sent
 by the server or received by the server.
+
+* CJ - lets call this previosEvent as the event part waits till the
+  next event on a long poll. Be good to say something about how this is
+  used as it is not clear to me it is needed. 
 
 ## Graceful Call Migration: Server
 
@@ -1487,6 +1515,8 @@ and media transactions. If this retry fails, the client MUST consider
 the call terminated. It SHOULD NOT a further attempt to re-establish
 the call.
 
+* CJ - Note there is no way to know if it can use 0-RTT or not, all
+  depends on cached state so the best it can do is hope it might work. 
 
 
 
