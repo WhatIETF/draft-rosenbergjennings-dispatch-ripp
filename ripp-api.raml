@@ -18,7 +18,13 @@ types:
         type: object
         properties:
             name:
-                enum: [ alerting, accepted, rejected, failed, tnt, migrate, terminated ] 
+                enum: [ alerting, accepted, rejected, failed, tnt, migrate, end,open-reverse ]
+	    direction:
+	        enum: [c2s, s2c]
+	    sequence number:
+	        type: number
+	    timestamp:
+	        type: number
             ended:
                 type: boolean
             timeStamp:
@@ -103,7 +109,7 @@ types:
                         type: Event
                 responses:
                     200:
-        /media-up:
+        /media-forward:
             post:
                  description: Starts an infinite flow of media frames from client to server 
                  body:
@@ -113,7 +119,7 @@ types:
                     200:
                         application/octet-stream:
                             type: BywayFlow
-        /media-down:
+        /media-reverse:
             post:
                  description: Starts an infinite flow of media frames from server to client 
                  body:
