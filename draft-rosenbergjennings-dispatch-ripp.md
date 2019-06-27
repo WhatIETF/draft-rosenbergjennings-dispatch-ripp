@@ -37,6 +37,13 @@ organization = "Cisco Systems"
   [author.address]
   email = "fluffy@iii.ca"
 
+[[author]]
+initials = "A."
+surname = "Minessale"
+fullname = "Anthony Minessale"
+organization = "Signalwire/Freeswitch"
+  [author.address]
+  email = "anthm@signalwire.com"
 
 %%%
 
