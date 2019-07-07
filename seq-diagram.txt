@@ -1,0 +1,36 @@
+object consumer provider
+consumer->provider: PUT /trunks/123/consumerTrunk
+note right of consumer: consumer trunk is /trunks/abc
+
+provider->consumer: GET /trunks/abc/capAdv
+consumer->provider: 200 OK w. consumer caps
+
+consumer->provider: GET /trunks/123/capAdv
+provider->consumer: 200 OK w. provider caps
+
+consumer->provider: POST /trunks/123/calls&target=14085551212@e164.arpa
+provider->consumer: 202 Created 
+note right of consumer: Location: /call/xyz
+
+consumer->provider: GET /call/xyz/event
+note right of consumer: signaling byway s2c
+provider->consumer: 200 OK
+
+consumer->provider: POST /call/xyz/media-forward
+note right of consumer: media byway c2s
+provider->consumer: 200 OK
+consumer->provider: POST /call/xyz/media-reverse
+note right of consumer: media byway s2c
+provider->consumer: 200 OK
+
+note left of provider: ringing eg. SIP 180
+provider->consumer: ringing event
+
+note left of provider: accepted eg. SIP 200
+provider->consumer: accepted
+
+note right of consumer: caller hangs up
+consumer->provider: PUT /call/xyz/event
+note right of consumer: end event
+provider->consumer: 200 OK
+
