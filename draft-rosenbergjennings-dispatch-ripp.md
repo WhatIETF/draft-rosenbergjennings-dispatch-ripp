@@ -54,7 +54,7 @@ This document specifies the Realtime Internet Peering Protocol
 provider (such as a telco), and a trunking consumer (such as an
 enterprise, cloud PBX provider, cloud contact center provider, and so
 on). RIPP is an alternative to SIP, SDP and RTP for this use case, and
-is designed to run on top of HTTP/3. Using HTTP/3 allows trunking
+is designed as a web application using HTTP/3. Using HTTP/3 allows trunking
 consumers to more easily build their applications on top of cloud
 platforms, such as AWS, Azure and Google Cloud, all of which are
 heavily focused on HTTP based services. RIPP also addresses many of
@@ -198,7 +198,7 @@ HTTP2 [@RFC7540] addressed the second of these with the introduction of pushes
 and long running requests. However, its usage of TCP was still a
 problem. This has finally been addressed with the arrival of QUIC
 [@I-D.ietf-quic-transport] and
-HTTP3. QUIC is based on UDP, and it introduces the concept of a stream
+HTTP/3. QUIC is based on UDP, and it introduces the concept of a stream
 that can be set up with zero RTT. These streams are carried over UDP,
 and though are still reliable, there is no head of line blocking
 across streams. This change has made it possible for HTTP to support
@@ -210,12 +210,12 @@ VoIP applications.
 The protocol defined here is based on the following requirements:
 
 REQ1: The solution shall not require extensions or modifications to
-HTTP3.
+HTTP/3.
 
 REQ2: The solution shall work with both L4 and L7 HTTP load balancers
 
 REQ3: The solution shall work in ways that are compatible with best
-practices for load balancers and proxies supporting HTTP3, and not
+practices for load balancers and proxies supporting HTTP/3, and not
 require any special changes to these load balancers in order to
 function.
 
@@ -242,8 +242,7 @@ must be designed for easy implementation by SBCs and easy deployment
 by PSTN termination and origination providers who do not utilize cloud
 platforms
 
-REQ10: The solution shall build-in callerID security and protections
-from robocalling at the outset
+REQ10: The solution shall require authentication and encryption, with no opportunity to disable them. Furthermore, it will require secure callerID, with no provision for insecure callerID 
 
 REQ11: The solution shall provide low latency for media
 
@@ -292,9 +291,9 @@ of client and server as bound to a specific transaction.
 
 HTTP does not operate this way. In HTTP, one entity is a client, and
 the other is a server. There is no way for the server to send messages
-asynchronously towards the client. HTTP3 does enable two distinct
+asynchronously towards the client. HTTP/3 does enable two distinct
 techniques that facilitate server messaging towards the client. But to
-use them, RIPP must abide by HTTP3 rules, and that means distinct
+use them, RIPP must abide by HTTP/3 rules, and that means distinct
 roles for clients and servers. Clients must always initiate
 connections and send requests, not servers.
 
@@ -346,7 +345,7 @@ struggle with NAT traversal.
 
 HTTP of course does not suffer from this. In general, "addressing", to
 the degree it exists at all, is done with HTTP URIs. RIPP follows this
-pattern. RIPP - as an application on top of HTTP3 - does not use or
+pattern. RIPP - as a web application that uses HTTP/3 - does not use or
 convey any IP addresses or ports. Furthermore, the client never
 provides addressing to the server - all traffic is sent in the reverse
 direction over the connection. 
@@ -397,13 +396,13 @@ peering as an alternative.
 Because of the HBH nature of RIPP, security is done fundamentally at
 the connection level - identically to HTTP. Since media is also
 carrier over the HTTP connection, both signalling and media are covered
-by the connection security provided by HTTP3.
+by the connection security provided by HTTP/3.
 
-Because of the mandatory usage of TLS1.3 with HTTP3, and the expected
-widespread deployment of HTTP3, running VoIP on top of HTTP3 will bring
+Because of the mandatory usage of TLS1.3 with HTTP/3, and the expected
+widespread deployment of HTTP/3, running VoIP on top of HTTP/3 will bring
 built-in encryption of media and signalling between peering domains,
 which is a notable improvement over the current deployment
-situation. It is also necessary in order to utilize HTTP3.
+situation. It is also necessary in order to utilize HTTP/3.
 
 Because of this, RIPP does not support SRTP. If a client receives a
 SIP call with SRTP, it must terminate the SRTP and decrypt media
@@ -442,7 +441,7 @@ move between machines in the case of failures.
 
 ## Path Validation, not ICE
 
-HTTP3 is designed to work through NAT as a client-server protocol. It
+HTTP/3 is designed to work through NAT as a client-server protocol. It
 has built in techniques for dealing with NAT re-bindings, IP address
 changes due to a client moving between networks (e.g., wifi to
 cellular data). It has built in path validation that ensures that HTTP
@@ -452,7 +451,7 @@ SIP has, over the years, solved these problems to some degree, but not
 efficiently nor completely. To work with HTTP, RIPP must utilize the
 HTTP approaches for these problems. Consequently, RIPP does not
 utilize ICE and has no specific considerations for NAT traversal, as
-these are handled by HTTP3 itself.
+these are handled by HTTP/3 itself.
 
 
 # Reference Architecture
@@ -527,15 +526,15 @@ balancer, as shown below:
 ~~~
 
 Since both the trunk provider and trunk consumer implement the client
-and server roles, both entities will typically have a load balancer
+and server roles, both entities will typically have a load balancer - perhaps a server component, or a cloud-based service, 
 used to receive incoming calls. This is not required, of course. It is
 worth restating that this load balancer is NOT specific to RIPP - it
 is any off-the-shelf HTTP load balancer which supports HTTP/3. No
 specific support for RIPP is required. RIPP is just a usage of HTTP. 
 
-Because RIPP clients and servers are nothing more than HTTP3
+Because RIPP clients and servers are nothing more than HTTP/3
 applications, the behavior or RIPP is specified entirely by describing
-how various RIPP procedures map to the core HTTP3 primitives available
+how various RIPP procedures map to the core HTTP/3 primitives available
 to applications - opening connections, closing connections, sending
 requests and responses, receiving requests and responses, and setting
 header fields and bodies. That's it.
@@ -543,7 +542,7 @@ header fields and bodies. That's it.
 
 # Terminology
 
-This specification follows the terminology of HTTP3 - specifically:
+This specification follows the terminology of HTTP/3 - specifically:
 
 RIPP Client: The entity that initiates a call, by acting as an HTTP
 client.
@@ -577,7 +576,7 @@ Trunking Consumer: An administrative entity that utilizes trunking
 services from the trunking provider. The relationship between the
 trunking consumer and trunking provider is static and does not vary
 from call to call. (e.g., Verizon would be the trunking provider to an
-enterprise, and the enterprise would be the trunking customer of
+enterprise consumer, and the enterprise would be the trunking consumer of
 Verizon. A trunking consumer implements a RIPP client to initiate
 calls to the trunking provider, and a RIPP server to receive them. 
 
@@ -604,7 +603,7 @@ represents the RIPP trunk from its perspective.
 RIPP Trunk Consumer URI: An HTTP URI hosted by the trunking consumer, which
 represents the RIPP trunk from its perspective.
 
-Byway: A bidirectional byte stream between a RIPR provide and
+Byway: A bidirectional byte stream between a RIPP provider and
 consumer. A Byway passes its data through a long-running HTTP request
 and a long-running HTTP response. Byways are used for signalling and
 media.
@@ -623,8 +622,8 @@ OAuth2.0, the details of which are beyond the scope of this
 specification, but expected to follow existing best practices used by
 web applications.
 
-The next step is provisioning. Once a trunking customer has purchased
-services from a trunking provider, the trunking customer can perform
+The next step is provisioning. Once a trunking customer has obtained access to 
+services from a trunking provider (by purchasing them , for example), the trunking customer can perform
 provisioning. Provisioning is the process by which a trunking customer
 connects a RIPP trunk from a trunking provider to trunking
 consumer. Provisioning is accomplished using  
@@ -640,7 +639,7 @@ authorization code flow. The trunking customer will authenticate with
 the trunking provider. The trunking provider authorizes the access,
 generates an authorization code, and generates a RIPP trunk provider
 URI. The provider URI is included in a new OAuth parameter defined by
-this specification,and is returned as a parameter in the authorization
+this specification, and is returned as a parameter in the authorization
 response. The trunking consumer trades the authorization code for a
 refresh and access token, and stores the provider URI. Finally, the
 trunking consumer mints a bearer token associated with the new RIPP
@@ -690,7 +689,7 @@ is initiated from the client to the server for purposes of
 signalling. One is a GET, retrieving call events from its peer. THe
 other is a PUT, sending call events to its peer. Each of these
 produces a unidirectional data stream, one in the forwards direction,
-one in the reverse. These are called byways. HTTP3
+one in the reverse. These are called byways. HTTP/3
 ensures zero RTT for setup of these byways.
 
 Signaling commands are encoded into the signalling byway using
@@ -706,7 +705,7 @@ byway carries media from the server to the client. To eliminate HOL
 blocking for media, a media packet is sent on a media byway when it is
 first established. After the first packet, the client cannot be sure a
 subsequent packet will be delayed due to the ordering guarantees
-provided by HTTP3 within a stream. To combat this, both sides
+provided by HTTP/3 within a stream. To combat this, both sides
 acknowledge the receipt of each packet using an ACK message sent over
 the media byways, in the opposite direction of the
 media. Consequently, in a forward media byway, ACK messages are
@@ -743,13 +742,13 @@ using a cloud calling service -  Webex - and gets PSTN trunking from the
 provider Comcast.
 
 The first stage is for Webex to set up their service to be able to work as
-an OAuth Resource Server, working with ComCast as the Authorization
-Server, and to obtain the baseURI that ComCast uses for RIPP authorization. Assume
+an OAuth Resource Server, working with Comcast as the Authorization
+Server, and to obtain the baseURI that Comcast uses for RIPP authorization. Assume
 that this is "https\://ripp.comcast.com". The next stage is the admin
 from ACME logs on to their Webex account and selects Comcast as the RIPP
 provider.  This will cause the OAUTH dance and the admin will end up
-having approved WebEX to use Acme's account at ComCast for RIPP. Webex
-will have received an OAuth access and refresh token from ComCast and be
+having approved WebEX to use Acme's account at Comcast for RIPP. Webex
+will have received an OAuth access and refresh token from Comcast and be
 passed the new Provider Trunk URI. At this point, provisioning is complete
 and calls can start. Assume the provider trunk URI returned is
 "https\://ripp.comcast.com/trunks/wbx234acme".
@@ -767,7 +766,7 @@ body of:
 }
 ~~~
 
-The ComCast server will then find out the advertised capability of the
+The Comcast server will then find out the advertised capability of the
 Webex trunk by doing a 
 GET to https\://ripp.webex/trunks/acme123/capAdv and using the
 secret1234 as an authorization token. Webex supports the default values
@@ -907,13 +906,13 @@ defined in [@RFC6749] for the authorization code grant
 flow. Furthermore, the RIPP provider MUST mint a new URI identifying
 this new RIPP trunk. This URI MUST contain a path component, and MUST
 NOT contain any URI parameters. This URI MUST be an HTTPS URI, and
-HTTP3 MUST be supported for this URI. The path component MUST be a
+HTTP/3 MUST be supported for this URI. The path component MUST be a
 globally unique identifier for this trunk, and not depend on the authority
 component as part of the namespace for purposes of uniqueness. 
 
 As an example, the following is a valid RIPP trunk URI:
 
-https://ripp.telco.com/trunks/6ha937fjjj9
+https://ripp.comcast.com/trunks/6ha937fjjj9
 
 This URI MUST be returned in the OAuth2.0 parameter "ripp-trunk", and
 MUST be base64 encoded.
@@ -936,7 +935,7 @@ object is specified in Section (#syntax).
 
 The RIPP provisioning object MUST contain a RIPP trunk consumer URI and
 a RIPP bearer token. The RIPP consumer MUST mint an HTTPS URI for the
-RIPP Trunk consumer URI. This URI MUST support HTTP3, and MUST implement
+RIPP Trunk consumer URI. This URI MUST support HTTP/3, and MUST implement
 the behaviours associated with capabilities and new call operations as
 defined below. This URI MUST have a path component,  MUST NOT
 contain any URI parameters, and MUST have a path segment which is
@@ -984,7 +983,7 @@ extensible through an IANA registry.
 
 * max-bitrate: The maximum bitrate for receiving voice. This is
   specified in bits per second. It MUST be greater than or equal to
-  32000. Its default is 32000.
+  64000. Its default is 64000.
 
 * max-samplerate: The maximum sample rate for audio. This is
   specified in Hz. It MUST be greater than or equal to 8000. Its
@@ -1061,7 +1060,7 @@ to application services - such as a recorder - in which case the
 parameter would take the form of an RFC822 email address.
 
 The client MUST add an HTTP Identity header field. This header field
-is defined in Section XX as a new HTTP header field. Its contents MUST
+is defined in Section (#iana) as a new HTTP header field. Its contents MUST
 be a valid Identity header field as defined by [@RFC8224]. This
 ensures that all calls utilize secure caller ID. A RIPP client MUST
 NOT place the caller ID in any place except for the Identity header
@@ -1105,14 +1104,14 @@ the SBC.
 
 For example, the RIPP trunk URI for such a telco operator might be:
 
-https://sbc-farm.telco.com/trunks/6ha937fjjj9
+https://sbc-farm.comcast.com/trunks/6ha937fjjj9
 
 which always resolves to 1.2.3.4, the VIP shared amongst the SBC
 farm. Consequently, a request to this RIPP trunk would hit a specific
 SBC behind the VIP. This SBC would then create the call and return a
 call URL which points to its actual IP, using DNS
 
-https://sbc23.sbc-farm.telco.com/call/ha8d7f6fso29s88clzopa
+https://sbc23.sbc-farm.comcast.com/call/ha8d7f6fso29s88clzopa
 
 However, the HTTP URI for the call MUST NOT contain an IP address; it
 MUST utilize a valid host or domain name. This is to ensure that TLS
@@ -1198,7 +1197,7 @@ The use of multiple media byways in either direction is essential to
 low latency operation of RIPP. This is because, as describe below,
 media frames are sprayed across these byways in order to ensure that
 there is never head-of-line blocking. This is possible because, in
-HTTP3, each transaction is carried over a separate QUIC stream, and
+HTTP/3, each transaction is carried over a separate QUIC stream, and
 QUIC streams run on top of UDP. Furthermore, a QUIC stream does not
 require a handshake to be established - creation of new QUIC streams
 is a 0-RTT process.
@@ -1210,7 +1209,7 @@ To open a forward media byway, the client MUST initiate a POST request
 to the /media-forward endpoint on the call URI, and MUST include a RIPP-Media header field in the request
 headers. Similarly, to open a reverse media byway, the client MUST
 initiate a POST request to the /media-reverse endpoint of the call
-URI. It MUST NOT includea a RIPP-Media header field
+URI. It MUST NOT include a RIPP-Media header field
 in the request headers. The server MUST include the RIPP-Media header
 in the response headers. The RIPP-Media header contains the properties for the
 byway - the sequence number base, the timestamp base, and the name of
@@ -1399,7 +1398,7 @@ additional behaviors.
 
 Signaling allows an application layer call end to be sent. This will
 also cause each side to terminate the the outstanding transactions
-using end flags per HTTP3 specs. However, the opposite is not true -
+using end flags per HTTP/3 specs. However, the opposite is not true -
 ending of the transactions or connection does not impact the call
 state.
 
@@ -1407,13 +1406,13 @@ A server MUST maintain a timer, with a value equal to one second, for
 which it will hold the call in its current state without any active
 signalling byway. If the server does not receive a signalling
 byway before the expiration of this timer, it MUST consider the
-call as ended. 
+call as ended. Once the call has ended, the call resource SHOULD be destroyed. 
 
 If the server receives a signalling or media byway for a call that
-is in the TERMINATED, it MUST reject the transaction with an XX
-response code.
+is TERMINATED, it MUST reject the transaction with an 404
+response code, since the resource no longer exists.
 
-Once the call has ended, the call resource SHOULD be destroyed. 
+
 
 ## GET Transactions
 
@@ -1442,7 +1441,7 @@ a burst once the media byways are re-established. This ensures there
 is no packet loss (though there will be jitter) during the migration
 period. 
 
-We dont use QUIC layer connection migration, as that is triggered by
+We don't use QUIC layer connection migration, as that is triggered by
 network changes and not likely to be exposed to applications.
 
 ## Graceful Call Migration: Client
@@ -1486,7 +1485,7 @@ the call.
 
 RIPP is designed to be easy to gateway from SIP. The expectation is
 that RIPP will be implemented in SBCs and softswitches. A SIP to RIPP
-gateway has to be call-stateful, acting as a b2bua, in order to
+gateway has to be call-stateful, acting as a B2BUA, in order to
 gateway to RIPP. Furthermore, a SIP to RIPP gateway has to act as a
 media termination point in SIP. It has to perform any SRTP decryption
 and encryption, and it must de-packetize RTP packets to extract their
@@ -1515,7 +1514,7 @@ gateway function in order to maximize interoperability.
 <{{ripp-api.raml}}
 
 
-# IANA Considerations
+# IANA Considerations {#iana}
 
 # Security Considerations
 
