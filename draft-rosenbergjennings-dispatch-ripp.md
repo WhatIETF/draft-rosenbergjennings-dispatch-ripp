@@ -741,34 +741,40 @@ This section describes a typical example where one company, Acme, is
 using a cloud calling service -  Webex - and gets PSTN trunking from the
 provider Comcast.
 
+The sequence diagram for the outbound call flow is here:
+
+~~~ ascii-art
+<{{seq-diagram-out.txt}}
+~~~
+
 The first stage is for Webex to set up their service to be able to work as
 an OAuth Resource Server, working with Comcast as the Authorization
 Server, and to obtain the baseURI that Comcast uses for RIPP authorization. Assume
 that this is "https\://ripp.comcast.com". The next stage is the admin
 from ACME logs on to their Webex account and selects Comcast as the RIPP
 provider.  This will cause the OAUTH dance and the admin will end up
-having approved WebEX to use Acme's account at Comcast for RIPP. Webex
+having approved Webex to use Acme's account at Comcast for RIPP. Webex
 will have received an OAuth access and refresh token from Comcast and be
 passed the new Provider Trunk URI. At this point, provisioning is complete
 and calls can start. Assume the provider trunk URI returned is
-"https\://ripp.comcast.com/trunks/wbx234acme".
+"https\://ripp.comcast.com/trunks/123".
 
 Webex will start by setting up for incoming calls at
-"https\://ripp.webex/trunks/acme123" with an opaque security token of
+"https\://ripp.webex/trunks/abc" with an opaque security token of
 "secret1234". This is done by making a HTTP PUT to
-https\://ripp.comcast.com/trunks/wbx234acme/consumerTrunk with a JSON
+https\://ripp.comcast.com/trunks/123/consumerTrunk with a JSON
 body of:
 
 ~~~
 {
-"consumerTrunkURI":"https://ripp.webex/trunks/acme123 " ,
+"consumerTrunkURI":"https://ripp.webex/trunks/abc " ,
 "consumerToken":"secret1234"
 }
 ~~~
 
 The Comcast server will then find out the advertised capability of the
 Webex trunk by doing a 
-GET to https\://ripp.webex/trunks/acme123/capAdv and using the
+GET to https\://ripp.webex/trunks/abc/capAdv and using the
 secret1234 as an authorization token. Webex supports the default values
 but also support G.729 as an additional codec. It returns a JSON body of:
 
@@ -778,7 +784,7 @@ but also support G.729 as an additional codec. It returns a JSON body of:
 
 Similarly, the Webex server will find out the advertised capability of
 the trunk by doing a GET to
-https:\://ripp.comcast.com/trunks/wbx234acme/capAdv, using its OAuth
+https:\://ripp.comcast.com/trunks/123/capAdv, using its OAuth
 token. In this case, the response is empty, indicating that the
 capabilities are all default.
 
@@ -793,14 +799,14 @@ a 183. It can then can make an HTTP post to the consumer trunk URI to set up the
 incoming call. This is does by doing a POST to
 "https\://ripp.webex/trunks/acme123/calls&target=14085551212@e164.arpa" using the authorization token
 "secret1234". This will return a new call URI for this call of
-https\://ripp.webex/call/c567.
+https\://ripp.webex/call/xyz.
 
 At this point the SBC can make a long poll GET and PUT to
-"https\://ripp.webex/call/c567/events" to receive and send signaling
+"https\://ripp.webex/call/xyz/events" to receive and send signaling
 events for
 this call. The SBC will also open a number of media byways by making POST
-requests to "https\://ripp.webex/call/c567/media-forward" and
-"https\://ripp.webex/call/c567/media-reverse" to send and receive media.
+requests to "https\://ripp.webex/call/xyz/media-forward" and
+"https\://ripp.webex/call/xyz/media-reverse" to send and receive media.
 
 For each of the media-forward byways, the Comcast SBC will send a BywayPreamble
 that tells the other side meta data about what will be sent on this
@@ -813,7 +819,7 @@ for the frame by adding the baseSeqNum for the byway to the seqOffset
 for the frame. The timestamp for the media is computed using the
 baseTime for the byway plus the packeTime multiplied by the seqNum.
 
-The data from the https\://ripp.webex/call/c567/events request will be
+The data from the https\://ripp.webex/call/xyz/events request will be
 an infinite JSON array of Events. When the Webex server answers the
 call, the event returned would look like:
 
@@ -826,7 +832,7 @@ call, the event returned would look like:
 For Webex to make it outbound call, it is the same as the inbound call
 other than the provider trunk URI is used. The Webex server would act as
 a client and do a HTTP POST to
-"https\://ripp.comcast.com/trunks/wbx234acme/calls&target=14085551212@e164.arpa" to create a call URI
+"https\://ripp.comcast.com/trunks/123/calls&target=14085551212@e164.arpa" to create a call URI
 of "http\s://ripp.comcast.com/call/c789". From that point the flow is
 roughly the same as inbound with the client and server roles reversed.
 
