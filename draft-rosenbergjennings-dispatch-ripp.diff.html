@@ -1,17 +1,17 @@
-<html><head><title>wdiff draft-rosenbergjennings-dispatch-ripp-old.txt draft-rosenbergjennings-dispatch-ripp-00.txt</title></head><body>
+<html><head><title>wdiff draft-rosenbergjennings-dispatch-ripp-old.txt draft-rosenbergjennings-dispatch-ripp-01.txt</title></head><body>
 <pre>
 
 Network Working Group                                       J. Rosenberg
 
 Intended status: Standards Track                             C. Jennings
-Expires: <strike><font color='red'>December 25, 2019</font></strike> <strong><font color='green'>January 9, 2020</font></strong>                                   Cisco Systems
-                                                           <strike><font color='red'>June 23,</font></strike>
-                                                            <strong><font color='green'>A. Minessale
+Expires: January 9, 2020                                   Cisco Systems
+                                                            A. Minessale
                                                    Signalwire/Freeswitch
-                                                            July 8,</font></strong> 2019
+                                                            July 8, 2019
 
                   Real Time Internet Peering Protocol
-                draft-rosenbergjennings-dispatch-ripp-00
+                <strike><font color='red'>draft-rosenbergjennings-dispatch-ripp-00</font></strike>
+                <strong><font color='green'>draft-rosenbergjennings-dispatch-ripp-01</font></strong>
 
 Abstract
 
@@ -20,7 +20,7 @@ Abstract
    provider (such as a telco), and a trunking consumer (such as an
    enterprise, cloud PBX provider, cloud contact center provider, and so
    on).  RIPP is an alternative to SIP, SDP and RTP for this use case,
-   and is designed <strike><font color='red'>to run on top of</font></strike> <strong><font color='green'>as a web application using</font></strong> HTTP/3.  Using HTTP/3
+   and is designed as a web application using HTTP/3.  Using HTTP/3
    allows trunking consumers to more easily build their applications on
    top of cloud platforms, such as AWS, Azure and Google Cloud, all of
    which are heavily focused on HTTP based services.  RIPP also
@@ -49,7 +49,7 @@ Status of This Memo
    and may be updated, replaced, or obsoleted by other documents at any
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
-   This Internet-Draft will expire on <strike><font color='red'>December 25, 2019.</font></strike> <strong><font color='green'>January 9, 2020.</font></strong>
+   This Internet-Draft will expire on January 9, 2020.
 
 Copyright Notice
 
@@ -76,46 +76,46 @@ Table of Contents
    2.  Solution Requirements . . . . . . . . . . . . . . . . . . . .   6
    3.  Design Approaches . . . . . . . . . . . . . . . . . . . . . .   7
      3.1.  HBH, not E2E  . . . . . . . . . . . . . . . . . . . . . .   7
-     3.2.  Client-Server, not Agent-to-Agent . . . . . . . . . . . .   <strike><font color='red'>7</font></strike>   <strong><font color='green'>8</font></strong>
+     3.2.  Client-Server, not Agent-to-Agent . . . . . . . . . . . .   8
      3.3.  Signaling and Media Together  . . . . . . . . . . . . . .   8
-     3.4.  URIs not IPs  . . . . . . . . . . . . . . . . . . . . . .   <strike><font color='red'>8</font></strike>   <strong><font color='green'>9</font></strong>
+     3.4.  URIs not IPs  . . . . . . . . . . . . . . . . . . . . . .   9
      3.5.  OAuth not MTLS or private IP  . . . . . . . . . . . . . .   9
-     3.6.  TLS not SRTP or SIPS  . . . . . . . . . . . . . . . . . .   <strike><font color='red'>9</font></strike>  <strong><font color='green'>10</font></strong>
+     3.6.  TLS not SRTP or SIPS  . . . . . . . . . . . . . . . . . .  10
      3.7.  Authenticated CallerID  . . . . . . . . . . . . . . . . .  10
-     3.8.  Calls Separate from Connections . . . . . . . . . . . . .  <strike><font color='red'>10</font></strike>  <strong><font color='green'>11</font></strong>
+     3.8.  Calls Separate from Connections . . . . . . . . . . . . .  11
      3.9.  Path Validation, not ICE  . . . . . . . . . . . . . . . .  11
    4.  Reference Architecture  . . . . . . . . . . . . . . . . . . .  11
-   5.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>13</font></strike>  <strong><font color='green'>14</font></strong>
-   6.  Overview of Operation . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>14</font></strike>  <strong><font color='green'>15</font></strong>
-   7.  Example . . . . . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>17</font></strike>  <strong><font color='green'>18</font></strong>
-     7.1.  Inbound Call  . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>18</font></strike>  <strong><font color='green'>19</font></strong>
-     7.2.  Outbound Call . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>18</font></strike>  <strong><font color='green'>19</font></strong>
-     7.3.  End of call . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>19</font></strike>  <strong><font color='green'>20</font></strong>
-   8.  Detailed Behaviours . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>19</font></strike>  <strong><font color='green'>20</font></strong>
-     8.1.  Configuration . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>19</font></strike>  <strong><font color='green'>20</font></strong>
-     8.2.  RIPP Trunk Provisioning . . . . . . . . . . . . . . . . .  <strike><font color='red'>20</font></strike>  <strong><font color='green'>21</font></strong>
-     8.3.  Capabilities  . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>21</font></strike>  <strong><font color='green'>22</font></strong>
-     8.4.  Initiating Calls  . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>23</font></strike>  <strong><font color='green'>24</font></strong>
-     8.5.  Establishing the Signaling Byways . . . . . . . . . . . .  <strike><font color='red'>25</font></strike>  <strong><font color='green'>26</font></strong>
-     8.6.  The Media Sequence  . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>25</font></strike>  <strong><font color='green'>26</font></strong>
-     8.7.  Opening Media Byways  . . . . . . . . . . . . . . . . . .  <strike><font color='red'>26</font></strike>  <strong><font color='green'>27</font></strong>
-     8.8.  Sending and Receiving Media . . . . . . . . . . . . . . .  <strike><font color='red'>27</font></strike>  <strong><font color='green'>28</font></strong>
-     8.9.  Terminating and Re-establishing Connections and  Byways .  <strike><font color='red'>28</font></strike>  <strong><font color='green'>29</font></strong>
-     8.10. Signaling - Events  . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>29</font></strike>  <strong><font color='green'>30</font></strong>
-     8.11. Call Termination  . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>30</font></strike>  <strong><font color='green'>32</font></strong>
-     8.12. GET Transactions  . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>31</font></strike>  <strong><font color='green'>32</font></strong>
-     8.13. Graceful Call Migration: Server . . . . . . . . . . . . .  <strike><font color='red'>31</font></strike>  <strong><font color='green'>32</font></strong>
-     8.14. Graceful Call Migration: Client . . . . . . . . . . . . .  <strike><font color='red'>31</font></strike>  <strong><font color='green'>33</font></strong>
-     8.15. Ungraceful Call Migration . . . . . . . . . . . . . . . .  <strike><font color='red'>32</font></strike>  <strong><font color='green'>33</font></strong>
-   9.  SIP Gateway . . . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>32</font></strike>  <strong><font color='green'>33</font></strong>
-     9.1.  RIPP to SIP . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>33</font></strike>  <strong><font color='green'>34</font></strong>
-     9.2.  SIP to RIPP . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>33</font></strike>  <strong><font color='green'>34</font></strong>
-   10. RAML API  . . . . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>33</font></strike>  <strong><font color='green'>34</font></strong>
-   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>36</font></strike>  <strong><font color='green'>37</font></strong>
-   12. Security Considerations . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>36</font></strike>  <strong><font color='green'>37</font></strong>
-   13. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>36</font></strike>  <strong><font color='green'>37</font></strong>
-   14. Informative References  . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>36</font></strike>  <strong><font color='green'>37</font></strong>
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>37</font></strike>  <strong><font color='green'>38</font></strong>
+   5.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .  14
+   6.  Overview of Operation . . . . . . . . . . . . . . . . . . . .  15
+   7.  Example . . . . . . . . . . . . . . . . . . . . . . . . . . .  18
+     7.1.  Inbound Call  . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>19</font></strike>  <strong><font color='green'>20</font></strong>
+     7.2.  Outbound Call . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>19</font></strike>  <strong><font color='green'>21</font></strong>
+     7.3.  End of call . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>20</font></strike>  <strong><font color='green'>21</font></strong>
+   8.  Detailed Behaviours . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>20</font></strike>  <strong><font color='green'>22</font></strong>
+     8.1.  Configuration . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>20</font></strike>  <strong><font color='green'>22</font></strong>
+     8.2.  RIPP Trunk Provisioning . . . . . . . . . . . . . . . . .  <strike><font color='red'>21</font></strike>  <strong><font color='green'>22</font></strong>
+     8.3.  Capabilities  . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>22</font></strike>  <strong><font color='green'>24</font></strong>
+     8.4.  Initiating Calls  . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>24</font></strike>  <strong><font color='green'>26</font></strong>
+     8.5.  Establishing the Signaling Byways . . . . . . . . . . . .  <strike><font color='red'>26</font></strike>  <strong><font color='green'>28</font></strong>
+     8.6.  The Media Sequence  . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>26</font></strike>  <strong><font color='green'>28</font></strong>
+     8.7.  Opening Media Byways  . . . . . . . . . . . . . . . . . .  <strike><font color='red'>27</font></strike>  <strong><font color='green'>29</font></strong>
+     8.8.  Sending and Receiving Media . . . . . . . . . . . . . . .  <strike><font color='red'>28</font></strike>  <strong><font color='green'>30</font></strong>
+     8.9.  Terminating and Re-establishing Connections and  Byways .  <strike><font color='red'>29</font></strike>  <strong><font color='green'>31</font></strong>
+     8.10. Signaling - Events  . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>30</font></strike>  <strong><font color='green'>31</font></strong>
+     8.11. Call Termination  . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>32</font></strike>  <strong><font color='green'>33</font></strong>
+     8.12. GET Transactions  . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>32</font></strike>  <strong><font color='green'>34</font></strong>
+     8.13. Graceful Call Migration: Server . . . . . . . . . . . . .  <strike><font color='red'>32</font></strike>  <strong><font color='green'>34</font></strong>
+     8.14. Graceful Call Migration: Client . . . . . . . . . . . . .  <strike><font color='red'>33</font></strike>  <strong><font color='green'>34</font></strong>
+     8.15. Ungraceful Call Migration . . . . . . . . . . . . . . . .  <strike><font color='red'>33</font></strike>  <strong><font color='green'>34</font></strong>
+   9.  SIP Gateway . . . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>33</font></strike>  <strong><font color='green'>35</font></strong>
+     9.1.  RIPP to SIP . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>34</font></strike>  <strong><font color='green'>36</font></strong>
+     9.2.  SIP to RIPP . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>34</font></strike>  <strong><font color='green'>36</font></strong>
+   10. RAML API  . . . . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>34</font></strike>  <strong><font color='green'>36</font></strong>
+   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>37</font></strike>  <strong><font color='green'>39</font></strong>
+   12. Security Considerations . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>37</font></strike>  <strong><font color='green'>39</font></strong>
+   13. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>37</font></strike>  <strong><font color='green'>39</font></strong>
+   14. Informative References  . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>37</font></strike>  <strong><font color='green'>39</font></strong>
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  <strike><font color='red'>38</font></strike>  <strong><font color='green'>40</font></strong>
 
 1.  Introduction
 
@@ -245,7 +245,7 @@ Table of Contents
    HTTP2 [RFC7540] addressed the second of these with the introduction
    of pushes and long running requests.  However, its usage of TCP was
    still a problem.  This has finally been addressed with the arrival of
-   QUIC [I-D.ietf-quic-transport] and <strike><font color='red'>HTTP3.</font></strike> <strong><font color='green'>HTTP/3.</font></strong>  QUIC is based on UDP, and
+   QUIC [I-D.ietf-quic-transport] and HTTP/3.  QUIC is based on UDP, and
    it introduces the concept of a stream that can be set up with zero
    RTT.  These streams are carried over UDP, and though are still
    reliable, there is no head of line blocking across streams.  This
@@ -256,13 +256,12 @@ Table of Contents
    The protocol defined here is based on the following requirements:
 
    REQ1: The solution shall not require extensions or modifications to
-   <strike><font color='red'>HTTP3.</font></strike>
-   <strong><font color='green'>HTTP/3.</font></strong>
+   HTTP/3.
 
    REQ2: The solution shall work with both L4 and L7 HTTP load balancers
 
    REQ3: The solution shall work in ways that are compatible with best
-   practices for load balancers and proxies supporting <strike><font color='red'>HTTP3,</font></strike> <strong><font color='green'>HTTP/3,</font></strong> and not
+   practices for load balancers and proxies supporting HTTP/3, and not
    require any special changes to these load balancers in order to
    function.
 
@@ -289,10 +288,9 @@ Table of Contents
    deployment by PSTN termination and origination providers who do not
    utilize cloud platforms
 
-   REQ10: The solution shall <strike><font color='red'>build-in callerID security</font></strike> <strong><font color='green'>require authentication</font></strong> and <strike><font color='red'>protections
-   from robocalling at the outset</font></strike> <strong><font color='green'>encryption, with
+   REQ10: The solution shall require authentication and encryption, with
    no opportunity to disable them.  Furthermore, it will require secure
-   callerID, with no provision for insecure callerID</font></strong>
+   callerID, with no provision for insecure callerID
 
    REQ11: The solution shall provide low latency for media
 
@@ -340,9 +338,9 @@ Table of Contents
 
    HTTP does not operate this way.  In HTTP, one entity is a client, and
    the other is a server.  There is no way for the server to send
-   messages asynchronously towards the client.  <strike><font color='red'>HTTP3</font></strike>  <strong><font color='green'>HTTP/3</font></strong> does enable two
+   messages asynchronously towards the client.  HTTP/3 does enable two
    distinct techniques that facilitate server messaging towards the
-   client.  But to use them, RIPP must abide by <strike><font color='red'>HTTP3</font></strike> <strong><font color='green'>HTTP/3</font></strong> rules, and that
+   client.  But to use them, RIPP must abide by HTTP/3 rules, and that
    means distinct roles for clients and servers.  Clients must always
    initiate connections and send requests, not servers.
 
@@ -393,7 +391,7 @@ Table of Contents
 
    HTTP of course does not suffer from this.  In general, "addressing",
    to the degree it exists at all, is done with HTTP URIs.  RIPP follows
-   this pattern.  RIPP - as <strike><font color='red'>an</font></strike> <strong><font color='green'>a web</font></strong> application <strike><font color='red'>on top of HTTP3</font></strike> <strong><font color='green'>that uses HTTP/3</font></strong> - does
+   this pattern.  RIPP - as a web application that uses HTTP/3 - does
    not use or convey any IP addresses or ports.  Furthermore, the client
    never provides addressing to the server - all traffic is sent in the
    reverse direction over the connection.
@@ -443,14 +441,14 @@ Table of Contents
    Because of the HBH nature of RIPP, security is done fundamentally at
    the connection level - identically to HTTP.  Since media is also
    carrier over the HTTP connection, both signalling and media are
-   covered by the connection security provided by <strike><font color='red'>HTTP3.</font></strike> <strong><font color='green'>HTTP/3.</font></strong>
+   covered by the connection security provided by HTTP/3.
 
-   Because of the mandatory usage of TLS1.3 with <strike><font color='red'>HTTP3,</font></strike> <strong><font color='green'>HTTP/3,</font></strong> and the
-   expected widespread deployment of <strike><font color='red'>HTTP3,</font></strike> <strong><font color='green'>HTTP/3,</font></strong> running VoIP on top of <strike><font color='red'>HTTP3</font></strike>
-   <strong><font color='green'>HTTP/3</font></strong> will bring built-in encryption of media and signalling between
+   Because of the mandatory usage of TLS1.3 with HTTP/3, and the
+   expected widespread deployment of HTTP/3, running VoIP on top of
+   HTTP/3 will bring built-in encryption of media and signalling between
    peering domains, which is a notable improvement over the current
-   deployment situation.  It is also necessary in order to utilize <strike><font color='red'>HTTP3.</font></strike>
-   <strong><font color='green'>HTTP/3.</font></strong>
+   deployment situation.  It is also necessary in order to utilize
+   HTTP/3.
 
    Because of this, RIPP does not support SRTP.  If a client receives a
    SIP call with SRTP, it must terminate the SRTP and decrypt media
@@ -489,9 +487,7 @@ Table of Contents
 
 3.9.  Path Validation, not ICE
 
-   <strike><font color='red'>HTTP3</font></strike>
-
-   <strong><font color='green'>HTTP/3</font></strong> is designed to work through NAT as a client-server protocol.
+   HTTP/3 is designed to work through NAT as a client-server protocol.
    It has built in techniques for dealing with NAT re-bindings, IP
    address changes due to a client moving between networks (e.g., wifi
    to cellular data).  It has built in path validation that ensures that
@@ -501,7 +497,7 @@ Table of Contents
    not efficiently nor completely.  To work with HTTP, RIPP must utilize
    the HTTP approaches for these problems.  Consequently, RIPP does not
    utilize ICE and has no specific considerations for NAT traversal, as
-   these are handled by <strike><font color='red'>HTTP3</font></strike> <strong><font color='green'>HTTP/3</font></strong> itself.
+   these are handled by HTTP/3 itself.
 
 4.  Reference Architecture
 
@@ -569,23 +565,23 @@ Table of Contents
                                                     +------------+
 
    Since both the trunk provider and trunk consumer implement the client
-   and server roles, both entities will typically have a load balancer <strong><font color='green'>-
-   perhaps a server component, or a cloud-based service,</font></strong> used to receive
+   and server roles, both entities will typically have a load balancer -
+   perhaps a server component, or a cloud-based service, used to receive
    incoming calls.  This is not required, of course.  It is worth
    restating that this load balancer is NOT specific to RIPP - it is any
    off-the-shelf HTTP load balancer which supports HTTP/3.  No specific
    support for RIPP is required.  RIPP is just a usage of HTTP.
 
-   Because RIPP clients and servers are nothing more than <strike><font color='red'>HTTP3</font></strike> <strong><font color='green'>HTTP/3</font></strong>
+   Because RIPP clients and servers are nothing more than HTTP/3
    applications, the behavior or RIPP is specified entirely by
-   describing how various RIPP procedures map to the core <strike><font color='red'>HTTP3</font></strike> <strong><font color='green'>HTTP/3</font></strong>
+   describing how various RIPP procedures map to the core HTTP/3
    primitives available to applications - opening connections, closing
    connections, sending requests and responses, receiving requests and
    responses, and setting header fields and bodies.  That's it.
 
 5.  Terminology
 
-   This specification follows the terminology of <strike><font color='red'>HTTP3</font></strike> <strong><font color='green'>HTTP/3</font></strong> - specifically:
+   This specification follows the terminology of HTTP/3 - specifically:
 
    RIPP Client: The entity that initiates a call, by acting as an HTTP
    client.
@@ -619,8 +615,8 @@ Table of Contents
    services from the trunking provider.  The relationship between the
    trunking consumer and trunking provider is static and does not vary
    from call to call. (e.g., Verizon would be the trunking provider to
-   an <strike><font color='red'>enterprise,</font></strike> <strong><font color='green'>enterprise consumer,</font></strong> and the enterprise would be the trunking <strike><font color='red'>customer</font></strike>
-   <strong><font color='green'>consumer</font></strong> of Verizon.  A trunking consumer implements a RIPP client to
+   an enterprise consumer, and the enterprise would be the trunking
+   consumer of Verizon.  A trunking consumer implements a RIPP client to
    initiate calls to the trunking provider, and a RIPP server to receive
    them.
 
@@ -647,7 +643,7 @@ Table of Contents
    RIPP Trunk Consumer URI: An HTTP URI hosted by the trunking consumer,
    which represents the RIPP trunk from its perspective.
 
-   Byway: A bidirectional byte stream between a <strike><font color='red'>RIPR provide</font></strike> <strong><font color='green'>RIPP provider</font></strong> and
+   Byway: A bidirectional byte stream between a RIPP provider and
    consumer.  A Byway passes its data through a long-running HTTP
    request and a long-running HTTP response.  Byways are used for
    signalling and media.
@@ -665,10 +661,9 @@ Table of Contents
    specification, but expected to follow existing best practices used by
    web applications.
 
-   The next step is provisioning.  Once a trunking customer has
-   <strike><font color='red'>purchased</font></strike> <strong><font color='green'>obtained
-   access to</font></strong> services from a trunking <strike><font color='red'>provider,</font></strike> <strong><font color='green'>provider (by purchasing them , for
-   example),</font></strong> the trunking customer can perform provisioning.
+   The next step is provisioning.  Once a trunking customer has obtained
+   access to services from a trunking provider (by purchasing them , for
+   example), the trunking customer can perform provisioning.
    Provisioning is the process by which a trunking customer connects a
    RIPP trunk from a trunking provider to trunking consumer.
    Provisioning is accomplished using
@@ -684,7 +679,7 @@ Table of Contents
    with the trunking provider.  The trunking provider authorizes the
    access, generates an authorization code, and generates a RIPP trunk
    provider URI.  The provider URI is included in a new OAuth parameter
-   defined by this <strike><font color='red'>specification,and</font></strike> <strong><font color='green'>specification, and</font></strong> is returned as a parameter in the
+   defined by this specification, and is returned as a parameter in the
    authorization response.  The trunking consumer trades the
    authorization code for a refresh and access token, and stores the
    provider URI.  Finally, the trunking consumer mints a bearer token
@@ -734,7 +729,7 @@ Table of Contents
    signalling.  One is a GET, retrieving call events from its peer.  THe
    other is a PUT, sending call events to its peer.  Each of these
    produces a unidirectional data stream, one in the forwards direction,
-   one in the reverse.  These are called byways.  <strike><font color='red'>HTTP3</font></strike>  <strong><font color='green'>HTTP/3</font></strong> ensures zero
+   one in the reverse.  These are called byways.  HTTP/3 ensures zero
    RTT for setup of these byways.
 
    Signaling commands are encoded into the signalling byway using
@@ -750,7 +745,7 @@ Table of Contents
    blocking for media, a media packet is sent on a media byway when it
    is first established.  After the first packet, the client cannot be
    sure a subsequent packet will be delayed due to the ordering
-   guarantees provided by <strike><font color='red'>HTTP3</font></strike> <strong><font color='green'>HTTP/3</font></strong> within a stream.  To combat this, both
+   guarantees provided by HTTP/3 within a stream.  To combat this, both
    sides acknowledge the receipt of each packet using an ACK message
    sent over the media byways, in the opposite direction of the media.
    Consequently, in a forward media byway, ACK messages are carried from
@@ -784,40 +779,119 @@ Table of Contents
    using a cloud calling service - Webex - and gets PSTN trunking from
    the provider Comcast.
 
-   The <strong><font color='green'>sequence diagram for the outbound call flow is here:
+   The sequence diagram for the outbound call flow is here:
 
-                         &lt;{{seq-diagram-out.txt}}
+                         <strike><font color='red'>&lt;{{seq-diagram-out.txt}}</font></strike>
 
-   The</font></strong> first stage is for Webex to set up their service to be able to
-   work as an OAuth Resource Server, working with <strike><font color='red'>ComCast</font></strike> <strong><font color='green'>Comcast</font></strong> as the
-   Authorization Server, and to obtain the baseURI that <strike><font color='red'>ComCast</font></strike> <strong><font color='green'>Comcast</font></strong> uses for
+<strong><font color='green'>+-----------+                                               +-----------+
+| consumer  |                                               | provider  |
++-----------+                                               +-----------+
+      |                                                           |
+      | PUT /trunks/123/consumerTrunk                             |
+      |----------------------------------------------------------&gt;|
+      | --------------------------------\                         |
+      |-| consumer trunk is /trunks/abc |                         |
+      | |-------------------------------|                         |
+      |                                                           |
+      |                                    GET /trunks/abc/capAdv |
+      |&lt;----------------------------------------------------------|
+      |                                                           |
+      | 200 OK w. consumer caps                                   |
+      |----------------------------------------------------------&gt;|
+      |                                                           |
+      | GET /trunks/123/capAdv                                    |
+      |----------------------------------------------------------&gt;|
+      |                                                           |
+      |                                   200 OK w. provider caps |
+      |&lt;----------------------------------------------------------|
+      |                                                           |
+      | POST /trunks/123/calls&amp;target=14085551212@e164.arpa       |
+      |----------------------------------------------------------&gt;|
+      |                                                           |
+      |                                              202 Created  |
+      |&lt;----------------------------------------------------------|
+      | ----------------------\                                   |
+      |-| Location: /call/xyz |                                   |
+      | |---------------------|                                   |
+      |                                                           |
+      | GET /call/xyz/event                                       |
+      |----------------------------------------------------------&gt;|
+      | ----------------------\                                   |
+      |-| signaling byway s2c |                                   |
+      | |---------------------|                                   |
+      |                                                           |
+      |                                                    200 OK |
+      |&lt;----------------------------------------------------------|
+      |                                                           |
+      | POST /call/xyz/media-forward                              |
+      |----------------------------------------------------------&gt;|
+      | ------------------\                                       |
+      |-| media byway c2s |                                       |
+      | |-----------------|                                       |
+      |                                                           |
+      |                                                    200 OK |
+      |&lt;----------------------------------------------------------|
+      |                                                           |
+      | POST /call/xyz/media-reverse                              |
+      |----------------------------------------------------------&gt;|
+      | ------------------\                                       |
+      |-| media byway s2c |                                       |
+      | |-----------------|                                       |
+      |                                                           |
+      |                                                    200 OK |
+      |&lt;----------------------------------------------------------|
+      |                                   ----------------------\ |
+      |                                   | ringing eg. SIP 180 |-|
+      |                                   |---------------------| |
+      |                                                           |
+      |                                             ringing event |
+      |&lt;----------------------------------------------------------|
+      |                                  -----------------------\ |
+      |                                  | accepted eg. SIP 200 |-|
+      |                                  |----------------------| |
+      |                                                           |
+      |                                                  accepted |
+      |&lt;----------------------------------------------------------|
+      | ------------------\                                       |
+      |-| caller hangs up |                                       |
+      | |-----------------|                                       |
+      |                                                           |
+      | PUT /call/xyz/event                                       |
+      |----------------------------------------------------------&gt;|
+      | ------------\                                             |
+      |-| end event |                                             |
+      | |-----------|                                             |
+      |                                                           |
+      |                                                    200 OK |
+      |&lt;----------------------------------------------------------|
+      |                                                           |</font></strong>
+
+   The first stage is for Webex to set up their service to be able to
+   work as an OAuth Resource Server, working with Comcast as the
+   Authorization Server, and to obtain the baseURI that Comcast uses for
    RIPP authorization.  Assume that this is "https://ripp.comcast.com".
    The next stage is the admin from ACME logs on to their Webex account
    and selects Comcast as the RIPP provider.  This will cause the OAUTH
-   dance and the admin will end up having approved <strike><font color='red'>WebEX</font></strike> <strong><font color='green'>Webex</font></strong> to use Acme's
-   account at <strike><font color='red'>ComCast</font></strike> <strong><font color='green'>Comcast</font></strong> for RIPP.  Webex will have received an OAuth
-   access and refresh token from <strike><font color='red'>ComCast</font></strike> <strong><font color='green'>Comcast</font></strong> and be passed the new Provider
+   dance and the admin will end up having approved Webex to use Acme's
+   account at Comcast for RIPP.  Webex will have received an OAuth
+   access and refresh token from Comcast and be passed the new Provider
    Trunk URI.  At this point, provisioning is complete and calls can
    start.  Assume the provider trunk URI returned is
-   <strike><font color='red'>"https://ripp.comcast.com/trunks/wbx234acme".</font></strike>
-   <strong><font color='green'>"https://ripp.comcast.com/trunks/123".</font></strong>
+   "https://ripp.comcast.com/trunks/123".
 
    Webex will start by setting up for incoming calls at
-   <strike><font color='red'>"https://ripp.webex/trunks/acme123"</font></strike>
-   <strong><font color='green'>"https://ripp.webex/trunks/abc"</font></strong> with an opaque security token of
+   "https://ripp.webex/trunks/abc" with an opaque security token of
    "secret1234".  This is done by making a HTTP PUT to
-   <strike><font color='red'>https://ripp.comcast.com/trunks/wbx234acme/consumerTrunk</font></strike>
-   <strong><font color='green'>https://ripp.comcast.com/trunks/123/consumerTrunk</font></strong> with a JSON body
+   https://ripp.comcast.com/trunks/123/consumerTrunk with a JSON body
    of:
 
            {
-         <strike><font color='red'>"consumerTrunkURI":"https://ripp.webex/trunks/acme123</font></strike>
-           <strong><font color='green'>"consumerTrunkURI":"https://ripp.webex/trunks/abc</font></strong> " ,
+           "consumerTrunkURI":"https://ripp.webex/trunks/abc " ,
            "consumerToken":"secret1234"
            }
 
-   The <strike><font color='red'>ComCast</font></strike> <strong><font color='green'>Comcast</font></strong> server will then find out the advertised capability of
-   the Webex trunk by doing a GET to <strike><font color='red'>https://ripp.webex/trunks/acme123/</font></strike> <strong><font color='green'>https://ripp.webex/trunks/abc/</font></strong>
+   The Comcast server will then find out the advertised capability of
+   the Webex trunk by doing a GET to https://ripp.webex/trunks/abc/
    capAdv and using the secret1234 as an authorization token.  Webex
    supports the default values but also support G.729 as an additional
    codec.  It returns a JSON body of:
@@ -825,9 +899,8 @@ Table of Contents
                           {  "audio/g729": true }
 
    Similarly, the Webex server will find out the advertised capability
-   of the trunk by doing a GET to
-   <strike><font color='red'>https:://ripp.comcast.com/trunks/wbx234acme/capAdv,</font></strike> <strong><font color='green'>https:://ripp.comcast.com/trunks/123/
-   capAdv,</font></strong> using its OAuth token.  In this case, the response is empty,
+   of the trunk by doing a GET to https:://ripp.comcast.com/trunks/123/
+   capAdv, using its OAuth token.  In this case, the response is empty,
    indicating that the capabilities are all default.
 
    At this point we are ready for inbound or outbound calls.
@@ -842,16 +915,13 @@ Table of Contents
    This is does by doing a POST to "https://ripp.webex/trunks/acme123/
    calls&amp;target=14085551212@e164.arpa" using the authorization token
    "secret1234".  This will return a new call URI for this call of
-   <strike><font color='red'>https://ripp.webex/call/c567.</font></strike>
-   <strong><font color='green'>https://ripp.webex/call/xyz.</font></strong>
+   https://ripp.webex/call/xyz.
 
    At this point the SBC can make a long poll GET and PUT to
-   <strike><font color='red'>"https://ripp.webex/call/c567/events"</font></strike>
-   <strong><font color='green'>"https://ripp.webex/call/xyz/events"</font></strong> to receive and send signaling
+   "https://ripp.webex/call/xyz/events" to receive and send signaling
    events for this call.  The SBC will also open a number of media
-   byways by making POST requests to <strike><font color='red'>"https://ripp.webex/call/c567/
-   media-forward"</font></strike> <strong><font color='green'>"https://ripp.webex/call/xyz/media-
-   forward"</font></strong> and <strike><font color='red'>"https://ripp.webex/call/c567/media-reverse"</font></strike> <strong><font color='green'>"https://ripp.webex/call/xyz/media-reverse"</font></strong> to send and
+   byways by making POST requests to "https://ripp.webex/call/xyz/media-
+   forward" and "https://ripp.webex/call/xyz/media-reverse" to send and
    receive media.
 
    For each of the media-forward byways, the Comcast SBC will send a
@@ -866,7 +936,7 @@ Table of Contents
    media is computed using the baseTime for the byway plus the packeTime
    multiplied by the seqNum.
 
-   The data from the <strike><font color='red'>https://ripp.webex/call/c567/events</font></strike> <strong><font color='green'>https://ripp.webex/call/xyz/events</font></strong> request will be
+   The data from the https://ripp.webex/call/xyz/events request will be
    an infinite JSON array of Events.  When the Webex server answers the
    call, the event returned would look like:
 
@@ -877,8 +947,7 @@ Table of Contents
    For Webex to make it outbound call, it is the same as the inbound
    call other than the provider trunk URI is used.  The Webex server
    would act as a client and do a HTTP POST to
-   <strike><font color='red'>"https://ripp.comcast.com/trunks/wbx234acme/</font></strike>
-   <strong><font color='green'>"https://ripp.comcast.com/trunks/123/</font></strong>
+   "https://ripp.comcast.com/trunks/123/
    calls&amp;target=14085551212@e164.arpa" to create a call URI of
    "http\s://ripp.comcast.com/call/c789".  From that point the flow is
    roughly the same as inbound with the client and server roles
@@ -956,16 +1025,14 @@ Table of Contents
    flow.  Furthermore, the RIPP provider MUST mint a new URI identifying
    this new RIPP trunk.  This URI MUST contain a path component, and
    MUST NOT contain any URI parameters.  This URI MUST be an HTTPS URI,
-   and <strike><font color='red'>HTTP3</font></strike> <strong><font color='green'>HTTP/3</font></strong> MUST be supported for this URI.  The path component MUST
+   and HTTP/3 MUST be supported for this URI.  The path component MUST
    be a globally unique identifier for this trunk, and not depend on the
    authority component as part of the namespace for purposes of
    uniqueness.
 
    As an example, the following is a valid RIPP trunk URI:
 
-   <strike><font color='red'>&lt;https://ripp.telco.com/trunks/6ha937fjjj9&gt;</font></strike>
-
-   <strong><font color='green'>&lt;https://ripp.comcast.com/trunks/6ha937fjjj9&gt;</font></strong>
+   &lt;https://ripp.comcast.com/trunks/6ha937fjjj9&gt;
 
    This URI MUST be returned in the OAuth2.0 parameter "ripp-trunk", and
    MUST be base64 encoded.
@@ -989,7 +1056,7 @@ Table of Contents
 
    The RIPP provisioning object MUST contain a RIPP trunk consumer URI
    and a RIPP bearer token.  The RIPP consumer MUST mint an HTTPS URI
-   for the RIPP Trunk consumer URI.  This URI MUST support <strike><font color='red'>HTTP3,</font></strike> <strong><font color='green'>HTTP/3,</font></strong> and
+   for the RIPP Trunk consumer URI.  This URI MUST support HTTP/3, and
    MUST implement the behaviours associated with capabilities and new
    call operations as defined below.  This URI MUST have a path
    component, MUST NOT contain any URI parameters, and MUST have a path
@@ -1038,7 +1105,7 @@ Table of Contents
    o  max-bitrate: The maximum bitrate for receiving voice.  This is
       specified in bits per second.  It MUST be greater than or equal to
 
-      1.  Its default is <strike><font color='red'>32000.</font></strike> <strong><font color='green'>64000.</font></strong>
+      1.  Its default is 64000.
 
    o  max-samplerate: The maximum sample rate for audio.  This is
       specified in Hz.  It MUST be greater than or equal to 8000.  Its
@@ -1118,13 +1185,12 @@ Table of Contents
    take the form of an RFC822 email address.
 
    The client MUST add an HTTP Identity header field.  This header field
-   is defined in Section <strike><font color='red'>XX</font></strike> <strong><font color='green'>Section 11</font></strong> as a new HTTP header field.  Its
+   is defined in Section Section 11 as a new HTTP header field.  Its
    contents MUST be a valid Identity header field as defined by
    [RFC8224].  This ensures that all calls utilize secure caller ID.  A
    RIPP client MUST NOT place the caller ID in any place except for the
    Identity header field in this request.  Specifically, a "From",
-   "Contact", or <strike><font color='red'>"P-
-   Asserted-ID"</font></strike> <strong><font color='green'>"P-Asserted-ID"</font></strong> header field MUST NOT ever appear.
+   "Contact", or "P-Asserted-ID" header field MUST NOT ever appear.
 
    o  CJ - I would prefer to add this another way without using a
       header.
@@ -1164,18 +1230,14 @@ Table of Contents
 
    For example, the RIPP trunk URI for such a telco operator might be:
 
-   <strike><font color='red'>&lt;https://sbc-farm.telco.com/trunks/6ha937fjjj9&gt;</font></strike>
-
-   <strong><font color='green'>&lt;https://sbc-farm.comcast.com/trunks/6ha937fjjj9&gt;</font></strong>
+   &lt;https://sbc-farm.comcast.com/trunks/6ha937fjjj9&gt;
 
    which always resolves to 1.2.3.4, the VIP shared amongst the SBC
    farm.  Consequently, a request to this RIPP trunk would hit a
    specific SBC behind the VIP.  This SBC would then create the call and
    return a call URL which points to its actual IP, using DNS
 
-   <strike><font color='red'>&lt;https://sbc23.sbc-farm.telco.com/call/ha8d7f6fso29s88clzopa&gt;</font></strike>
-
-   <strong><font color='green'>&lt;https://sbc23.sbc-farm.comcast.com/call/ha8d7f6fso29s88clzopa&gt;</font></strong>
+   &lt;https://sbc23.sbc-farm.comcast.com/call/ha8d7f6fso29s88clzopa&gt;
 
    However, the HTTP URI for the call MUST NOT contain an IP address; it
    MUST utilize a valid host or domain name.  This is to ensure that TLS
@@ -1260,8 +1322,7 @@ Table of Contents
    low latency operation of RIPP.  This is because, as describe below,
    media frames are sprayed across these byways in order to ensure that
    there is never head-of-line blocking.  This is possible because, in
-   <strike><font color='red'>HTTP3,</font></strike>
-   <strong><font color='green'>HTTP/3,</font></strong> each transaction is carried over a separate QUIC stream, and
+   HTTP/3, each transaction is carried over a separate QUIC stream, and
    QUIC streams run on top of UDP.  Furthermore, a QUIC stream does not
    require a handshake to be established - creation of new QUIC streams
    is a 0-RTT process.
@@ -1274,8 +1335,7 @@ Table of Contents
    include a RIPP-Media header field in the request headers.  Similarly,
    to open a reverse media byway, the client MUST initiate a POST
    request to the /media-reverse endpoint of the call URI.  It MUST NOT
-   <strike><font color='red'>includea</font></strike>
-   <strong><font color='green'>include</font></strong> a RIPP-Media header field in the request headers.  The server
+   include a RIPP-Media header field in the request headers.  The server
    MUST include the RIPP-Media header in the response headers.  The
    RIPP-Media header contains the properties for the byway - the
    sequence number base, the timestamp base, and the name of the codec.
@@ -1329,6 +1389,7 @@ Table of Contents
    for that direction, this is a signal that congestion has occurred.
    In such a case, the client or server MUST either drop packets at the
    application layer, or buffer them for later transmission.  [[TODO:
+
    can we play with QUIC priorities to prioritize newer media frames
    over older?]]
 
@@ -1460,7 +1521,7 @@ Table of Contents
 
    Signaling allows an application layer call end to be sent.  This will
    also cause each side to terminate the the outstanding transactions
-   using end flags per <strike><font color='red'>HTTP3</font></strike> <strong><font color='green'>HTTP/3</font></strong> specs.  However, the opposite is not true
+   using end flags per HTTP/3 specs.  However, the opposite is not true
    - ending of the transactions or connection does not impact the call
    state.
 
@@ -1468,16 +1529,12 @@ Table of Contents
    which it will hold the call in its current state without any active
    signalling byway.  If the server does not receive a signalling byway
    before the expiration of this timer, it MUST consider the call as
-   ended.  <strong><font color='green'>Once the call has ended, the call resource SHOULD be
-   destroyed.</font></strong>
+   ended.  Once the call has ended, the call resource SHOULD be
+   destroyed.
 
    If the server receives a signalling or media byway for a call that is
-   <strike><font color='red'>in the</font></strike>
-   TERMINATED, it MUST reject the transaction with an <strike><font color='red'>XX</font></strike> <strong><font color='green'>404</font></strong> response
-   <strike><font color='red'>code.
-
-   Once the call has ended,</font></strike> <strong><font color='green'>code,
-   since</font></strong> the <strike><font color='red'>call</font></strike> resource <strike><font color='red'>SHOULD be destroyed.</font></strike> <strong><font color='green'>no longer exists.</font></strong>
+   TERMINATED, it MUST reject the transaction with an 404 response code,
+   since the resource no longer exists.
 
 8.12.  GET Transactions
 
@@ -1506,7 +1563,7 @@ Table of Contents
    there is no packet loss (though there will be jitter) during the
    migration period.
 
-   We <strike><font color='red'>dont</font></strike> <strong><font color='green'>don't</font></strong> use QUIC layer connection migration, as that is triggered by
+   We don't use QUIC layer connection migration, as that is triggered by
    network changes and not likely to be exposed to applications.
 
 8.14.  Graceful Call Migration: Client
@@ -1551,7 +1608,7 @@ Table of Contents
 
    RIPP is designed to be easy to gateway from SIP.  The expectation is
    that RIPP will be implemented in SBCs and softswitches.  A SIP to
-   RIPP gateway has to be call-stateful, acting as a <strike><font color='red'>b2bua,</font></strike> <strong><font color='green'>B2BUA,</font></strong> in order to
+   RIPP gateway has to be call-stateful, acting as a B2BUA, in order to
    gateway to RIPP.  Furthermore, a SIP to RIPP gateway has to act as a
    media termination point in SIP.  It has to perform any SRTP
    decryption and encryption, and it must de-packetize RTP packets to
@@ -1605,7 +1662,6 @@ types:
             ended:
                 type: boolean
             timeStamp:
-
                 type: datetime
             tntDestination:
                 type: string
@@ -1652,12 +1708,10 @@ types:
                     body:
                          application/json:
                             type: Advertisement
-      <strike><font color='red'>/calls/{destination}:</font></strike>
-      <strong><font color='green'>/calls:</font></strong>
-
+      /calls:
         post:
-            <strong><font color='green'>queryParameters:
-              target:</font></strong>
+            queryParameters:
+              target:
             securedBy: [oauth_2_0]
             description: Create a new call. Returns a Call URI
             responses:
@@ -1665,6 +1719,7 @@ types:
 
 /call:
     /{callID}:
+
         /prevEvent:
             get:
                 description: Retreive the previous event from server
@@ -1715,7 +1770,7 @@ types:
 
 13.  Acknowledgements
 
-   <strong><font color='green'>Thank you to Jason Livingood for the detailed review.</font></strong>
+   Thank you to Jason Livingood for the detailed review.
 
 14.  Informative References
 
@@ -1793,9 +1848,10 @@ Authors' Addresses
    Cisco Systems
 
    Email: fluffy@iii.ca
-   <strong><font color='green'>Anthony Minessale
+
+   Anthony Minessale
    Signalwire/Freeswitch
 
-   Email: anthm@signalwire.com</font></strong>
+   Email: anthm@signalwire.com
 </pre>
 </body></html>

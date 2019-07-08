@@ -12,7 +12,7 @@
 Title = "Real Time Internet Peering Protocol"
 abbrev = "RIPP"
 category = "std"
-docName = "draft-rosenbergjennings-dispatch-ripp-00"
+docName = "draft-rosenbergjennings-dispatch-ripp-01"
 ipr= "trust200902"
 area = "Internet"
 keyword = ["RTP"]
@@ -743,9 +743,7 @@ provider Comcast.
 
 The sequence diagram for the outbound call flow is here:
 
-~~~ ascii-art
 <{{seq-diagram-out.txt}}
-~~~
 
 The first stage is for Webex to set up their service to be able to work as
 an OAuth Resource Server, working with Comcast as the Authorization

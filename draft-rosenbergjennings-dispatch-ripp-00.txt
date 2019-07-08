@@ -97,15 +97,15 @@ Table of Contents
    5.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .  14
    6.  Overview of Operation . . . . . . . . . . . . . . . . . . . .  15
    7.  Example . . . . . . . . . . . . . . . . . . . . . . . . . . .  18
-     7.1.  Inbound Call  . . . . . . . . . . . . . . . . . . . . . .  19
-     7.2.  Outbound Call . . . . . . . . . . . . . . . . . . . . . .  19
-     7.3.  End of call . . . . . . . . . . . . . . . . . . . . . . .  20
-   8.  Detailed Behaviours . . . . . . . . . . . . . . . . . . . . .  20
-     8.1.  Configuration . . . . . . . . . . . . . . . . . . . . . .  20
-     8.2.  RIPP Trunk Provisioning . . . . . . . . . . . . . . . . .  21
-     8.3.  Capabilities  . . . . . . . . . . . . . . . . . . . . . .  22
-     8.4.  Initiating Calls  . . . . . . . . . . . . . . . . . . . .  24
-     8.5.  Establishing the Signaling Byways . . . . . . . . . . . .  26
+     7.1.  Inbound Call  . . . . . . . . . . . . . . . . . . . . . .  20
+     7.2.  Outbound Call . . . . . . . . . . . . . . . . . . . . . .  21
+     7.3.  End of call . . . . . . . . . . . . . . . . . . . . . . .  21
+   8.  Detailed Behaviours . . . . . . . . . . . . . . . . . . . . .  22
+     8.1.  Configuration . . . . . . . . . . . . . . . . . . . . . .  22
+     8.2.  RIPP Trunk Provisioning . . . . . . . . . . . . . . . . .  22
+     8.3.  Capabilities  . . . . . . . . . . . . . . . . . . . . . .  24
+     8.4.  Initiating Calls  . . . . . . . . . . . . . . . . . . . .  26
+     8.5.  Establishing the Signaling Byways . . . . . . . . . . . .  28
 
 
 
@@ -114,25 +114,25 @@ Rosenberg, et al.        Expires January 9, 2020                [Page 2]
 Internet-Draft                    RIPP                         July 2019
 
 
-     8.6.  The Media Sequence  . . . . . . . . . . . . . . . . . . .  26
-     8.7.  Opening Media Byways  . . . . . . . . . . . . . . . . . .  27
-     8.8.  Sending and Receiving Media . . . . . . . . . . . . . . .  28
-     8.9.  Terminating and Re-establishing Connections and  Byways .  29
-     8.10. Signaling - Events  . . . . . . . . . . . . . . . . . . .  30
-     8.11. Call Termination  . . . . . . . . . . . . . . . . . . . .  32
-     8.12. GET Transactions  . . . . . . . . . . . . . . . . . . . .  32
-     8.13. Graceful Call Migration: Server . . . . . . . . . . . . .  32
-     8.14. Graceful Call Migration: Client . . . . . . . . . . . . .  33
-     8.15. Ungraceful Call Migration . . . . . . . . . . . . . . . .  33
-   9.  SIP Gateway . . . . . . . . . . . . . . . . . . . . . . . . .  33
-     9.1.  RIPP to SIP . . . . . . . . . . . . . . . . . . . . . . .  34
-     9.2.  SIP to RIPP . . . . . . . . . . . . . . . . . . . . . . .  34
-   10. RAML API  . . . . . . . . . . . . . . . . . . . . . . . . . .  34
-   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  37
-   12. Security Considerations . . . . . . . . . . . . . . . . . . .  37
-   13. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  37
-   14. Informative References  . . . . . . . . . . . . . . . . . . .  37
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  38
+     8.6.  The Media Sequence  . . . . . . . . . . . . . . . . . . .  28
+     8.7.  Opening Media Byways  . . . . . . . . . . . . . . . . . .  29
+     8.8.  Sending and Receiving Media . . . . . . . . . . . . . . .  30
+     8.9.  Terminating and Re-establishing Connections and  Byways .  31
+     8.10. Signaling - Events  . . . . . . . . . . . . . . . . . . .  31
+     8.11. Call Termination  . . . . . . . . . . . . . . . . . . . .  33
+     8.12. GET Transactions  . . . . . . . . . . . . . . . . . . . .  34
+     8.13. Graceful Call Migration: Server . . . . . . . . . . . . .  34
+     8.14. Graceful Call Migration: Client . . . . . . . . . . . . .  34
+     8.15. Ungraceful Call Migration . . . . . . . . . . . . . . . .  34
+   9.  SIP Gateway . . . . . . . . . . . . . . . . . . . . . . . . .  35
+     9.1.  RIPP to SIP . . . . . . . . . . . . . . . . . . . . . . .  36
+     9.2.  SIP to RIPP . . . . . . . . . . . . . . . . . . . . . . .  36
+   10. RAML API  . . . . . . . . . . . . . . . . . . . . . . . . . .  36
+   11. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  39
+   12. Security Considerations . . . . . . . . . . . . . . . . . . .  39
+   13. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  39
+   14. Informative References  . . . . . . . . . . . . . . . . . . .  39
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  40
 
 1.  Introduction
 
@@ -965,10 +965,107 @@ Internet-Draft                    RIPP                         July 2019
 
    The sequence diagram for the outbound call flow is here:
 
-                         <{{seq-diagram-out.txt}}
++-----------+                                               +-----------+
+| consumer  |                                               | provider  |
++-----------+                                               +-----------+
+      |                                                           |
+      | PUT /trunks/123/consumerTrunk                             |
+      |---------------------------------------------------------->|
+      | --------------------------------\                         |
+      |-| consumer trunk is /trunks/abc |                         |
+      | |-------------------------------|                         |
+      |                                                           |
+      |                                    GET /trunks/abc/capAdv |
+      |<----------------------------------------------------------|
+      |                                                           |
+      | 200 OK w. consumer caps                                   |
+      |---------------------------------------------------------->|
+      |                                                           |
+      | GET /trunks/123/capAdv                                    |
+      |---------------------------------------------------------->|
+      |                                                           |
+      |                                   200 OK w. provider caps |
+      |<----------------------------------------------------------|
+      |                                                           |
+      | POST /trunks/123/calls&target=14085551212@e164.arpa       |
+      |---------------------------------------------------------->|
+      |                                                           |
+      |                                              202 Created  |
+      |<----------------------------------------------------------|
+      | ----------------------\                                   |
+      |-| Location: /call/xyz |                                   |
+      | |---------------------|                                   |
+      |                                                           |
+      | GET /call/xyz/event                                       |
+      |---------------------------------------------------------->|
+      | ----------------------\                                   |
+      |-| signaling byway s2c |                                   |
+      | |---------------------|                                   |
+      |                                                           |
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 18]
+
+Internet-Draft                    RIPP                         July 2019
+
+
+      |                                                    200 OK |
+      |<----------------------------------------------------------|
+      |                                                           |
+      | POST /call/xyz/media-forward                              |
+      |---------------------------------------------------------->|
+      | ------------------\                                       |
+      |-| media byway c2s |                                       |
+      | |-----------------|                                       |
+      |                                                           |
+      |                                                    200 OK |
+      |<----------------------------------------------------------|
+      |                                                           |
+      | POST /call/xyz/media-reverse                              |
+      |---------------------------------------------------------->|
+      | ------------------\                                       |
+      |-| media byway s2c |                                       |
+      | |-----------------|                                       |
+      |                                                           |
+      |                                                    200 OK |
+      |<----------------------------------------------------------|
+      |                                   ----------------------\ |
+      |                                   | ringing eg. SIP 180 |-|
+      |                                   |---------------------| |
+      |                                                           |
+      |                                             ringing event |
+      |<----------------------------------------------------------|
+      |                                  -----------------------\ |
+      |                                  | accepted eg. SIP 200 |-|
+      |                                  |----------------------| |
+      |                                                           |
+      |                                                  accepted |
+      |<----------------------------------------------------------|
+      | ------------------\                                       |
+      |-| caller hangs up |                                       |
+      | |-----------------|                                       |
+      |                                                           |
+      | PUT /call/xyz/event                                       |
+      |---------------------------------------------------------->|
+      | ------------\                                             |
+      |-| end event |                                             |
+      | |-----------|                                             |
+      |                                                           |
+      |                                                    200 OK |
+      |<----------------------------------------------------------|
+      |                                                           |
 
    The first stage is for Webex to set up their service to be able to
    work as an OAuth Resource Server, working with Comcast as the
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 19]
+
+Internet-Draft                    RIPP                         July 2019
+
+
    Authorization Server, and to obtain the baseURI that Comcast uses for
    RIPP authorization.  Assume that this is "https://ripp.comcast.com".
    The next stage is the admin from ACME logs on to their Webex account
@@ -1001,15 +1098,6 @@ Internet-Draft                    RIPP                         July 2019
 
    Similarly, the Webex server will find out the advertised capability
    of the trunk by doing a GET to https:://ripp.comcast.com/trunks/123/
-
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 18]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    capAdv, using its OAuth token.  In this case, the response is empty,
    indicating that the capabilities are all default.
 
@@ -1026,6 +1114,13 @@ Internet-Draft                    RIPP                         July 2019
    calls&target=14085551212@e164.arpa" using the authorization token
    "secret1234".  This will return a new call URI for this call of
    https://ripp.webex/call/xyz.
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 20]
+
+Internet-Draft                    RIPP                         July 2019
+
 
    At this point the SBC can make a long poll GET and PUT to
    "https://ripp.webex/call/xyz/events" to receive and send signaling
@@ -1058,14 +1153,6 @@ Internet-Draft                    RIPP                         July 2019
    call other than the provider trunk URI is used.  The Webex server
    would act as a client and do a HTTP POST to
    "https://ripp.comcast.com/trunks/123/
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 19]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    calls&target=14085551212@e164.arpa" to create a call URI of
    "http\s://ripp.comcast.com/call/c789".  From that point the flow is
    roughly the same as inbound with the client and server roles
@@ -1082,6 +1169,14 @@ Internet-Draft                    RIPP                         July 2019
    connection.  In either case the even looks like:
 
                   { "name":"terminated", "ended": true }
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 21]
+
+Internet-Draft                    RIPP                         July 2019
+
 
 8.  Detailed Behaviours
 
@@ -1114,14 +1209,6 @@ Internet-Draft                    RIPP                         July 2019
    trunking services from a RIPP trunking provider.  They separately
    have purchased cloud PBX, cloud contact center, or another saas
    service which requires connectivity to a RIPP trunk.  In this case,
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 20]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    the cloud PBX, cloud contact center, or other saas service acts as
    the RIPP trunk consumer.  The RIPP trunk consumer would configure
    itself as a client with a variety of RIPP trunking providers, and for
@@ -1137,6 +1224,15 @@ Internet-Draft                    RIPP                         July 2019
    RIPP trunk on-demand using a web form.  RIPP consumers will typically
    provide a self-service web form for such provisioning, since self-
    service and instant provisioning are key goals of RIPP.
+
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 22]
+
+Internet-Draft                    RIPP                         July 2019
+
 
    The RIPP customer visits this web form, and selects their provider.
    The RIPP consumer would then initiate an OAuth2.0 authorization code
@@ -1170,14 +1266,6 @@ Internet-Draft                    RIPP                         July 2019
    long time, in order to avoid the resource owner needing to manually
    re-authorize.  The trunk consumer MUST be prepared for its access and
    refresh tokens to be invalidated at any time.  The RIPP consumer MUST
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 21]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    extract the "ripp-trunk" OAuth parameter from the authorization
    response, decode, and persist it.
 
@@ -1193,6 +1281,15 @@ Internet-Draft                    RIPP                         July 2019
    for the RIPP Trunk consumer URI.  This URI MUST support HTTP/3, and
    MUST implement the behaviours associated with capabilities and new
    call operations as defined below.  This URI MUST have a path
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 23]
+
+Internet-Draft                    RIPP                         July 2019
+
+
    component, MUST NOT contain any URI parameters, and MUST have a path
    segment which is globally unique.
 
@@ -1225,15 +1322,6 @@ Internet-Draft                    RIPP                         July 2019
    When the trunk resource is destroyed, its associated capabilities are
    also destroyed.
 
-
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 22]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    The RIPP capabilities document is a list of name-value pairs, which
    specify a capability.  Every capability has a default, so that if no
    document is posted, or it is posted but a specific capability is not
@@ -1249,6 +1337,14 @@ Internet-Draft                    RIPP                         July 2019
       specified in bits per second.  It MUST be greater than or equal to
 
       1.  Its default is 64000.
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 24]
+
+Internet-Draft                    RIPP                         July 2019
+
 
    o  max-samplerate: The maximum sample rate for audio.  This is
       specified in Hz.  It MUST be greater than or equal to 8000.  Its
@@ -1282,14 +1378,6 @@ Internet-Draft                    RIPP                         July 2019
    codecs except for "audio/PCMU", "audio/opus", "audio/telephone-event"
    and "audio/CN", for which the default is "true".  Because codec
    capabilities are receive-only, it is possible, and totally
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 23]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    acceptable, for there to be different audio codecs used in each
    direction.
 
@@ -1302,6 +1390,17 @@ Internet-Draft                    RIPP                         July 2019
    this will be known as a misconfiguration immediately.  This enables
    validation of trunk configurations in an automated fashion, without
    placing test calls or calling customer support.
+
+
+
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 25]
+
+Internet-Draft                    RIPP                         July 2019
+
 
 8.4.  Initiating Calls
 
@@ -1338,14 +1437,6 @@ Internet-Draft                    RIPP                         July 2019
    The client MUST add an HTTP Identity header field.  This header field
    is defined in Section Section 11 as a new HTTP header field.  Its
    contents MUST be a valid Identity header field as defined by
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 24]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    [RFC8224].  This ensures that all calls utilize secure caller ID.  A
    RIPP client MUST NOT place the caller ID in any place except for the
    Identity header field in this request.  Specifically, a "From",
@@ -1359,6 +1450,14 @@ Internet-Draft                    RIPP                         July 2019
    creation of a new call, and then either accept or reject the request.
    If accepted, it indicates that the server is willing to create this
    call.  The server MUST return a 201 Created response, and MUST
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 26]
+
+Internet-Draft                    RIPP                         July 2019
+
+
    include a Location header field containing an HTTPS URI which
    identifies the call that has been created.  The URI identifying the
    call MUST include a path segment which contains a type 4 UUID,
@@ -1393,15 +1492,6 @@ Internet-Draft                    RIPP                         July 2019
 
    which always resolves to 1.2.3.4, the VIP shared amongst the SBC
    farm.  Consequently, a request to this RIPP trunk would hit a
-
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 25]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    specific SBC behind the VIP.  This SBC would then create the call and
    return a call URL which points to its actual IP, using DNS
 
@@ -1414,6 +1504,15 @@ Internet-Draft                    RIPP                         July 2019
    SIP based peering).
 
    Neither the request, nor the response, contain bodies.
+
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 27]
+
+Internet-Draft                    RIPP                         July 2019
+
 
 8.5.  Establishing the Signaling Byways
 
@@ -1449,15 +1548,6 @@ Internet-Draft                    RIPP                         July 2019
    across many packets and associates it with the byway itself.  This
    means the media frames only contain the information which varies -
    the sequence number and length.  [[OPEN ISSUE: we could maybe even
-
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 26]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    eliminate the sequence number by computing it from offset in the
    stream.  Worried about sync problems though?]]
 
@@ -1471,6 +1561,14 @@ Internet-Draft                    RIPP                         July 2019
       byway, PLUS the sequence number offset TIMES the frame size in
       milliseconds.  Note that this requires that frame size must remain
       fixed for all media frames in a byway.
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 28]
+
+Internet-Draft                    RIPP                         July 2019
+
 
    o  The codec type, which is a fixed property of the byway.  There are
       no payload type numbers in RIPP.
@@ -1507,13 +1605,6 @@ Internet-Draft                    RIPP                         July 2019
    The requests to create these transactions MUST include Cookie headers
    for any applicable session cookies.
 
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 27]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    To open a forward media byway, the client MUST initiate a POST
    request to the /media-forward endpoint on the call URI, and MUST
    include a RIPP-Media header field in the request headers.  Similarly,
@@ -1526,6 +1617,15 @@ Internet-Draft                    RIPP                         July 2019
 
    RIPP supports multiple audio channels, meant for SIPREC use cases.
    Each channel MUST be on a separate byway.  When multi-channel audio
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 29]
+
+Internet-Draft                    RIPP                         July 2019
+
+
    is being used, the client MUST include the multi-channel parameter
    and MUST include the channel number, starting at 1.
 
@@ -1561,15 +1661,6 @@ Internet-Draft                    RIPP                         July 2019
    send another media frame on that byway.  The client or server notes
    the sequence number and channel number for that media frame.  Once it
    receives an acknowledgement for that corresponding media frame, it
-
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 28]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    marks the byway as UNBLOCKED.  A client or server MAY send a media
    frame on any unblocked byway.
 
@@ -1582,6 +1673,15 @@ Internet-Draft                    RIPP                         July 2019
    for that direction, this is a signal that congestion has occurred.
    In such a case, the client or server MUST either drop packets at the
    application layer, or buffer them for later transmission.  [[TODO:
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 30]
+
+Internet-Draft                    RIPP                         July 2019
+
+
    can we play with QUIC priorities to prioritize newer media frames
    over older?]]
 
@@ -1618,14 +1718,6 @@ Internet-Draft                    RIPP                         July 2019
    signalling events.  However, to deal with the fact that re-
    establishment takes time, both client and server MUST buffer their
    signalling and media streams for at least 5 seconds, and then once
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 29]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    the connections and byways are re-established, it sends all buffered
    data immediately.
 
@@ -1638,6 +1730,14 @@ Internet-Draft                    RIPP                         July 2019
    events.  Each event is a JSON object embedded in the signalling
    stream, which conveys the event as perceived by the client or server.
    Each event has a sequence number, which starts at zero for a call,
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 31]
+
+Internet-Draft                    RIPP                         July 2019
+
+
    and increases by one for each event.  The sequence number space is
    unique in each direction.  The event also contains a direction field,
    which indicates whether the event was sent from client to server, or
@@ -1673,15 +1773,6 @@ Internet-Draft                    RIPP                         July 2019
    accepted: Passed from server to client, indicating that the call was
    accepted.
 
-
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 30]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    rejected: Passed from server to client, indicating that the call was
    rejected by the user.
 
@@ -1694,6 +1785,14 @@ Internet-Draft                    RIPP                         July 2019
    noanswer: Passed from server to client, indicating that the call was
    delivered to the receiving user but was not answered, and the server
    or a downstream server timed out the call.
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 32]
+
+Internet-Draft                    RIPP                         July 2019
+
 
    end: initiated by either client or server, it indicates that the call
    is to be terminated.  Note that this does NOT delete the HTTP
@@ -1726,18 +1825,6 @@ Internet-Draft                    RIPP                         July 2019
    has been implemented by the provider.  RIPP does not define
    additional behaviors.
 
-
-
-
-
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 31]
-
-Internet-Draft                    RIPP                         July 2019
-
-
 8.11.  Call Termination
 
    Signaling allows an application layer call end to be sent.  This will
@@ -1752,6 +1839,16 @@ Internet-Draft                    RIPP                         July 2019
    before the expiration of this timer, it MUST consider the call as
    ended.  Once the call has ended, the call resource SHOULD be
    destroyed.
+
+
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 33]
+
+Internet-Draft                    RIPP                         July 2019
+
 
    If the server receives a signalling or media byway for a call that is
    TERMINATED, it MUST reject the transaction with an 404 response code,
@@ -1787,13 +1884,6 @@ Internet-Draft                    RIPP                         July 2019
    We don't use QUIC layer connection migration, as that is triggered by
    network changes and not likely to be exposed to applications.
 
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 32]
-
-Internet-Draft                    RIPP                         July 2019
-
-
 8.14.  Graceful Call Migration: Client
 
    Clients can move a call from one client instance to another easily.
@@ -1808,6 +1898,13 @@ Internet-Draft                    RIPP                         July 2019
    Since all media packets are acknowledged at the application layer, it
    is possible for endpoints to very quickly detect remote failures,
    network failures, and other related problems.
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 34]
+
+Internet-Draft                    RIPP                         July 2019
+
 
    Failure detection falls entirely at the hands of the client.  A
    failure situation is detected when any one of the following happens:
@@ -1842,14 +1939,6 @@ Internet-Draft                    RIPP                         July 2019
    decryption and encryption, and it must de-packetize RTP packets to
    extract their timestamps, sequence numbers, and codec types.
 
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 33]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    SIP to RIPP gateways are not transparent.  SIP header fields which
    are unknown or do not map to RIPP functionality as described here,
    MUST be discarded.
@@ -1861,6 +1950,17 @@ Internet-Draft                    RIPP                         July 2019
 
    This specification does define some normative procedures for the
    gateway function in order to maximize interoperability.
+
+
+
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 35]
+
+Internet-Draft                    RIPP                         July 2019
+
 
 9.1.  RIPP to SIP
 
@@ -1898,14 +1998,6 @@ types:
             ended:
                 type: boolean
             timeStamp:
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 34]
-
-Internet-Draft                    RIPP                         July 2019
-
-
                 type: datetime
             tntDestination:
                 type: string
@@ -1918,6 +2010,14 @@ Internet-Draft                    RIPP                         July 2019
         properties:
             max-bitrate: number
             max-samplerate: number
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 36]
+
+Internet-Draft                    RIPP                         July 2019
+
+
             max-channels: number
             non-e164: boolean
             force-cbr: boolean
@@ -1954,14 +2054,6 @@ Internet-Draft                    RIPP                         July 2019
                          application/json:
                             type: Advertisement
       /calls:
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 35]
-
-Internet-Draft                    RIPP                         July 2019
-
-
         post:
             queryParameters:
               target:
@@ -1974,6 +2066,14 @@ Internet-Draft                    RIPP                         July 2019
 
 /call:
     /{callID}:
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 37]
+
+Internet-Draft                    RIPP                         July 2019
+
+
         /prevEvent:
             get:
                 description: Retreive the previous event from server
@@ -2010,14 +2110,6 @@ Internet-Draft                    RIPP                         July 2019
         /media-reverse:
             post:
                  description: Starts an infinite flow of media frames from server to client
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 36]
-
-Internet-Draft                    RIPP                         July 2019
-
-
                  body:
                     application/octet-stream:
                         type: BywayFlow
@@ -2025,6 +2117,17 @@ Internet-Draft                    RIPP                         July 2019
                     200:
                         application/octet-stream:
                             type: BywayFlow
+
+
+
+
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 38]
+
+Internet-Draft                    RIPP                         July 2019
 
 
 11.  IANA Considerations
@@ -2067,13 +2170,6 @@ Internet-Draft                    RIPP                         July 2019
               Comfort Noise (CN)", RFC 3389, DOI 10.17487/RFC3389,
               September 2002, <https://www.rfc-editor.org/info/rfc3389>.
 
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 37]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    [RFC3550]  Schulzrinne, H., Casner, S., Frederick, R., and V.
               Jacobson, "RTP: A Transport Protocol for Real-Time
               Applications", STD 64, RFC 3550, DOI 10.17487/RFC3550,
@@ -2082,6 +2178,13 @@ Internet-Draft                    RIPP                         July 2019
    [RFC4855]  Casner, S., "Media Type Registration of RTP Payload
               Formats", RFC 4855, DOI 10.17487/RFC4855, February 2007,
               <https://www.rfc-editor.org/info/rfc4855>.
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 39]
+
+Internet-Draft                    RIPP                         July 2019
+
 
    [RFC6265]  Barth, A., "HTTP State Management Mechanism", RFC 6265,
               DOI 10.17487/RFC6265, April 2011,
@@ -2121,15 +2224,6 @@ Authors' Addresses
    Email: fluffy@iii.ca
 
 
-
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 38]
-
-Internet-Draft                    RIPP                         July 2019
-
-
    Anthony Minessale
    Signalwire/Freeswitch
 
@@ -2143,42 +2237,4 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 39]
+Rosenberg, et al.        Expires January 9, 2020               [Page 40]

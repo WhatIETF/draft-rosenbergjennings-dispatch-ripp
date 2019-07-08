@@ -2,7 +2,7 @@
 
 
 DRAFT = draft-rosenbergjennings-dispatch-ripp
-VERSION = 00
+VERSION = 01
 
 
 all: $(DRAFT)-$(VERSION).txt $(DRAFT)-$(VERSION).html  ripp-api.html ripp-api.md 
@@ -21,6 +21,10 @@ ripp-api.md: ripp-api.raml
 ripp-api.html: ripp-api.raml 
 	raml2html ripp-api.raml > ripp-api.html
 
+seq-diagram.md: seq-diagram-out.txt
+	echo "~~~ ascii-art" > seq-diagram.md
+	cat seq-diagram-out.txt >> seq-diagram.md
+	echo "~~~"  >> seq-diagram.md
 
 .PRECIOUS: %.xml
 
@@ -30,8 +34,8 @@ ripp-api.html: ripp-api.raml
 %.txt: %.xml
 	xml2rfc --text $^ -o $@
 
-$(DRAFT)-$(VERSION).xml: $(DRAFT).md 
-	mmark -xml2 -page $^ $@ 
+$(DRAFT)-$(VERSION).xml: $(DRAFT).md  seq-diagram.md  ripp-api.md
+	mmark -xml2 -page $(DRAFT).md $@ 
 
 $(DRAFT).diff.html: $(DRAFT)-$(VERSION).txt $(DRAFT)-old.txt 
 	htmlwdiff   $(DRAFT)-old.txt   $(DRAFT)-$(VERSION).txt >   $(DRAFT).diff.html
