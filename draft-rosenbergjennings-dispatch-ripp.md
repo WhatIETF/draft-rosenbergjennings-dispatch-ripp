@@ -12,7 +12,7 @@
 Title = "Real Time Internet Peering Protocol"
 abbrev = "RIPP"
 category = "std"
-docName = "draft-rosenbergjennings-dispatch-ripp-02"
+docName = "draft-rosenbergjennings-dispatch-ripp-03"
 ipr= "trust200902"
 area = "Internet"
 keyword = ["RTP"]
