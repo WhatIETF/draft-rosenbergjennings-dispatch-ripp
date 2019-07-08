@@ -44,7 +44,7 @@ fullname = "Anthony Minessale"
 organization = "Signalwire/Freeswitch"
   [author.address]
   email = "anthm@signalwire.com"
- 
+
 [[author]] 
 initials = "J." 
 surname = "Livingood" 
@@ -52,6 +52,14 @@ fullname = "Jason Livingood"
 organization = "Comcast"
   [author.address]
   email = "jason_livingood@comcast.com"
+
+[[author]] 
+initials = "J." 
+surname = "Uberti" 
+fullname = "Justin Uberti" 
+organization = "Google"
+  [author.address]
+  email = "justin@uberti.name"
  
 
 %%%

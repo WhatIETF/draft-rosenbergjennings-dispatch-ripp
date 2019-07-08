@@ -10,6 +10,8 @@ Expires: January 9, 2020                                   Cisco Systems
                                                    Signalwire/Freeswitch
                                                             J. Livingood
                                                                  Comcast
+                                                               J. Uberti
+                                                                  Google
                                                             July 8, 2019
 
 
@@ -48,8 +50,6 @@ Status of This Memo
    working documents as Internet-Drafts.  The list of current Internet-
    Drafts is at https://datatracker.ietf.org/drafts/current/.
 
-   Internet-Drafts are draft documents valid for a maximum of six months
-   and may be updated, replaced, or obsoleted by other documents at any
 
 
 
@@ -58,6 +58,8 @@ Rosenberg, et al.        Expires January 9, 2020                [Page 1]
 Internet-Draft                    RIPP                         July 2019
 
 
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
@@ -104,8 +106,6 @@ Table of Contents
      7.2.  Outbound Call . . . . . . . . . . . . . . . . . . . . . .  21
      7.3.  End of call . . . . . . . . . . . . . . . . . . . . . . .  21
    8.  Detailed Behaviours . . . . . . . . . . . . . . . . . . . . .  22
-     8.1.  Configuration . . . . . . . . . . . . . . . . . . . . . .  22
-     8.2.  RIPP Trunk Provisioning . . . . . . . . . . . . . . . . .  22
 
 
 
@@ -114,6 +114,8 @@ Rosenberg, et al.        Expires January 9, 2020                [Page 2]
 Internet-Draft                    RIPP                         July 2019
 
 
+     8.1.  Configuration . . . . . . . . . . . . . . . . . . . . . .  22
+     8.2.  RIPP Trunk Provisioning . . . . . . . . . . . . . . . . .  22
      8.3.  Capabilities  . . . . . . . . . . . . . . . . . . . . . .  24
      8.4.  Initiating Calls  . . . . . . . . . . . . . . . . . . . .  26
      8.5.  Establishing the Signaling Byways . . . . . . . . . . . .  28
@@ -159,9 +161,7 @@ Internet-Draft                    RIPP                         July 2019
    and automatically configure the load balancers to include them in the
    pool of available servers.
 
-   Yet another example is Kubernetes, which allows web-based
-   applications to be deployed into containers (typically Docker), with
-   load balancing, scaling, and HTTP request routing.
+
 
 
 
@@ -169,6 +169,10 @@ Rosenberg, et al.        Expires January 9, 2020                [Page 3]
 
 Internet-Draft                    RIPP                         July 2019
 
+
+   Yet another example is Kubernetes, which allows web-based
+   applications to be deployed into containers (typically Docker), with
+   load balancing, scaling, and HTTP request routing.
 
    Another example are HTTP tracing tools, which facilitate the tracing
    of requests through distributed microservices.  These tools can
@@ -213,10 +217,6 @@ Internet-Draft                    RIPP                         July 2019
    load balancing, HA, failover, clustering, security, and scaling
    technologies, rather than using the capabilities of these platforms.
 
-   This has creating a barrier to entry, particularly for applications
-   such as websites which are not expert in VoIP technologies.
-   Furthermore, it has meant that VoIP applications have been unable to
-   take advantage of the many technology improvements that have come to
 
 
 
@@ -226,6 +226,10 @@ Rosenberg, et al.        Expires January 9, 2020                [Page 4]
 Internet-Draft                    RIPP                         July 2019
 
 
+   This has creating a barrier to entry, particularly for applications
+   such as websites which are not expert in VoIP technologies.
+   Furthermore, it has meant that VoIP applications have been unable to
+   take advantage of the many technology improvements that have come to
    networking and protocol design since the publication of RFC 3261 in
    2002.
 
@@ -270,10 +274,6 @@ Internet-Draft                    RIPP                         July 2019
    However, several significant limitations made this previously
    infeasible:
 
-   1.  HTTP utilized TCP, which meant that it created head-of-line
-       blocking which would delay lost packets rather than just discard
-       them.  This will often provide intolerable latency for VoIP.
-
 
 
 
@@ -281,6 +281,10 @@ Rosenberg, et al.        Expires January 9, 2020                [Page 5]
 
 Internet-Draft                    RIPP                         July 2019
 
+
+   1.  HTTP utilized TCP, which meant that it created head-of-line
+       blocking which would delay lost packets rather than just discard
+       them.  This will often provide intolerable latency for VoIP.
 
    2.  HTTP was request response, allowing the client to send requests
        and receive a response.  There as no way for a server to
@@ -327,10 +331,6 @@ Internet-Draft                    RIPP                         July 2019
 
    REQ8: The solution will be easy to interoperate with SIP
 
-   REQ9: The solution shall be incrementally deployable - specifically
-   it must be designed for easy implementation by SBCs and easy
-
-
 
 
 Rosenberg, et al.        Expires January 9, 2020                [Page 6]
@@ -338,6 +338,8 @@ Rosenberg, et al.        Expires January 9, 2020                [Page 6]
 Internet-Draft                    RIPP                         July 2019
 
 
+   REQ9: The solution shall be incrementally deployable - specifically
+   it must be designed for easy implementation by SBCs and easy
    deployment by PSTN termination and origination providers who do not
    utilize cloud platforms
 
@@ -381,8 +383,6 @@ Internet-Draft                    RIPP                         July 2019
    RIPP server can of course act as a RIPP client and further connect
    calls to downstream elements.  However, such behavior requires no
    additional specification and is therefore not discussed by RIPP.
-
-
 
 
 
@@ -2238,3 +2238,59 @@ Authors' Addresses
 
 
 Rosenberg, et al.        Expires January 9, 2020               [Page 40]
+
+Internet-Draft                    RIPP                         July 2019
+
+
+   Justin Uberti
+   Google
+
+   Email: justin@uberti.name
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Rosenberg, et al.        Expires January 9, 2020               [Page 41]
