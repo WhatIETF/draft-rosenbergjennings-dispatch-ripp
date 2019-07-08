@@ -12,7 +12,7 @@ Expires: January 9, 2020                                   Cisco Systems
 
 
                   Real Time Internet Peering Protocol
-                draft-rosenbergjennings-dispatch-ripp-00
+                draft-rosenbergjennings-dispatch-ripp-01
 
 Abstract
 

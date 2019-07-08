@@ -427,8 +427,8 @@
   <meta name="generator" content="xml2rfc version 2.8.4 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
-  <meta name="dct.creator" content="Rosenberg, J., Jennings, C., and A. Minessale" />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-rosenbergjennings-dispatch-ripp-00" />
+  <meta name="dct.creator" content="Rosenberg, J., Jennings, C., Minessale, A., and J. Livingood" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-rosenbergjennings-dispatch-ripp-02" />
   <meta name="dct.issued" scheme="ISO8601" content="2019-7-8" />
   <meta name="dct.abstract" content="This document specifies the Realtime Internet Peering Protocol (RIPP). RIPP is used to provide telephony peering between a trunking provider (such as a telco), and a trunking consumer (such as an enterprise, cloud PBX provider, cloud contact center provider, and so on). RIPP is an alternative to SIP, SDP and RTP for this use case, and is designed as a web application using HTTP/3. Using HTTP/3 allows trunking consumers to more easily build their applications on top of cloud platforms, such as AWS, Azure and Google Cloud, all of which are heavily focused on HTTP based services. RIPP also addresses many of the challenges of traditional SIP-based trunking. Most notably, it mandates secure caller ID via STIR, and provides automated trunk provisioning as a mandatory protocol component. RIPP supports both direct and &quot;BYO&quot; trunk configurations. Since it runs over HTTP/3, it works through NATs and firewalls with the same ease as HTTP does, and easily supports load balancing with elastic cluster expansion and contraction, including auto-scaling - all because it is nothing more than an HTTP application. RIPP also provides built in mechanisms for migrations of calls between RIPP client and server instances, enabling failover with call preservation.  " />
   <meta name="description" content="This document specifies the Realtime Internet Peering Protocol (RIPP). RIPP is used to provide telephony peering between a trunking provider (such as a telco), and a trunking consumer (such as an enterprise, cloud PBX provider, cloud contact center provider, and so on). RIPP is an alternative to SIP, SDP and RTP for this use case, and is designed as a web application using HTTP/3. Using HTTP/3 allows trunking consumers to more easily build their applications on top of cloud platforms, such as AWS, Azure and Google Cloud, all of which are heavily focused on HTTP based services. RIPP also addresses many of the challenges of traditional SIP-based trunking. Most notably, it mandates secure caller ID via STIR, and provides automated trunk provisioning as a mandatory protocol component. RIPP supports both direct and &quot;BYO&quot; trunk configurations. Since it runs over HTTP/3, it works through NATs and firewalls with the same ease as HTTP does, and easily supports load balancing with elastic cluster expansion and contraction, including auto-scaling - all because it is nothing more than an HTTP application. RIPP also provides built in mechanisms for migrations of calls between RIPP client and server instances, enabling failover with call preservation.  " />
@@ -466,6 +466,14 @@
 </tr>
 <tr>
 <td class="left"></td>
+<td class="right">J. Livingood</td>
+</tr>
+<tr>
+<td class="left"></td>
+<td class="right">Comcast</td>
+</tr>
+<tr>
+<td class="left"></td>
 <td class="right">July 8, 2019</td>
 </tr>
 
@@ -474,7 +482,7 @@
   </table>
 
   <p class="title">Real Time Internet Peering Protocol<br />
-  <span class="filename">draft-rosenbergjennings-dispatch-ripp-00</span></p>
+  <span class="filename">draft-rosenbergjennings-dispatch-ripp-02</span></p>
   
   <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
 <p>This document specifies the Realtime Internet Peering Protocol (RIPP). RIPP is used to provide telephony peering between a trunking provider (such as a telco), and a trunking consumer (such as an enterprise, cloud PBX provider, cloud contact center provider, and so on). RIPP is an alternative to SIP, SDP and RTP for this use case, and is designed as a web application using HTTP/3. Using HTTP/3 allows trunking consumers to more easily build their applications on top of cloud platforms, such as AWS, Azure and Google Cloud, all of which are heavily focused on HTTP based services. RIPP also addresses many of the challenges of traditional SIP-based trunking. Most notably, it mandates secure caller ID via STIR, and provides automated trunk provisioning as a mandatory protocol component. RIPP supports both direct and "BYO" trunk configurations. Since it runs over HTTP/3, it works through NATs and firewalls with the same ease as HTTP does, and easily supports load balancing with elastic cluster expansion and contraction, including auto-scaling - all because it is nothing more than an HTTP application. RIPP also provides built in mechanisms for migrations of calls between RIPP client and server instances, enabling failover with call preservation.  </p>
@@ -1293,7 +1301,6 @@ types:
 <h1 id="rfc.section.13">
 <a href="#rfc.section.13">13.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a>
 </h1>
-<p id="rfc.section.13.p.1">Thank you to Jason Livingood for the detailed review.  </p>
 <h1 id="rfc.references">
 <a href="#rfc.references">14.</a> Informative References</h1>
 <table><tbody>
@@ -1425,6 +1432,27 @@ types:
 	  <span class="country-name vcardline"></span>
 	</span>
 	<span class="vcardline">EMail: <a href="mailto:anthm@signalwire.com">anthm@signalwire.com</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Jason Livingood</span> 
+	  <span class="n hidden">
+		<span class="family-name">Livingood</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Comcast</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:jason_livingood@comcast.com">jason_livingood@comcast.com</a></span>
 
   </address>
 </div>

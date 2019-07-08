@@ -2,7 +2,7 @@
 
 
 DRAFT = draft-rosenbergjennings-dispatch-ripp
-VERSION = 01
+VERSION = 02
 
 
 all: $(DRAFT)-$(VERSION).txt $(DRAFT)-$(VERSION).html  ripp-api.html ripp-api.md 

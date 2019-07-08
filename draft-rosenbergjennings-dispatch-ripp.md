@@ -12,7 +12,7 @@
 Title = "Real Time Internet Peering Protocol"
 abbrev = "RIPP"
 category = "std"
-docName = "draft-rosenbergjennings-dispatch-ripp-01"
+docName = "draft-rosenbergjennings-dispatch-ripp-02"
 ipr= "trust200902"
 area = "Internet"
 keyword = ["RTP"]
@@ -37,13 +37,22 @@ organization = "Cisco Systems"
   [author.address]
   email = "fluffy@iii.ca"
 
-[[author]]
-initials = "A."
-surname = "Minessale"
-fullname = "Anthony Minessale"
+[[author]] 
+initials = "A." 
+surname = "Minessale" 
+fullname = "Anthony Minessale" 
 organization = "Signalwire/Freeswitch"
   [author.address]
   email = "anthm@signalwire.com"
+ 
+[[author]] 
+initials = "J." 
+surname = "Livingood" 
+fullname = "Jason Livingood" 
+organization = "Comcast"
+  [author.address]
+  email = "jason_livingood@comcast.com"
+ 
 
 %%%
 
@@ -1523,8 +1532,6 @@ gateway function in order to maximize interoperability.
 # Security Considerations
 
 # Acknowledgements
-
-Thank you to Jason Livingood for the detailed review. 
 
 {backmatter}
 
