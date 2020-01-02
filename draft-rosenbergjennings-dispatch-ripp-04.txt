@@ -2136,6 +2136,8 @@ Internet-Draft                    RIPP                      January 2020
 
 13.  Acknowledgements
 
+   Thanks you for review and edits to: Giacomo Vacca.
+
 14.  Informative References
 
    [I-D.ietf-quic-http]
@@ -2176,8 +2178,6 @@ Internet-Draft                    RIPP                      January 2020
    [RFC4855]  Casner, S., "Media Type Registration of RTP Payload
               Formats", RFC 4855, DOI 10.17487/RFC4855, February 2007,
               <https://www.rfc-editor.org/info/rfc4855>.
-
-
 
 
 
