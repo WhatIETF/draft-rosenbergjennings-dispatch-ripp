@@ -1186,7 +1186,21 @@ Each media chunk has the following properties in the envelope part:
    version.  (tag = 2)
 
 * An optional codec type that is sent periodically. Value is a string
-  such as "opus".  (tag = 3)
+   such as "opus".  (tag = 3)
+
+* Optional Reference frame flag. Indicates other chunks are encoded
+  based on this frame. Typically used with video codecs and only set
+  true on chunks that are part of an I Frame. Default value is false.
+
+* Optional Spacial Layer scale: TBD - indicates which spacial layer this
+  packet is part of when using a scalable codec 
+
+* Optional Temporal Layer scale: TBD - indicates which temporal layer this
+packet is part of when using a scalable codec
+
+* Active  Level: Provides indication of audio energy in media
+  chunk and can be used by conferring bridges to do speaker
+  selection. 
 
 * Optional extension parameters in the envelope
 
