@@ -782,7 +782,7 @@ body of:
 
 ~~~
 {
-"consumerTrunkURI":"https://ripp.webex/trunks/abc " ,
+"consumerTrunkURI":"https://ripp.webex/trunks/abc" ,
 "consumerToken":"secret1234"
 }
 ~~~
@@ -814,7 +814,7 @@ a 183. It can then can make an HTTP post to the consumer trunk URI to set up the
 incoming call. This is done by doing a POST to
 "https\://ripp.webex/trunks/abc/calls&target=14085551212@e164.arpa" using the authorization token
 "secret1234". This will return a new call URI for this call of
-https\://ripp.webex/call/xyz.
+"https\://ripp.webex/call/xyz".
 
 At this point the SBC can make a long poll GET and PUT to
 "https\://ripp.webex/call/xyz/events" to receive and send signaling
@@ -834,7 +834,7 @@ for the frame by adding the baseSeqNum for the byway to the seqOffset
 for the frame. The timestamp for the media is computed using the
 baseTime for the byway plus the packeTime multiplied by the seqNum.
 
-The data from the https\://ripp.webex/call/xyz/events request will be
+The data from the "https\://ripp.webex/call/xyz/events" request will be
 an infinite JSON array of Events. When the Webex server answers the
 call, the event returned would look like:
 
@@ -848,7 +848,7 @@ For Webex to make it outbound call, it is the same as the inbound call
 other than the provider trunk URI is used. The Webex server would act as
 a client and do a HTTP POST to
 "https\://ripp.comcast.com/trunks/123/calls&target=14085551212@e164.arpa" to create a call URI
-of "http\s://ripp.comcast.com/call/c789". From that point the flow is
+of "https\://ripp.comcast.com/call/c789". From that point the flow is
 roughly the same as inbound with the client and server roles reversed.
 
 ## End of call 
@@ -933,7 +933,7 @@ component as part of the namespace for purposes of uniqueness.
 
 As an example, the following is a valid RIPP trunk URI:
 
-https://ripp.comcast.com/trunks/6ha937fjjj9
+"https\://ripp.comcast.com/trunks/6ha937fjjj9"
 
 This URI MUST be returned in the OAuth2.0 parameter "ripp-trunk", and
 MUST be base64 encoded.
@@ -1125,14 +1125,14 @@ the SBC.
 
 For example, the RIPP trunk URI for such a telco operator might be:
 
-https://sbc-farm.comcast.com/trunks/6ha937fjjj9
+"https\://sbc-farm.comcast.com/trunks/6ha937fjjj9"
 
 which always resolves to 1.2.3.4, the VIP shared amongst the SBC
 farm. Consequently, a request to this RIPP trunk would hit a specific
 SBC behind the VIP. This SBC would then create the call and return a
 call URL which points to its actual IP, using DNS
 
-https://sbc23.sbc-farm.comcast.com/call/ha8d7f6fso29s88clzopa
+"https\://sbc23.sbc-farm.comcast.com/call/ha8d7f6fso29s88clzopa"
 
 However, the HTTP URI for the call MUST NOT contain an IP address; it
 MUST utilize a valid host or domain name. This is to ensure that TLS
