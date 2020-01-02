@@ -1542,5 +1542,7 @@ gateway function in order to maximize interoperability.
 
 # Acknowledgements
 
+Thanks you for review and edits to: Giacomo Vacca. 
+
 {backmatter}
 
