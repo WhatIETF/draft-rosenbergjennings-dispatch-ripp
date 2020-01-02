@@ -1209,6 +1209,13 @@ of sequence number. By default the authentication tag is truncated to
 0 bits as authentication is provided by the TLS transport protocol
 this is sent over.
 
+[[ TODO - IANA section for tags ]]
+
+[[ TODO - IANA section for ciphers with auth truncation length ]]
+
+[[ TODO - example ]]
+
+
 ## Opening Media Byways
 
 The client bears the responsibility for opening media byways - both
