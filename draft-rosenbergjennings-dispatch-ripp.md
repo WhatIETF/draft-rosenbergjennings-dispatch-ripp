@@ -314,7 +314,7 @@ use them, RIPP must abide by HTTP/3 rules, and that means distinct
 roles for clients and servers. Clients must always initiate
 connections and send requests, not servers.
 
-To handle this RIPP, specifies that the domain associated with the
+To handle this, RIPP specifies that the domain associated with the
 caller implements the RIPP client, and the domain receiving the calls
 is the RIPP server. For any particular call, the roles of client and
 server do not change. To facilitate calls in either direction, a
@@ -352,7 +352,7 @@ SIP is full of IP addresses and ports. They are contained in Via
 headers, in Route and Record-Route headers. In SDP. In Contact
 headers. The usage of IPs is one of the main reasons why SIP is so
 difficult to deploy into cloud platforms. These platforms are based on
-the behavior of HTTP which has been baed on TCP connections and
+the behavior of HTTP which has been based on TCP connections and
 therefore done most of its routing at the connection layer, and not
 the IP layer.
 
@@ -501,7 +501,7 @@ RIPP is used between a RIPP trunk provider and a RIPP trunk
 consumer. Both entities implement the RIPP client and RIPP server
 roles; the latter to receive calls, and the former to send them.
 
-RIPP is also designed such that all communications between the a RIPP
+RIPP is also designed such that all communications between the RIPP
 client and the RIPP server can easily sit behind a typical HTTP load
 balancer, as shown below:
 
@@ -763,7 +763,7 @@ The sequence diagram for the outbound call flow is here:
 <{{seq-diagram-out.txt}}
 
 The first stage is for Webex to set up their service to be able to work as
-an OAuth Resource Server, working with Comcast as the Authorization
+an OAuth Client, working with Comcast as the Authorization
 Server, and to obtain the baseURI that Comcast uses for RIPP authorization. Assume
 that this is "https\://ripp.comcast.com". The next stage is the admin
 from ACME logs on to their Webex account and selects Comcast as the RIPP
@@ -799,7 +799,7 @@ but also support G.729 as an additional codec. It returns a JSON body of:
 
 Similarly, the Webex server will find out the advertised capability of
 the trunk by doing a GET to
-https:\://ripp.comcast.com/trunks/123/capAdv, using its OAuth
+https\://ripp.comcast.com/trunks/123/capAdv, using its OAuth
 token. In this case, the response is empty, indicating that the
 capabilities are all default.
 
@@ -811,8 +811,8 @@ A PSTN calls arrives at Comcast that is routed to the this trunk via a
 Comcast SBC that will convert it from SIP to RIPP. The SBC knows which
 codecs the trunk supports (G.729, Opus and G.711) and can immediately send the SIP answer in
 a 183. It can then can make an HTTP post to the consumer trunk URI to set up the
-incoming call. This is does by doing a POST to
-"https\://ripp.webex/trunks/acme123/calls&target=14085551212@e164.arpa" using the authorization token
+incoming call. This is done by doing a POST to
+"https\://ripp.webex/trunks/abc/calls&target=14085551212@e164.arpa" using the authorization token
 "secret1234". This will return a new call URI for this call of
 https\://ripp.webex/call/xyz.
 
@@ -859,7 +859,7 @@ close the connection then closes the connection.
 
 If the call is ended on the client side, the client sends a terminated
 event with the ended flag set to true and then closes the connection. In
-either case the even looks like:
+either case the event looks like:
 
 ~~~
 { "name":"terminated", "ended": true }
@@ -966,7 +966,7 @@ In addition, the RIPP consumer MUST mint a bearer token to be used by
 the RIPP provider when performing operations against the RIPP Trunk
 Client URI. The bearer token MAY be constructed in any way desired by
 the RIPP consumer. The token and URI SHOULD remain valid for at least
-one day, however, a security problem could cuase them to be invalidated.
+one day, however, a security problem could cause them to be invalidated.
 The RIPP consumer MUST refresh the provisioning against the
 RIPP trunk at least one hour in advance of the expiration, in order to
 ensure no calls are delayed.
