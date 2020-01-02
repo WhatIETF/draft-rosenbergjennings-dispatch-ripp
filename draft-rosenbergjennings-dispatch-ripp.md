@@ -1153,10 +1153,11 @@ The signaling is accomplished by a long running HTTP transaction, with
 a stream of JSON in the PUT request, and a stream of JSON in the GET
 response.
 
-The body begins with an open curly bracket, and after that is a
+The body begins with an open square bracket to indicate the start of an
+JSON array, and after that is a
 series of JSON objects, each starting with a curly bracket, and ending
 with a curly bracket. Consequently, each side MUST immediately send
-their respective open brackets after the HTTP header fields. We
+their respective open square brackets after the HTTP header fields. We
 utilize streaming JSON in order to facilitate usage of tools like CURL
 for signalling operations. 
 
