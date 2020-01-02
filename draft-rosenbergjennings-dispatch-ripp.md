@@ -991,37 +991,53 @@ brief interval. It MUST be prepared for this.
 When the trunk resource is destroyed, its associated capabilities are
 also destroyed.
 
-The RIPP capabilities document is a list of name-value pairs, which
+The capabilities are descriebd by an Advertisement 
+
+Capabilities are bound to the RIPP trunk, and are
+destroyed when the RIPP trunk is destroyed.
+
+In general, an entity MUST declare a capability for any characteristic
+of a call which may result in the call being rejected. This
+requirement facilitates prevention of call failures, along with clear
+indications of why calls have failed when they do. For example, if a
+RIPP trunk provider provisions a trunk without support for G.729, but
+the consumer configures their to utilize this codec, this will be
+known as a misconfiguration immediately. This enables validation of
+trunk configurations in an automated fashion, without placing test
+calls or calling customer support.
+
+## Advertisement
+
+[[ CJ - Propose we move this section to a seperate draft ]]
+
+The RIPP advertisment  is a list of name-value pairs, which
 specify a capability. Every capability has a default, so that if no
 document is posted, or it is posted but a specific capability is not
-included, the capability for the peer is understood. Capabilities are
+included, the capability for the peer is understood.
+
+TODO - Capabilities are
 receive only, and specify what the entity is willing to
-receive. Capabilities are bound to the RIPP trunk, and are
-destroyed when the RIPP trunk is destroyed.
+receive. 
 
 This specification defines the following capability set. This set is
 extensible through an IANA registry.
 
 * max-bitrate: The maximum bitrate for receiving voice. This is
-  specified in bits per second. It MUST be greater than or equal to
-  64000. Its default is 64000.
+  specified in bits per second.. The default is 64000.
 
 * max-samplerate: The maximum sample rate for audio. This is
   specified in Hz. It MUST be greater than or equal to 8000. Its
-  default is 8000.
+  default is 48000.
 
 * max-samplesize: The maximum sample size for audio. This is specified
   in bits. It MUST be greater than or equal to 8. The default is 16. 
 
-* force-cbr: Indicates whether the entity requires CBR media only. It
+* cbr: Indicates whether the entity requires CBR media only. It
   MUST be either "true" or "false". The default is 
   "false". If "true", the sender MUST send constant rate audio.
 
-* two-channel: Indicates whether the entity supports receiving two
-  audio channels or not. Two channel audio is specifically used for
-  RIPP trunks meant to convey listen-only media for the purposes of
-  recording, similar to SIPREC [@RFC7866]. It MUST be either "true" or
-  "false". The default is "false".
+* max-channel: Indicates whether the entity supports  multiple
+  audio channels.  The default is 1.
 
 * tnt: Indicates whether the entity supports the takeback-and-transfer
   command. Telcos supporting this feature on a trunk would set it to
@@ -1038,15 +1054,6 @@ except for "audio/PCMU", "audio/opus", "audio/telephone-event" and
 capabilities are receive-only, it is possible, and totally acceptable,
 for there to be different audio codecs used in each direction.
 
-In general, an entity MUST declare a capability for any characteristic
-of a call which may result in the call being rejected. This
-requirement facilitates prevention of call failures, along with clear
-indications of why calls have failed when they do. For example, if a
-RIPP trunk provider provisions a trunk without support for G.729, but
-the consumer configures their to utilize this codec, this will be
-known as a misconfiguration immediately. This enables validation of
-trunk configurations in an automated fashion, without placing test
-calls or calling customer support.
 
 ## Initiating Calls
 
