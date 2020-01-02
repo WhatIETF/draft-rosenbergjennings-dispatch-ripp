@@ -424,12 +424,12 @@
 <link href="#rfc.authors" rel="Chapter">
 
 
-  <meta name="generator" content="xml2rfc version 2.8.4 - https://tools.ietf.org/tools/xml2rfc" />
+  <meta name="generator" content="xml2rfc version 2.22.3 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Rosenberg, J., Jennings, C., Minessale, A., Livingood, J., and J. Uberti" />
   <meta name="dct.identifier" content="urn:ietf:id:draft-rosenbergjennings-dispatch-ripp-04" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-7-8" />
+  <meta name="dct.issued" scheme="ISO8601" content="2020-01-02" />
   <meta name="dct.abstract" content="This document specifies the Realtime Internet Peering Protocol (RIPP). RIPP is used to provide telephony peering between a trunking provider (such as a telco), and a trunking consumer (such as an enterprise, cloud PBX provider, cloud contact center provider, and so on). RIPP is an alternative to SIP, SDP and RTP for this use case, and is designed as a web application using HTTP/3. Using HTTP/3 allows trunking consumers to more easily build their applications on top of cloud platforms, such as AWS, Azure and Google Cloud, all of which are heavily focused on HTTP based services. RIPP also addresses many of the challenges of traditional SIP-based trunking. Most notably, it mandates secure caller ID via STIR, and provides automated trunk provisioning as a mandatory protocol component. RIPP supports both direct and &quot;BYO&quot; trunk configurations. Since it runs over HTTP/3, it works through NATs and firewalls with the same ease as HTTP does, and easily supports load balancing with elastic cluster expansion and contraction, including auto-scaling - all because it is nothing more than an HTTP application. RIPP also provides built in mechanisms for migrations of calls between RIPP client and server instances, enabling failover with call preservation.  " />
   <meta name="description" content="This document specifies the Realtime Internet Peering Protocol (RIPP). RIPP is used to provide telephony peering between a trunking provider (such as a telco), and a trunking consumer (such as an enterprise, cloud PBX provider, cloud contact center provider, and so on). RIPP is an alternative to SIP, SDP and RTP for this use case, and is designed as a web application using HTTP/3. Using HTTP/3 allows trunking consumers to more easily build their applications on top of cloud platforms, such as AWS, Azure and Google Cloud, all of which are heavily focused on HTTP based services. RIPP also addresses many of the challenges of traditional SIP-based trunking. Most notably, it mandates secure caller ID via STIR, and provides automated trunk provisioning as a mandatory protocol component. RIPP supports both direct and &quot;BYO&quot; trunk configurations. Since it runs over HTTP/3, it works through NATs and firewalls with the same ease as HTTP does, and easily supports load balancing with elastic cluster expansion and contraction, including auto-scaling - all because it is nothing more than an HTTP application. RIPP also provides built in mechanisms for migrations of calls between RIPP client and server instances, enabling failover with call preservation.  " />
 
@@ -453,7 +453,7 @@
 <td class="right">C. Jennings</td>
 </tr>
 <tr>
-<td class="left">Expires: January 9, 2020</td>
+<td class="left">Expires: July 5, 2020</td>
 <td class="right">Cisco Systems</td>
 </tr>
 <tr>
@@ -482,7 +482,7 @@
 </tr>
 <tr>
 <td class="left"></td>
-<td class="right">July 8, 2019</td>
+<td class="right">January 2, 2020</td>
 </tr>
 
     	
@@ -498,9 +498,9 @@
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on January 9, 2020.</p>
+<p>This Internet-Draft will expire on July 5, 2020.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
-<p>Copyright (c) 2019 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
+<p>Copyright (c) 2020 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
 
   
@@ -681,7 +681,7 @@
 </h1>
 <p id="rfc.section.3.2.p.1">SIP is based fundamentally on the User Agent, and describes the communications between a pair of user agents. Either user agent can initiate requests towards the other. SIP defines the traditional role of client and server as bound to a specific transaction.  </p>
 <p id="rfc.section.3.2.p.2">HTTP does not operate this way. In HTTP, one entity is a client, and the other is a server. There is no way for the server to send messages asynchronously towards the client. HTTP/3 does enable two distinct techniques that facilitate server messaging towards the client. But to use them, RIPP must abide by HTTP/3 rules, and that means distinct roles for clients and servers. Clients must always initiate connections and send requests, not servers.  </p>
-<p id="rfc.section.3.2.p.3">To handle this RIPP, specifies that the domain associated with the caller implements the RIPP client, and the domain receiving the calls is the RIPP server. For any particular call, the roles of client and server do not change. To facilitate calls in either direction, a domain can implement both RIPP client and RIPP server roles. However, there is no relationship between the two directions.  </p>
+<p id="rfc.section.3.2.p.3">To handle this, RIPP specifies that the domain associated with the caller implements the RIPP client, and the domain receiving the calls is the RIPP server. For any particular call, the roles of client and server do not change. To facilitate calls in either direction, a domain can implement both RIPP client and RIPP server roles. However, there is no relationship between the two directions.  </p>
 <h1 id="rfc.section.3.3">
 <a href="#rfc.section.3.3">3.3.</a> <a href="#signaling-and-media-together" id="signaling-and-media-together">Signaling and Media Together</a>
 </h1>
@@ -691,7 +691,7 @@
 <h1 id="rfc.section.3.4">
 <a href="#rfc.section.3.4">3.4.</a> <a href="#uris-not-ips" id="uris-not-ips">URIs not IPs</a>
 </h1>
-<p id="rfc.section.3.4.p.1">SIP is full of IP addresses and ports. They are contained in Via headers, in Route and Record-Route headers. In SDP. In Contact headers. The usage of IPs is one of the main reasons why SIP is so difficult to deploy into cloud platforms. These platforms are based on the behavior of HTTP which has been baed on TCP connections and therefore done most of its routing at the connection layer, and not the IP layer.  </p>
+<p id="rfc.section.3.4.p.1">SIP is full of IP addresses and ports. They are contained in Via headers, in Route and Record-Route headers. In SDP. In Contact headers. The usage of IPs is one of the main reasons why SIP is so difficult to deploy into cloud platforms. These platforms are based on the behavior of HTTP which has been based on TCP connections and therefore done most of its routing at the connection layer, and not the IP layer.  </p>
 <p id="rfc.section.3.4.p.2">Furthermore, modern cloud platforms are full of NATs and private IP space, making them inhospitable to SIP based applications which still struggle with NAT traversal.  </p>
 <p id="rfc.section.3.4.p.3">HTTP of course does not suffer from this. In general, "addressing", to the degree it exists at all, is done with HTTP URIs. RIPP follows this pattern. RIPP - as a web application that uses HTTP/3 - does not use or convey any IP addresses or ports. Furthermore, the client never provides addressing to the server - all traffic is sent in the reverse direction over the connection.  </p>
 <h1 id="rfc.section.3.5">
@@ -754,7 +754,7 @@
 +-------------+            +-------------+
 </pre>
 <p id="rfc.section.4.p.2">RIPP is used between a RIPP trunk provider and a RIPP trunk consumer. Both entities implement the RIPP client and RIPP server roles; the latter to receive calls, and the former to send them.  </p>
-<p id="rfc.section.4.p.3">RIPP is also designed such that all communications between the a RIPP client and the RIPP server can easily sit behind a typical HTTP load balancer, as shown below: </p>
+<p id="rfc.section.4.p.3">RIPP is also designed such that all communications between the RIPP client and the RIPP server can easily sit behind a typical HTTP load balancer, as shown below: </p>
 <pre>
                                            +------------+ 
                                            |            | 
@@ -915,11 +915,11 @@
       |                                                           |
 </pre>
 <p></p>
-<p id="rfc.section.7.p.4">The first stage is for Webex to set up their service to be able to work as an OAuth Resource Server, working with Comcast as the Authorization Server, and to obtain the baseURI that Comcast uses for RIPP authorization. Assume that this is "https://ripp.comcast.com". The next stage is the admin from ACME logs on to their Webex account and selects Comcast as the RIPP provider.  This will cause the OAUTH dance and the admin will end up having approved Webex to use Acme's account at Comcast for RIPP. Webex will have received an OAuth access and refresh token from Comcast and be passed the new Provider Trunk URI. At this point, provisioning is complete and calls can start. Assume the provider trunk URI returned is "https://ripp.comcast.com/trunks/123".  </p>
+<p id="rfc.section.7.p.4">The first stage is for Webex to set up their service to be able to work as an OAuth Client, working with Comcast as the Authorization Server, and to obtain the baseURI that Comcast uses for RIPP authorization. Assume that this is "https://ripp.comcast.com". The next stage is the admin from ACME logs on to their Webex account and selects Comcast as the RIPP provider.  This will cause the OAUTH dance and the admin will end up having approved Webex to use Acme's account at Comcast for RIPP. Webex will have received an OAuth access and refresh token from Comcast and be passed the new Provider Trunk URI. At this point, provisioning is complete and calls can start. Assume the provider trunk URI returned is "https://ripp.comcast.com/trunks/123".  </p>
 <p id="rfc.section.7.p.5">Webex will start by setting up for incoming calls at "https://ripp.webex/trunks/abc" with an opaque security token of "secret1234". This is done by making a HTTP PUT to https://ripp.comcast.com/trunks/123/consumerTrunk with a JSON body of: </p>
 <pre>
 {
-"consumerTrunkURI":"https://ripp.webex/trunks/abc " ,
+"consumerTrunkURI":"https://ripp.webex/trunks/abc" ,
 "consumerToken":"secret1234"
 }
 </pre>
@@ -927,27 +927,27 @@
 <pre>
 {  "audio/g729": true }
 </pre>
-<p id="rfc.section.7.p.7">Similarly, the Webex server will find out the advertised capability of the trunk by doing a GET to https:://ripp.comcast.com/trunks/123/capAdv, using its OAuth token. In this case, the response is empty, indicating that the capabilities are all default.  </p>
+<p id="rfc.section.7.p.7">Similarly, the Webex server will find out the advertised capability of the trunk by doing a GET to https://ripp.comcast.com/trunks/123/capAdv, using its OAuth token. In this case, the response is empty, indicating that the capabilities are all default.  </p>
 <p id="rfc.section.7.p.8">At this point we are ready for inbound or outbound calls.  </p>
 <h1 id="rfc.section.7.1">
 <a href="#rfc.section.7.1">7.1.</a> <a href="#inbound-call" id="inbound-call">Inbound Call</a>
 </h1>
-<p id="rfc.section.7.1.p.1">A PSTN calls arrives at Comcast that is routed to the this trunk via a Comcast SBC that will convert it from SIP to RIPP. The SBC knows which codecs the trunk supports (G.729, Opus and G.711) and can immediately send the SIP answer in a 183. It can then can make an HTTP post to the consumer trunk URI to set up the incoming call. This is does by doing a POST to "https://ripp.webex/trunks/acme123/calls&amp;target=14085551212@e164.arpa" using the authorization token "secret1234". This will return a new call URI for this call of https://ripp.webex/call/xyz.  </p>
+<p id="rfc.section.7.1.p.1">A PSTN calls arrives at Comcast that is routed to the this trunk via a Comcast SBC that will convert it from SIP to RIPP. The SBC knows which codecs the trunk supports (G.729, Opus and G.711) and can immediately send the SIP answer in a 183. It can then can make an HTTP post to the consumer trunk URI to set up the incoming call. This is done by doing a POST to "https://ripp.webex/trunks/abc/calls&amp;target=14085551212@e164.arpa" using the authorization token "secret1234". This will return a new call URI for this call of "https://ripp.webex/call/xyz".  </p>
 <p id="rfc.section.7.1.p.2">At this point the SBC can make a long poll GET and PUT to "https://ripp.webex/call/xyz/events" to receive and send signaling events for this call. The SBC will also open a number of media byways by making POST requests to "https://ripp.webex/call/xyz/media-forward" and "https://ripp.webex/call/xyz/media-reverse" to send and receive media.  </p>
 <p id="rfc.section.7.1.p.3">For each of the media-forward byways, the Comcast SBC will send a BywayPreamble that tells the other side meta data about what will be sent on this byway. For the media-reverse byways, the Webex server will send the BywayPreamble. The BywayPreamble contains the name of the codec, the base sequence number, frameTime, and baseTime. After this BywayPreamble, media frames can be sent that contain a seqOffset number, media length, and then the media data. The receiver compute the time sequence number for the frame by adding the baseSeqNum for the byway to the seqOffset for the frame. The timestamp for the media is computed using the baseTime for the byway plus the packeTime multiplied by the seqNum.  </p>
-<p id="rfc.section.7.1.p.4">The data from the https://ripp.webex/call/xyz/events request will be an infinite JSON array of Events. When the Webex server answers the call, the event returned would look like: </p>
+<p id="rfc.section.7.1.p.4">The data from the "https://ripp.webex/call/xyz/events" request will be an infinite JSON array of Events. When the Webex server answers the call, the event returned would look like: </p>
 <pre>
 { "name":"accepted" }
 </pre>
 <h1 id="rfc.section.7.2">
 <a href="#rfc.section.7.2">7.2.</a> <a href="#outbound-call" id="outbound-call">Outbound Call</a>
 </h1>
-<p id="rfc.section.7.2.p.1">For Webex to make it outbound call, it is the same as the inbound call other than the provider trunk URI is used. The Webex server would act as a client and do a HTTP POST to "https://ripp.comcast.com/trunks/123/calls&amp;target=14085551212@e164.arpa" to create a call URI of "http\s://ripp.comcast.com/call/c789". From that point the flow is roughly the same as inbound with the client and server roles reversed.  </p>
+<p id="rfc.section.7.2.p.1">For Webex to make it outbound call, it is the same as the inbound call other than the provider trunk URI is used. The Webex server would act as a client and do a HTTP POST to "https://ripp.comcast.com/trunks/123/calls&amp;target=14085551212@e164.arpa" to create a call URI of "https://ripp.comcast.com/call/c789". From that point the flow is roughly the same as inbound with the client and server roles reversed.  </p>
 <h1 id="rfc.section.7.3">
 <a href="#rfc.section.7.3">7.3.</a> <a href="#end-of-call" id="end-of-call">End of call</a>
 </h1>
 <p id="rfc.section.7.3.p.1">If the call is ended on the server side, server sends a terminated event with the ended flag set to true then waits a small time for client to close the connection then closes the connection.  </p>
-<p id="rfc.section.7.3.p.2">If the call is ended on the client side, the client sends a terminated event with the ended flag set to true and then closes the connection. In either case the even looks like: </p>
+<p id="rfc.section.7.3.p.2">If the call is ended on the client side, the client sends a terminated event with the ended flag set to true and then closes the connection. In either case the event looks like: </p>
 <pre>
 { "name":"terminated", "ended": true }
 </pre>
@@ -969,12 +969,12 @@
 <p id="rfc.section.8.2.p.2">The RIPP customer visits this web form, and selects their provider. The RIPP consumer would then initiate an OAuth2.0 authorization code flow. This utilizes the clientID, client-secret and authorization endpoint URL configured previously. The RIPP customer will authenticate to the RIPP provider, and authorize creation of a new RIPP trunk.  </p>
 <p id="rfc.section.8.2.p.3">Once the RIPP customer authorizes creation of a RIPP trunk, the RIPP provider MUST generate an authorization code and follow the procedures defined in <a href="#RFC6749" class="xref">[RFC6749]</a> for the authorization code grant flow. Furthermore, the RIPP provider MUST mint a new URI identifying this new RIPP trunk. This URI MUST contain a path component, and MUST NOT contain any URI parameters. This URI MUST be an HTTPS URI, and HTTP/3 MUST be supported for this URI. The path component MUST be a globally unique identifier for this trunk, and not depend on the authority component as part of the namespace for purposes of uniqueness.  </p>
 <p id="rfc.section.8.2.p.4">As an example, the following is a valid RIPP trunk URI: </p>
-<p><span>&lt;</span><a href="https://ripp.comcast.com/trunks/6ha937fjjj9">https://ripp.comcast.com/trunks/6ha937fjjj9</a><span>&gt;</span> </p>
+<p id="rfc.section.8.2.p.5">"https://ripp.comcast.com/trunks/6ha937fjjj9" </p>
 <p id="rfc.section.8.2.p.6">This URI MUST be returned in the OAuth2.0 parameter "ripp-trunk", and MUST be base64 encoded.  </p>
 <p id="rfc.section.8.2.p.7">The RIPP consumer MUST follow the procedures defined in <a href="#RFC6749" class="xref">[RFC6749]</a> for an OAuth client, trade in its authorization code for both a refresh and access token. The RIPP provider MUST issue both refresh and access tokens. It is expected that the refresh token will last a long time, in order to avoid the resource owner needing to manually re-authorize. The trunk consumer MUST be prepared for its access and refresh tokens to be invalidated at any time. The RIPP consumer MUST extract the "ripp-trunk" OAuth parameter from the authorization response, decode, and persist it.  </p>
 <p id="rfc.section.8.2.p.8">Once the RIPP consumer has obtained an access token, it MUST initiate an HTTPS PUT request towards /consumerTrunk on the provider trunk URI. This request MUST contain an Authorization header field utilizing the access token just obtained. It MUST include a RIPP provisioning object in the body. This object is specified in Section <a href="#syntax" class="xref">Section 10</a>.  </p>
 <p id="rfc.section.8.2.p.9">The RIPP provisioning object MUST contain a RIPP trunk consumer URI and a RIPP bearer token. The RIPP consumer MUST mint an HTTPS URI for the RIPP Trunk consumer URI. This URI MUST support HTTP/3, and MUST implement the behaviours associated with capabilities and new call operations as defined below. This URI MUST have a path component,  MUST NOT contain any URI parameters, and MUST have a path segment which is globally unique.  </p>
-<p id="rfc.section.8.2.p.10">In addition, the RIPP consumer MUST mint a bearer token to be used by the RIPP provider when performing operations against the RIPP Trunk Client URI. The bearer token MAY be constructed in any way desired by the RIPP consumer. The token and URI SHOULD remain valid for at least one day, however, a security problem could cuase them to be invalidated.  The RIPP consumer MUST refresh the provisioning against the RIPP trunk at least one hour in advance of the expiration, in order to ensure no calls are delayed.  </p>
+<p id="rfc.section.8.2.p.10">In addition, the RIPP consumer MUST mint a bearer token to be used by the RIPP provider when performing operations against the RIPP Trunk Client URI. The bearer token MAY be constructed in any way desired by the RIPP consumer. The token and URI SHOULD remain valid for at least one day, however, a security problem could cause them to be invalidated.  The RIPP consumer MUST refresh the provisioning against the RIPP trunk at least one hour in advance of the expiration, in order to ensure no calls are delayed.  </p>
 <p id="rfc.section.8.2.p.11">At this point, the RIPP trunk is provisioned. Both the RIPP provider and RIPP consumer have a RIPP trunk URI and an Authorization token to be used for placing calls in each direction.  </p>
 <h1 id="rfc.section.8.3">
 <a href="#rfc.section.8.3">8.3.</a> <a href="#capabilities" id="capabilities">Capabilities</a>
@@ -1016,9 +1016,9 @@
 <p id="rfc.section.8.4.p.8">The server MAY include HTTP session cookies in the 201 response. The client MUST support receipt of cookies <a href="#RFC6265" class="xref">[RFC6265]</a>. It MUST be prepared to receive up to 10 cookies per call. The client MUST destroy all cookies associated with a call, when the call has ended. Cookies MUST NOT be larger the 5K.  </p>
 <p id="rfc.section.8.4.p.9">The usage of an HTTP URI to identify the call itself, combined with session cookies, gives the terminating RIPP domain a great deal of flexibility in how it manages state for the call. In traditional softswitch designs, call and media state is held in-memory in the server and not placed into databases. In such a design, a RIPP server can use the session cookie in combination with sticky session routing in the load balancers to ensure that subsequent requests for the same call go to the same call server. Alternatively, if the server is not using any kind of HTTP load balancer at all, it can use a specific hostname in the URI to route all requests for this call to a specific instance of the server. This technique is particularly useful for telcos who have not deployed HTTP infrastructure, but do have SBCs that sit behind a single virtual IP address. The root URI can use a domain whose A record maps to this IP. Once a call has landed on a particular SBC, the call URI can indicate the specific IP of the SBC.  </p>
 <p id="rfc.section.8.4.p.10">For example, the RIPP trunk URI for such a telco operator might be: </p>
-<p><span>&lt;</span><a href="https://sbc-farm.comcast.com/trunks/6ha937fjjj9">https://sbc-farm.comcast.com/trunks/6ha937fjjj9</a><span>&gt;</span> </p>
+<p id="rfc.section.8.4.p.11">"https://sbc-farm.comcast.com/trunks/6ha937fjjj9" </p>
 <p id="rfc.section.8.4.p.12">which always resolves to 1.2.3.4, the VIP shared amongst the SBC farm. Consequently, a request to this RIPP trunk would hit a specific SBC behind the VIP. This SBC would then create the call and return a call URL which points to its actual IP, using DNS </p>
-<p><span>&lt;</span><a href="https://sbc23.sbc-farm.comcast.com/call/ha8d7f6fso29s88clzopa">https://sbc23.sbc-farm.comcast.com/call/ha8d7f6fso29s88clzopa</a><span>&gt;</span> </p>
+<p id="rfc.section.8.4.p.13">"https://sbc23.sbc-farm.comcast.com/call/ha8d7f6fso29s88clzopa" </p>
 <p id="rfc.section.8.4.p.14">However, the HTTP URI for the call MUST NOT contain an IP address; it MUST utilize a valid host or domain name. This is to ensure that TLS certificate validation functions properly without manual configuration of certificates (a practice which is required still for SIP based peering).  </p>
 <p id="rfc.section.8.4.p.15">Neither the request, nor the response, contain bodies.  </p>
 <h1 id="rfc.section.8.5">
@@ -1026,7 +1026,7 @@
 </h1>
 <p id="rfc.section.8.5.p.1">To perform signalling for this call, the client MUST initiate an HTTP GET and PUT request towards the call URI that it just obtained, targeted at the /event endpoint.  </p>
 <p id="rfc.section.8.5.p.2">The signaling is accomplished by a long running HTTP transaction, with a stream of JSON in the PUT request, and a stream of JSON in the GET response.  </p>
-<p id="rfc.section.8.5.p.3">The body begins with an open curly bracket, and after that is a series of JSON objects, each starting with a curly bracket, and ending with a curly bracket. Consequently, each side MUST immediately send their respective open brackets after the HTTP header fields. We utilize streaming JSON in order to facilitate usage of tools like CURL for signalling operations.  </p>
+<p id="rfc.section.8.5.p.3">The body begins with an open square bracket to indicate the start of an JSON array, and after that is a series of JSON objects, each starting with a curly bracket, and ending with a curly bracket. Consequently, each side MUST immediately send their respective open square brackets after the HTTP header fields. We utilize streaming JSON in order to facilitate usage of tools like CURL for signalling operations.  </p>
 <h1 id="rfc.section.8.6">
 <a href="#rfc.section.8.6">8.6.</a> <a href="#the-media-sequence" id="the-media-sequence">The Media Sequence</a>
 </h1>
@@ -1315,12 +1315,12 @@ types:
 <tr>
 <td class="reference"><b id="I-D.ietf-quic-http">[I-D.ietf-quic-http]</b></td>
 <td class="top">
-<a>Bishop, M.</a>, "<a href="https://tools.ietf.org/html/draft-ietf-quic-http-20">Hypertext Transfer Protocol Version 3 (HTTP/3)</a>", Internet-Draft draft-ietf-quic-http-20, April 2019.</td>
+<a>Bishop, M.</a>, "<a href="https://tools.ietf.org/html/draft-ietf-quic-http-24">Hypertext Transfer Protocol Version 3 (HTTP/3)</a>", Internet-Draft draft-ietf-quic-http-24, November 2019.</td>
 </tr>
 <tr>
 <td class="reference"><b id="I-D.ietf-quic-transport">[I-D.ietf-quic-transport]</b></td>
 <td class="top">
-<a>Iyengar, J.</a> and <a>M. Thomson</a>, "<a href="https://tools.ietf.org/html/draft-ietf-quic-transport-20">QUIC: A UDP-Based Multiplexed and Secure Transport</a>", Internet-Draft draft-ietf-quic-transport-20, April 2019.</td>
+<a>Iyengar, J.</a> and <a>M. Thomson</a>, "<a href="https://tools.ietf.org/html/draft-ietf-quic-transport-24">QUIC: A UDP-Based Multiplexed and Secure Transport</a>", Internet-Draft draft-ietf-quic-transport-24, November 2019.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC2833">[RFC2833]</b></td>

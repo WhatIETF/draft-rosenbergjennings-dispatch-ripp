@@ -5,14 +5,14 @@
 Network Working Group                                       J. Rosenberg
 Internet-Draft                                                     Five9
 Intended status: Standards Track                             C. Jennings
-Expires: January 9, 2020                                   Cisco Systems
+Expires: July 5, 2020                                      Cisco Systems
                                                             A. Minessale
                                                    Signalwire/Freeswitch
                                                             J. Livingood
                                                                  Comcast
                                                                J. Uberti
                                                                   Google
-                                                            July 8, 2019
+                                                         January 2, 2020
 
 
                   Real Time Internet Peering Protocol
@@ -53,9 +53,9 @@ Status of This Memo
 
 
 
-Rosenberg, et al.        Expires January 9, 2020                [Page 1]
+Rosenberg, et al.         Expires July 5, 2020                  [Page 1]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    Internet-Drafts are draft documents valid for a maximum of six months
@@ -63,11 +63,11 @@ Internet-Draft                    RIPP                         July 2019
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 9, 2020.
+   This Internet-Draft will expire on July 5, 2020.
 
 Copyright Notice
 
-   Copyright (c) 2019 IETF Trust and the persons identified as the
+   Copyright (c) 2020 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Rosenberg, et al.        Expires January 9, 2020                [Page 2]
+Rosenberg, et al.         Expires July 5, 2020                  [Page 2]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
      8.1.  Configuration . . . . . . . . . . . . . . . . . . . . . .  22
@@ -165,9 +165,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020                [Page 3]
+Rosenberg, et al.         Expires July 5, 2020                  [Page 3]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    Yet another example is Kubernetes, which allows web-based
@@ -221,9 +221,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020                [Page 4]
+Rosenberg, et al.         Expires July 5, 2020                  [Page 4]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    This has creating a barrier to entry, particularly for applications
@@ -277,9 +277,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020                [Page 5]
+Rosenberg, et al.         Expires July 5, 2020                  [Page 5]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    1.  HTTP utilized TCP, which meant that it created head-of-line
@@ -333,9 +333,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020                [Page 6]
+Rosenberg, et al.         Expires July 5, 2020                  [Page 6]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    REQ9: The solution shall be incrementally deployable - specifically
@@ -389,9 +389,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020                [Page 7]
+Rosenberg, et al.         Expires July 5, 2020                  [Page 7]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
 3.2.  Client-Server, not Agent-to-Agent
@@ -409,7 +409,7 @@ Internet-Draft                    RIPP                         July 2019
    means distinct roles for clients and servers.  Clients must always
    initiate connections and send requests, not servers.
 
-   To handle this RIPP, specifies that the domain associated with the
+   To handle this, RIPP specifies that the domain associated with the
    caller implements the RIPP client, and the domain receiving the calls
    is the RIPP server.  For any particular call, the roles of client and
    server do not change.  To facilitate calls in either direction, a
@@ -445,9 +445,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020                [Page 8]
+Rosenberg, et al.         Expires July 5, 2020                  [Page 8]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
 3.4.  URIs not IPs
@@ -456,7 +456,7 @@ Internet-Draft                    RIPP                         July 2019
    headers, in Route and Record-Route headers.  In SDP.  In Contact
    headers.  The usage of IPs is one of the main reasons why SIP is so
    difficult to deploy into cloud platforms.  These platforms are based
-   on the behavior of HTTP which has been baed on TCP connections and
+   on the behavior of HTTP which has been based on TCP connections and
    therefore done most of its routing at the connection layer, and not
    the IP layer.
 
@@ -501,9 +501,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020                [Page 9]
+Rosenberg, et al.         Expires July 5, 2020                  [Page 9]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    provider.  The customer domain authenticates with the provider and
@@ -557,9 +557,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 10]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 10]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
 3.8.  Calls Separate from Connections
@@ -613,9 +613,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 11]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 11]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
                  Trunk Provider             Trunk Consumer
@@ -642,7 +642,7 @@ Internet-Draft                    RIPP                         July 2019
    Both entities implement the RIPP client and RIPP server roles; the
    latter to receive calls, and the former to send them.
 
-   RIPP is also designed such that all communications between the a RIPP
+   RIPP is also designed such that all communications between the RIPP
    client and the RIPP server can easily sit behind a typical HTTP load
    balancer, as shown below:
 
@@ -669,9 +669,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 12]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 12]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
                                                     +------------+
@@ -725,9 +725,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 13]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 13]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
 5.  Terminology
@@ -781,9 +781,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 14]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 14]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    receive calls from the trunking consumer, and a RIPP client to send
@@ -837,9 +837,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 15]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 15]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    labeled with their trunking provider.  This will begin the OAuth 2
@@ -893,9 +893,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 16]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 16]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    initial request, while facilitating failover should that server go
@@ -949,9 +949,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 17]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 17]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    Finally, RIPP trunks can be destroyed by a trunking consumer by
@@ -1005,9 +1005,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 18]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 18]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
       |                                                    200 OK |
@@ -1057,19 +1057,19 @@ Internet-Draft                    RIPP                         July 2019
       |                                                           |
 
    The first stage is for Webex to set up their service to be able to
-   work as an OAuth Resource Server, working with Comcast as the
+   work as an OAuth Client, working with Comcast as the Authorization
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 19]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 19]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
-   Authorization Server, and to obtain the baseURI that Comcast uses for
-   RIPP authorization.  Assume that this is "https://ripp.comcast.com".
-   The next stage is the admin from ACME logs on to their Webex account
-   and selects Comcast as the RIPP provider.  This will cause the OAUTH
+   Server, and to obtain the baseURI that Comcast uses for RIPP
+   authorization.  Assume that this is "https://ripp.comcast.com".  The
+   next stage is the admin from ACME logs on to their Webex account and
+   selects Comcast as the RIPP provider.  This will cause the OAUTH
    dance and the admin will end up having approved Webex to use Acme's
    account at Comcast for RIPP.  Webex will have received an OAuth
    access and refresh token from Comcast and be passed the new Provider
@@ -1084,7 +1084,7 @@ Internet-Draft                    RIPP                         July 2019
    of:
 
            {
-           "consumerTrunkURI":"https://ripp.webex/trunks/abc " ,
+           "consumerTrunkURI":"https://ripp.webex/trunks/abc" ,
            "consumerToken":"secret1234"
            }
 
@@ -1097,7 +1097,7 @@ Internet-Draft                    RIPP                         July 2019
                           {  "audio/g729": true }
 
    Similarly, the Webex server will find out the advertised capability
-   of the trunk by doing a GET to https:://ripp.comcast.com/trunks/123/
+   of the trunk by doing a GET to https://ripp.comcast.com/trunks/123/
    capAdv, using its OAuth token.  In this case, the response is empty,
    indicating that the capabilities are all default.
 
@@ -1110,16 +1110,16 @@ Internet-Draft                    RIPP                         July 2019
    which codecs the trunk supports (G.729, Opus and G.711) and can
    immediately send the SIP answer in a 183.  It can then can make an
    HTTP post to the consumer trunk URI to set up the incoming call.
-   This is does by doing a POST to "https://ripp.webex/trunks/acme123/
+   This is done by doing a POST to "https://ripp.webex/trunks/abc/
    calls&target=14085551212@e164.arpa" using the authorization token
    "secret1234".  This will return a new call URI for this call of
-   https://ripp.webex/call/xyz.
+   "https://ripp.webex/call/xyz".
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 20]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 20]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    At this point the SBC can make a long poll GET and PUT to
@@ -1141,9 +1141,9 @@ Internet-Draft                    RIPP                         July 2019
    media is computed using the baseTime for the byway plus the packeTime
    multiplied by the seqNum.
 
-   The data from the https://ripp.webex/call/xyz/events request will be
-   an infinite JSON array of Events.  When the Webex server answers the
-   call, the event returned would look like:
+   The data from the "https://ripp.webex/call/xyz/events" request will
+   be an infinite JSON array of Events.  When the Webex server answers
+   the call, the event returned would look like:
 
                            { "name":"accepted" }
 
@@ -1154,7 +1154,7 @@ Internet-Draft                    RIPP                         July 2019
    would act as a client and do a HTTP POST to
    "https://ripp.comcast.com/trunks/123/
    calls&target=14085551212@e164.arpa" to create a call URI of
-   "http\s://ripp.comcast.com/call/c789".  From that point the flow is
+   "https://ripp.comcast.com/call/c789".  From that point the flow is
    roughly the same as inbound with the client and server roles
    reversed.
 
@@ -1166,16 +1166,16 @@ Internet-Draft                    RIPP                         July 2019
 
    If the call is ended on the client side, the client sends a
    terminated event with the ended flag set to true and then closes the
-   connection.  In either case the even looks like:
+   connection.  In either case the event looks like:
 
                   { "name":"terminated", "ended": true }
 
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 21]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 21]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
 8.  Detailed Behaviours
@@ -1229,9 +1229,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 22]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 22]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    The RIPP customer visits this web form, and selects their provider.
@@ -1254,7 +1254,7 @@ Internet-Draft                    RIPP                         July 2019
 
    As an example, the following is a valid RIPP trunk URI:
 
-   <https://ripp.comcast.com/trunks/6ha937fjjj9>
+   "https://ripp.comcast.com/trunks/6ha937fjjj9"
 
    This URI MUST be returned in the OAuth2.0 parameter "ripp-trunk", and
    MUST be base64 encoded.
@@ -1285,9 +1285,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 23]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 23]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    component, MUST NOT contain any URI parameters, and MUST have a path
@@ -1297,7 +1297,7 @@ Internet-Draft                    RIPP                         July 2019
    the RIPP provider when performing operations against the RIPP Trunk
    Client URI.  The bearer token MAY be constructed in any way desired
    by the RIPP consumer.  The token and URI SHOULD remain valid for at
-   least one day, however, a security problem could cuase them to be
+   least one day, however, a security problem could cause them to be
    invalidated.  The RIPP consumer MUST refresh the provisioning against
    the RIPP trunk at least one hour in advance of the expiration, in
    order to ensure no calls are delayed.
@@ -1341,9 +1341,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 24]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 24]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    o  max-samplerate: The maximum sample rate for audio.  This is
@@ -1397,9 +1397,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 25]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 25]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
 8.4.  Initiating Calls
@@ -1453,9 +1453,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 26]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 26]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    include a Location header field containing an HTTPS URI which
@@ -1488,14 +1488,14 @@ Internet-Draft                    RIPP                         July 2019
 
    For example, the RIPP trunk URI for such a telco operator might be:
 
-   <https://sbc-farm.comcast.com/trunks/6ha937fjjj9>
+   "https://sbc-farm.comcast.com/trunks/6ha937fjjj9"
 
    which always resolves to 1.2.3.4, the VIP shared amongst the SBC
    farm.  Consequently, a request to this RIPP trunk would hit a
    specific SBC behind the VIP.  This SBC would then create the call and
    return a call URL which points to its actual IP, using DNS
 
-   <https://sbc23.sbc-farm.comcast.com/call/ha8d7f6fso29s88clzopa>
+   "https://sbc23.sbc-farm.comcast.com/call/ha8d7f6fso29s88clzopa"
 
    However, the HTTP URI for the call MUST NOT contain an IP address; it
    MUST utilize a valid host or domain name.  This is to ensure that TLS
@@ -1509,9 +1509,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 27]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 27]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
 8.5.  Establishing the Signaling Byways
@@ -1524,12 +1524,13 @@ Internet-Draft                    RIPP                         July 2019
    with a stream of JSON in the PUT request, and a stream of JSON in the
    GET response.
 
-   The body begins with an open curly bracket, and after that is a
-   series of JSON objects, each starting with a curly bracket, and
-   ending with a curly bracket.  Consequently, each side MUST
-   immediately send their respective open brackets after the HTTP header
-   fields.  We utilize streaming JSON in order to facilitate usage of
-   tools like CURL for signalling operations.
+   The body begins with an open square bracket to indicate the start of
+   an JSON array, and after that is a series of JSON objects, each
+   starting with a curly bracket, and ending with a curly bracket.
+   Consequently, each side MUST immediately send their respective open
+   square brackets after the HTTP header fields.  We utilize streaming
+   JSON in order to facilitate usage of tools like CURL for signalling
+   operations.
 
 8.6.  The Media Sequence
 
@@ -1564,10 +1565,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-
-Rosenberg, et al.        Expires January 9, 2020               [Page 28]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 28]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    o  The codec type, which is a fixed property of the byway.  There are
@@ -1621,9 +1621,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 29]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 29]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    is being used, the client MUST include the multi-channel parameter
@@ -1677,9 +1677,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 30]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 30]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    can we play with QUIC priorities to prioritize newer media frames
@@ -1733,9 +1733,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 31]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 31]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    and increases by one for each event.  The sequence number space is
@@ -1789,9 +1789,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 32]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 32]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    end: initiated by either client or server, it indicates that the call
@@ -1845,9 +1845,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 33]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 33]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    If the server receives a signalling or media byway for a call that is
@@ -1901,9 +1901,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 34]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 34]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    Failure detection falls entirely at the hands of the client.  A
@@ -1957,9 +1957,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 35]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 35]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
 9.1.  RIPP to SIP
@@ -2013,9 +2013,9 @@ types:
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 36]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 36]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
             max-channels: number
@@ -2069,9 +2069,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 37]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 37]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
         /prevEvent:
@@ -2125,9 +2125,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 38]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 38]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
 11.  IANA Considerations
@@ -2140,13 +2140,13 @@ Internet-Draft                    RIPP                         July 2019
 
    [I-D.ietf-quic-http]
               Bishop, M., "Hypertext Transfer Protocol Version 3
-              (HTTP/3)", draft-ietf-quic-http-20 (work in progress),
-              April 2019.
+              (HTTP/3)", draft-ietf-quic-http-24 (work in progress),
+              November 2019.
 
    [I-D.ietf-quic-transport]
               Iyengar, J. and M. Thomson, "QUIC: A UDP-Based Multiplexed
-              and Secure Transport", draft-ietf-quic-transport-20 (work
-              in progress), April 2019.
+              and Secure Transport", draft-ietf-quic-transport-24 (work
+              in progress), November 2019.
 
    [RFC2833]  Schulzrinne, H. and S. Petrack, "RTP Payload for DTMF
               Digits, Telephony Tones and Telephony Signals", RFC 2833,
@@ -2181,9 +2181,9 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 39]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 39]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    [RFC6265]  Barth, A., "HTTP State Management Mechanism", RFC 6265,
@@ -2237,9 +2237,9 @@ Authors' Addresses
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 40]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 40]
 
-Internet-Draft                    RIPP                         July 2019
+Internet-Draft                    RIPP                      January 2020
 
 
    Justin Uberti
@@ -2293,4 +2293,4 @@ Internet-Draft                    RIPP                         July 2019
 
 
 
-Rosenberg, et al.        Expires January 9, 2020               [Page 41]
+Rosenberg, et al.         Expires July 5, 2020                 [Page 41]
