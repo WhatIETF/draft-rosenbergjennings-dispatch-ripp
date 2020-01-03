@@ -1637,7 +1637,8 @@ gateway function in order to maximize interoperability.
 
 # Acknowledgements
 
-Thanks you for review and edits to: Giacomo Vacca. 
+Thanks you for review and edits to: Giacomo Vacca. Thank you to Mo
+Zanaty for greatly simplifying the advertisement proposal for video. 
 
 {backmatter}
 
