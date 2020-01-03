@@ -1010,38 +1010,103 @@ calls or calling customer support.
 
 [[ CJ - Propose we move this section to a seperate draft ]]
 
-The RIPP advertisment  is a list of name-value pairs, which
-specify a capability. Every capability has a default, so that if no
+The RIPP advertisment  is a list of media souces and sinks along with
+the codecs they suppor and a set of name-value pairs, which
+specify a capability of the codec on that source or sink.
+
+A device with a single micrphone and speaker that support g711 and
+opus might have an advrertisement that looked lke:
+
+~~~ ascii-art
+mic1: opus,g711
+spk1: opus,g711
+~~~
+
+A device with a camera that could support H.264 at 4K and av1 at 1080p
+might have a advertisement that looked like:
+
+~~~ ascii-art
+cam1: h264 @size=1080x1920
+cam1: av1 @size=2160x3840
+~~~
+
+The syntax is a names  for the source or sink, followed by a
+commone seperated list of supported codecs, followed by at @ sign then
+a comman sepearted set of limits. The name for a source or sink can
+occur mutiple times with each line indicating a differnt codec and
+limits.
+
+Sources that are only send audio have a name starting with mic while
+video start with cam.  Sinks that receicve only audio have a name
+starting with spk and video sinks start with dis. Device that souces
+and sink audio start with aud while ones that souce and sink video
+start with vid. If a device and source and sink audo and video is can
+start with av.
+
+An video phone that could support opus and H.264 at 720p might look
+like.:
+
+~~~ ascii-art
+av1: h264,opus @size=720x1280
+~~~
+
+Every capability has a default, so that if no
 document is posted, or it is posted but a specific capability is not
 included, the capability for the peer is understood.
+
+TODO - add all defaults 
+
 
 TODO - Capabilities are
 receive only, and specify what the entity is willing to
 receive. 
 
-This specification defines the following capability set. This set is
-extensible through an IANA registry.
+This specification defines the following capability set for audio codecs. 
 
-* max-bitrate: The maximum bitrate for receiving voice. This is
-  specified in bits per second.. The default is 64000.
-
-* max-samplerate: The maximum sample rate for audio. This is
-  specified in Hz. It MUST be greater than or equal to 8000. Its
+* sr: The maximum sample rate for audio. This is specified in Hz. The
   default is 48000.
 
-* max-samplesize: The maximum sample size for audio. This is specified
+* ss: The maximum sample size for audio. This is specified
   in bits. It MUST be greater than or equal to 8. The default is 16. 
 
 * cbr: Indicates whether the entity requires CBR media only. It
-  MUST be either "true" or "false". The default is 
-  "false". If "true", the sender MUST send constant rate audio.
+  MUST be either 1 for constant bit rate or 0 for variabl. The default is 
+  1. If "true", the sender MUST send constant rate audio.
 
-* max-channel: Indicates whether the entity supports  multiple
+* ch: Indicates whether the entity supports  multiple
   audio channels.  The default is 1.
 
+
+This specification defines the following capability set for video codecs. 
+
+* fr: The maximum frame rate for video. This is specified in frames
+  per second. The default is 30.
+
+* size: the max height in pixels followed by and x then the max width
+  in pixels. Default is TBD.
+
+* pr: the max pixel rate ( pixels / second ). Default is 2^64-1. 
+
+* depth: the max pixel depth in bits. Defaul is 8.
+
+
+This specification defines the following capability set for both audio
+and video codecs. 
+
+* br: The maximum bitrate for receiving audio or video. This is
+  specified in bits per second. Defauld for audio is 64000. This is
+  the rate of encoded video from the video codec and not the rate
+  transmitted over the network. 
+
 * tnt: Indicates whether the entity supports the takeback-and-transfer
-  command. Telcos supporting this feature on a trunk would set it to
-  "true". The value MUST be "true" or "false". The default is "false".
+  command. It MUST be either 1 or 0 and is 1 if tnt is supported. The
+  default is
+  0.
+
+
+This cpabilities are 
+extensible through an IANA registry.
+
 
 In addition, codecs can be listed as capabilities. This is done by
 using the media type and subtype, separated by a "/", as the
