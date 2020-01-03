@@ -1096,10 +1096,10 @@ rate of the later it depends on. Default is 1.
 This specification defines the following capability set for both audio
 and video codecs.
 
-* br: The maximum bitrate for receiving audio or video. This is
-  specified in bits per second. Default for audio is 64000. This is the
-  rate of encoded video from the video codec and not the rate
-  transmitted over the network. Default is 2^64-1.
+* br: The maximum bitrate in kilo bits per second for receiving audio or
+  video. This is specified in bits per second. This is the rate of
+  encoded media from the codec and not the rate transmitted over the
+  network. Default is 2^64-1.
 
 * tnt: If present Indicates whether the entity supports the
   takeback-and-transfer (TNT) command. The default is does not support
@@ -1122,7 +1122,26 @@ https://www.iana.org/assignments/media-types/media-types.xhtml
 
 [[ CJ - Propose we move this section and previous to a separate draft ]]
 
-TODO 
+The proposal uses the same syntax as the advertisement and is used to
+configure what media sources send. The proposal can be full accepted or
+rejected by the media source that is being configured with proposal but
+partial acceptance is not allowed.
+
+For example, a controller could configure a camera to with the following
+proposal:
+
+~~~ ascii-art
+cam1: H264@size=1280x720,fps=30
+mic1: opus@br=20
+~~~
+
+This would tell the camera to send video at resolutions and frame rates up
+to 720p at 30fps. The camera might send less than this due to congestion
+of other reasons but it would not exceed this. It would send  audio
+using opus but encoded not to exceed a bandwith of 20 kbps.
+
+The source and sink names must match the names in the advertisement from
+this device. 
 
 ## Initiating Calls
 
