@@ -1161,44 +1161,74 @@ their respective open square brackets after the HTTP header fields. We
 utilize streaming JSON in order to facilitate usage of tools like CURL
 for signalling operations. 
 
-## The Media Sequence
+## The Media Chunk Format
+
+[[ Propose move this section to it's own draft ]]
+
+[[ Note - moved from frame to chunk as frame is too confusing  with video ]]
 
 In RIPP, media is represented as a continuous sequence of RIPP media
-frames embedded in a media byway. Each ripp media frame encodes a variable
-length sequence number offset, followed by a variable length length
-field, followed by a codec frame equal to that length. The media byway
-itself, when created, includes properties that are shared across all
-media frames within that byway. These parameters include the sequence
-number base, the timestamp base, the codec type, and the frame size in
-milliseconds for the codec.
+chunks.
 
-This is a significantly different design than RTP, which conveys many
-repeated parameters (such as the payload type and timestamp) in every
-packet. Instead, RIPP extracts information that will be shared across
-many packets and associates it with the byway itself. This means the
-media frames only contain the information which varies - the sequence
-number and length. [[OPEN ISSUE: we could maybe even eliminate the
-sequence number by computing it from offset in the stream. Worried
-about sync problems though?]]
+Each ripp media chunk has an outer envelope that is not encrypted,
+except by the transport the chunk is sent over, and an inner package
+that is encrypted. Inside both the envelope and package are a set of
+tag length values (TLV) tuples.
 
-Consequently, each media frame has the following properties:
+Each media chunk has the following properties in the envelope part:
 
-* The sequence number, which is equal to the sequence number base
-  associated with the media byway, PLUS the value of the sequence
-  number offset
+* The truncated sequence number, which provides the absolute ordering
+  of the packets for the codec. (tag = 1)
 
-* The timestamp, which is equal to the timestamp base from the byway,
-  PLUS the sequence number offset TIMES the frame size in
-  milliseconds. Note that this requires that frame size must remain
-  fixed for all media frames in a byway.
+* The truncated timestamp, which provides the wall clock time in ms of
+   when the first sample of media in the chunk was recorded. Full
+   values is sent periodically but all packets should have a truncated
+   version.  (tag = 2)
 
-* The codec type, which is a fixed property of the byway. There are no
-  payload type numbers in RIPP.
+* An optional codec type that is sent periodically. Value is a string
+   such as "opus".  (tag = 3)
 
-RIPP does not support gaps in the media sequence due to
-silence. Something must be transmitted for each time interval. If a
-RIPP implementation wishes to change codecs, it MUST utilize a
-different byway for that codec. 
+* Optional Reference frame flag. Indicates other chunks are encoded
+  based on this frame. Typically used with video codecs and only set
+  true on chunks that are part of an I Frame. Default value is false.
+
+* Optional Spacial Layer scale: TBD - indicates which spacial layer this
+  packet is part of when using a scalable codec 
+
+* Optional Temporal Layer scale: TBD - indicates which temporal layer this
+packet is part of when using a scalable codec
+
+* Active  Level: Provides indication of audio energy in media
+  chunk and can be used by conferring bridges to do speaker
+  selection. 
+
+* Optional extension parameters in the envelope
+
+Each media chunk has the following properties in the package part:
+
+* Media. Then output from the codec (tag=4)
+
+* optional extension parameters in the package
+
+The chunk is encoded by passing the envelope as authenticated data,
+and the package to an AEAD cipher. The chunk is created by taking the
+truncated auth tags of the cipher followed by output of the AEAD
+cipher.  The keys for the cipher to use, the keys for the cipher, and
+the authentication tag truncation are set by mechanisms outside this
+section.
+
+The default cipher is AEAD_AES_128_GCM, the IV is formed by
+concatenating the 64 bit version of the timestamp with 64 bit version
+of sequence number. By default the authentication tag is truncated to
+0 bits as authentication is provided by the TLS transport protocol
+this is sent over.
+
+[[ TODO - IANA section for tags ]]
+
+[[ TODO - IANA section for ciphers with auth truncation length ]]
+
+[[ TODO - example ]]
+
 
 ## Opening Media Byways
 
