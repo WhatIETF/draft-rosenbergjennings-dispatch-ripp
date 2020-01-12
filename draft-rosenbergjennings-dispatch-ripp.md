@@ -991,52 +991,10 @@ brief interval. It MUST be prepared for this.
 When the trunk resource is destroyed, its associated capabilities are
 also destroyed.
 
-The RIPP capabilities document is a list of name-value pairs, which
-specify a capability. Every capability has a default, so that if no
-document is posted, or it is posted but a specific capability is not
-included, the capability for the peer is understood. Capabilities are
-receive only, and specify what the entity is willing to
-receive. Capabilities are bound to the RIPP trunk, and are
+The capabilities are descriebd by an Advertisement 
+
+Capabilities are bound to the RIPP trunk, and are
 destroyed when the RIPP trunk is destroyed.
-
-This specification defines the following capability set. This set is
-extensible through an IANA registry.
-
-* max-bitrate: The maximum bitrate for receiving voice. This is
-  specified in bits per second. It MUST be greater than or equal to
-  64000. Its default is 64000.
-
-* max-samplerate: The maximum sample rate for audio. This is
-  specified in Hz. It MUST be greater than or equal to 8000. Its
-  default is 8000.
-
-* max-samplesize: The maximum sample size for audio. This is specified
-  in bits. It MUST be greater than or equal to 8. The default is 16. 
-
-* force-cbr: Indicates whether the entity requires CBR media only. It
-  MUST be either "true" or "false". The default is 
-  "false". If "true", the sender MUST send constant rate audio.
-
-* two-channel: Indicates whether the entity supports receiving two
-  audio channels or not. Two channel audio is specifically used for
-  RIPP trunks meant to convey listen-only media for the purposes of
-  recording, similar to SIPREC [@RFC7866]. It MUST be either "true" or
-  "false". The default is "false".
-
-* tnt: Indicates whether the entity supports the takeback-and-transfer
-  command. Telcos supporting this feature on a trunk would set it to
-  "true". The value MUST be "true" or "false". The default is "false".
-
-In addition, codecs can be listed as capabilities. This is done by
-using the media type and subtype, separated by a "/", as the
-capability name. Media type and subtype values are taken from the IANA
-registry for RTP payload format media types, as defined in
-[@RFC4855]. The value of the capability is "true" if the codec is
-supported, "false" if it is not. The default is "false" for all codecs
-except for "audio/PCMU", "audio/opus", "audio/telephone-event" and
-"audio/CN", for which the default is "true". Because codec
-capabilities are receive-only, it is possible, and totally acceptable,
-for there to be different audio codecs used in each direction.
 
 In general, an entity MUST declare a capability for any characteristic
 of a call which may result in the call being rejected. This
@@ -1047,6 +1005,143 @@ the consumer configures their to utilize this codec, this will be
 known as a misconfiguration immediately. This enables validation of
 trunk configurations in an automated fashion, without placing test
 calls or calling customer support.
+
+## Advertisement
+
+[[ CJ - Propose we move this section and next to a separate draft ]]
+
+The RIPP advertisement  is a list of media sources and sinks along with
+the codecs they suppor and a set of name-value pairs, which
+specify a capability of the codec on that source or sink.
+
+A device with a single microphone and speaker that support G.711 and
+opus might have an advertisement that looked like:
+
+~~~ ascii-art
+mic1: opus,PCMU,PCMA
+spk1: opus,PCUM,PCMA
+~~~
+
+A device with a camera that could support H.264 at 4K and av1 at 1080p
+might have a advertisement that looked like:
+
+~~~ ascii-art
+cam1: H264 @size=1920x1080
+cam1: av1 @size=3840x2160
+~~~
+
+The syntax is a names  for the source or sink, followed by a
+comma separated list of supported codecs, followed by at @ sign then
+a comma separated set of limits. The name for a source or sink can
+occur multiple times with each line indicating a different codec and
+limits.
+
+Sources that are only send audio have a name starting with mic while
+video start with cam.  Sinks that receive only audio have a name
+starting with spk and video sinks start with dis. Device that sources
+and sink audio start with aud while ones that source and sink video
+start with vid. If a device and source and sink audo and video is can
+start with av.
+
+An video phone that could support opus and H.264 at 720p @ 30 fps might look
+like:
+
+~~~ ascii-art
+av1: H264,opus @size=1280x720,fps=30
+~~~
+
+Every capability has a default, so that if no
+document is posted, or it is posted but a specific capability is not
+included, the capability for the peer is understood.
+
+This specification defines the following capability set for audio codecs. 
+
+* sr: The maximum sample rate for audio. This is specified in Hz. The
+  default is 48000.
+
+* ss: The maximum sample size for audio. This is specified
+  in bits. It MUST be greater than or equal to 8. The default is 16. 
+
+* cbr: If present, indicates whether the entity requires constant
+  bitrate (CBR) media only. Default is not constant bit rate.
+
+* ch: Indicates whether the entity supports  multiple
+  audio channels.  The default is 1.
+
+* ptime: max duration of media encoded in single packet in ms. Default is 30. 
+
+This specification defines the following capability set for video
+codecs:
+
+* fps: The maximum frame rate for video. This is specified in frames per
+  second. The default is 30.
+
+* size: the max width in pixels followed by and x then the max height
+  in pixels. Default is TBD.
+
+* pr: the max pixel rate ( pixels / second ). Default is 2^64-1. 
+
+* depth: the max pixel depth in bits. Default is 8.
+
+This specification defines the following capability set for scalable video
+codecs:
+
+* tlay: max number of temporal layers. Each sub layer runs at twice the
+rate of the later it depends on. Default is 1.
+
+* slay: max numer of spacial layers. Each sub layer has 2 times the number
+  of pixel of layer it depended on. Default
+  is 1. [[ Open issue 2 times or 4 times ]] 
+
+This specification defines the following capability set for both audio
+and video codecs.
+
+* br: The maximum bitrate in kilo bits per second for receiving audio or
+  video. This is specified in bits per second. This is the rate of
+  encoded media from the codec and not the rate transmitted over the
+  network. Default is 2^64-1.
+
+* tnt: If present Indicates whether the entity supports the
+  takeback-and-transfer (TNT) command. The default is does not support
+  TNT.
+
+A PSTN gateway that supported G.711 and TNT might have an advertisement
+that looked like:
+
+~~~ ascii-art
+aud1:PCMU,PCMA@tnt
+~~~
+
+This capabilities are extensible through an IANA registry. [[ TODO ]] 
+
+The codec names are defined in the IANA registry "Media Types" at
+https://www.iana.org/assignments/media-types/media-types.xhtml
+
+
+## Proposal
+
+[[ CJ - Propose we move this section and previous to a separate draft ]]
+
+The proposal uses the same syntax as the advertisement and is used to
+configure what media sources send. The proposal can be full accepted or
+rejected by the media source that is being configured with proposal but
+partial acceptance is not allowed.
+
+For example, a controller could configure a camera to with the following
+proposal:
+
+~~~ ascii-art
+cam1: H264@size=1280x720,fps=30
+mic1: opus@br=20
+~~~
+
+This would tell the camera to send video at resolutions and frame rates up
+to 720p at 30fps. The camera might send less than this due to congestion
+of other reasons but it would not exceed this. It would send  audio
+using opus but encoded not to exceed a bandwith of 20 kbps.
+
+The source and sink names must match the names in the advertisement from
+this device. 
 
 ## Initiating Calls
 
@@ -1572,7 +1667,8 @@ gateway function in order to maximize interoperability.
 
 # Acknowledgements
 
-Thanks you for review and edits to: Giacomo Vacca. 
+Thanks you for review and edits to: Giacomo Vacca. Thank you to Mo
+Zanaty for greatly simplifying the advertisement proposal for video. 
 
 {backmatter}
 
