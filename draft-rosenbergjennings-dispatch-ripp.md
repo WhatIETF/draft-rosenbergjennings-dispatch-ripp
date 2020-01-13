@@ -67,24 +67,24 @@ organization = "Google"
 .# Abstract
 
 This document specifies the Realtime Internet Peering Protocol
-(RIPP). RIPP is used to provide telephony peering between a trunking
-provider (such as a telco), and a trunking consumer (such as an
-enterprise, cloud PBX provider, cloud contact center provider, and so
-on). RIPP is an alternative to SIP, SDP and RTP for this use case, and
-is designed as a web application using HTTP/3. Using HTTP/3 allows trunking
-consumers to more easily build their applications on top of cloud
-platforms, such as AWS, Azure and Google Cloud, all of which are
-heavily focused on HTTP based services. RIPP also addresses many of
-the challenges of traditional SIP-based trunking. Most notably, it
-mandates secure caller ID via STIR, and provides automated trunk
-provisioning as a mandatory protocol component. RIPP supports both
-direct and "BYO" trunk configurations. Since it runs over HTTP/3, it
-works through NATs and firewalls with the same ease as HTTP does, and
-easily supports load balancing with elastic cluster expansion and
-contraction, including auto-scaling - all because it is nothing more
-than an HTTP application. RIPP also provides built in mechanisms for
-migrations of calls between RIPP client and server instances, enabling
-failover with call preservation.
+(RIPP). RIPP is used to provide peering of voice and video
+communications between administrative domains. These include a
+traditional voice trunking provider (such as a telco), and a trunking
+consumer (such as an enterprise PBX or contact center), or between a
+video conferencing endpoint deployed in an enterprise, and a video
+conferencing SaaS service. RIPP is an alternative to SIP, SDP and RTP
+for this use case, and is designed as a web application using
+HTTP/3. Using HTTP/3 allows trunking consumers to more easily build
+their applications on top of cloud platforms, such as AWS, Azure and
+Google Cloud, all of which are heavily focused on HTTP based
+services. RIPP also addresses many of the challenges of traditional
+SIP-based peering. It supports modern techniques for load balancing,
+autoscaling, and failover, adds mid-call failovers and graceful call
+migrations, is secure by default, requires STIR-based caller ID, and
+has built-in techniques for provisioning and capabilities - all of
+which have been challenges with traditional SIP peering and
+voice trunking. Since it runs over HTTP/3, it works through NATs and
+firewalls with the same ease as HTTP does
 
 {mainmatter}
 
@@ -146,7 +146,8 @@ PBXs, cloud contact centers, cloud meetings applications, and so
 on. Furthermore, commerce websites would like to allow customers
 to call into the telephone network for customer support.
 
-In order for these applications to connect to the PSTN, they typically
+In order for these applications to connect to the PSTN, or to connect
+voice and video services in other domains, they typically
 deploy Session Initiation Protocol (SIP) [@RFC3261] based servers -
 SBCs, SIP proxies, and softswitches, to provide this
 interconnection. Unfortunately, SIP based applications cannot make use
@@ -156,8 +157,22 @@ VMs at best. Application developers must build their own load
 balancing, HA, failover, clustering, security, and scaling
 technologies, rather than using the capabilities of these platforms.
 
-This has creating a barrier to entry, particularly for applications
-such as websites which are not expert in VoIP
+Another problem has been call drops. SIP's original design where call
+state lived only in the endpoints and media was sent p2p - provided
+extremely high reliability. In practice, SIP networks are full of
+state that resides in server intermediaries (softswitches, SBCs, and
+so on), and has seen media transmitted through these
+intermediaries. Unfortunately, the SIP protocol did not provide
+built-in mechanisms which enable call preservation - the ability of a
+call to survive failure of any server component without call drops. As
+a result, many of these servers rely on layer 3 solutions (such as
+shared VIPs with proprietary state replication), which are expensive,
+hard to deploy, and of limited scale. In other cases, they are absent,
+in which case a server failure will cause all calls to be dropped,
+requiring the end user themselves to re-initiate the call. 
+
+All of this has created a barrier to entry, particularly for
+applications such as websites which are not expert in VoIP
 technologies. Furthermore, it has meant that VoIP applications have
 been unable to take advantage of the many technology improvements that
 have come to networking and protocol design since the publication of
@@ -166,38 +181,47 @@ RFC 3261 in 2002.
 In addition, SIP trunking has suffered from complex provisioning
 operations, oftentimes requiring the exchange of static IPs and
 ports. These operations are almost never self-service and
-consequently, SIP trunk turn ups can take weeks. Finally, perhaps the
-biggest challenge with SIP trunking has been its abuse for injecting
-robocalls. 
+consequently, SIP trunk turn ups can take weeks.
 
-## Solution
+Finally, perhaps the biggest challenge with SIP trunking has been its
+abuse for injecting robocalls, and in general weak deployment of
+security. 
 
-The goal of RIPP is to enable one administrative domain to send and
-receive voice calls with another domain. In this regard, RIPP replaces
-the usage of SIP, SDP offer/answer [@RFC3264] and RTP [@RFC3550] for
-this particular use case. RIPP does not actually deprecate or replace
-SIP itself, as it covers only a small subset of the broader
-functionality that SIP provides. It is designed to be the minimum
-protocol required to interconnect voice between a trunking provider
-and a domain wishing to access trunking services.
+In summary - there are four core problems which this specification is
+addressing in the traditional usage of SIP peering between entities:
 
-In order to make use of new HTTP based technologies as described
-above, RIPP uses HTTP/3 [@I-D.ietf-quic-http], but is not an
-extension to it. The goal is to ride the coattails of advancement in
-HTTP based technologies without requiring them to do anything special
-for the benefit of VoIP. This means that RIPP inherits the benefits of
-classic HTTP deployments - easy load balancing, easy expansion and
-contraction of clusters (including auto-scaling), standard techniques
-for encryption, authentication, and denial-of-service prevention, and
-so on.
+1. The difficulty of deploying real-time communications servers into
+web-centric cloud platforms, which can enable modern solutions for
+load balancing, infinite scale, autoscaling, hitless software upgrade,
+and so on. 
 
-RIPP also includes a built-in mechanism for provisioning, as a
-mandatory component of the specification. This enables RIPP trunks to
-be self-provisioned through web portals, and instantly turned on in
-production. This will help accelerate the adoption of
-telecommunications services across the web.
+2. Lack of built-in protocol mechanisms for call preservation
 
-## Why Now?
+3. Lack of standardized and automated techniques for provisioning and
+configuration of SIP trunks
+
+4. Lack of secure caller ID
+
+
+## Core Concept
+
+The core concept of RIPP is simple - to make voice and video peering
+yet another application that sits on top of HTTP.
+
+Though SIP was inspired by HTTP, it is not HTTP itself. SIP and HTTP
+are peers - application protocols running ontop of the Internet. In the
+intervening years, HTTP evolved to become a general purpose substrate
+for delivering Internet applications. It is fair to say that today,
+almost all applications users consume over the Internet run over
+HTTP (with obvious exception of inter-server email - much client to
+server email is also now run over HTTP).
+
+This resulted - in essence - a rift between telecommunications
+technologies and web technologies. Both had their own protocol stacks,
+their own sets of products and services, and so on.
+
+RIPP is an attempt to seal this rift by reunifying web and
+telecommunications technologies, with web as the "winner".
 
 The idea of re-converging HTTP and SIP is certainly not new, and indeed
 has been discussed in the hallways of IETF for many years. However,
@@ -219,10 +243,32 @@ HTTP/3. QUIC is based on UDP, and it introduces the concept of a stream
 that can be set up with zero RTT. These streams are carried over UDP,
 and though are still reliable, there is no head of line blocking
 across streams. This change has made it possible for HTTP to support
-VoIP applications.
+real-time applications.
 
 
-# Solution Requirements
+As a result, RIPP uses HTTP/3 [@I-D.ietf-quic-http], but is not an
+extension to it. This means that RIPP inherits the benefits of
+classic HTTP deployments - easy load balancing, easy expansion and
+contraction of clusters (including auto-scaling), standard techniques
+for encryption, authentication, and denial-of-service prevention, and
+so on.
+
+# Structure of this Document
+
+The document is broadly split into two parts - explanatory and
+normative materials. The explanatory text is non-normative, and
+contains no [@RFC2119] language. Much of this text is meant to help
+readers familiar with SIP, understand how SIP concepts translate (or
+don't) into RIPP. These sections include Requirements (#req), Design
+Approaches (#design), Terminology (#terminology), Reference
+Architecture (#reference), Deployment Examples (#deployments)
+
+The normative content is split into four components - creating a
+reverse tg, tg, call, and media, each of which represents a web
+service. These are sections TODO.
+
+
+# Solution Requirements (#req)
 
 The protocol defined here is based on the following requirements:
 
@@ -259,21 +305,22 @@ must be designed for easy implementation by SBCs and easy deployment
 by PSTN termination and origination providers who do not utilize cloud
 platforms
 
-REQ10: The solution shall require authentication and encryption, with no opportunity to disable them. Furthermore, it will require secure callerID, with no provision for insecure callerID 
+REQ10: The solution shall require authentication and encryption, with
+no opportunity to disable them. Furthermore, it will require secure
+callerID, with no provision for insecure callerID
 
 REQ11: The solution shall provide low latency for media
 
-REQ12: The solution shall support only audio, but be extensible to
-video or other media in the future
+REQ12: The solution shall support audio and video
 
 REQ13: The solution must support secure caller ID out of the gate and
 not inherit any of the insecure techniques used with SIP
 
 REQ14: The solution shall include mandatory-to-implement provisioning
-operations 
+operations for cases where there is a customer-provider relationship 
 
 
-# Design Approaches
+# Design Approaches (#design)
 
 To meet the requirements stated above, RIPP makes several fundamental
 changes compared to SIP. These changes, and their motivations, are
@@ -319,7 +366,7 @@ caller implements the RIPP client, and the domain receiving the calls
 is the RIPP server. For any particular call, the roles of client and
 server do not change. To facilitate calls in either direction, a
 domain can implement both RIPP client and RIPP server roles. However,
-there is no relationship between the two directions.
+there is no relationship between the two directions. 
 
 ## Signaling and Media Together
 
@@ -337,10 +384,10 @@ consequentially RIPP needs to operate this way as well.
 
 Though SIP envisioned that signalling and media separation would also apply to
 inter-domain calls, in practice this has not happened. Inter-domain
-interconnect - used primarily for interconnection with the PSTN - is
+interconnect - including interconnection with the PSTN - is
 done traditionally with SBCs which terminate and re-originate
-media. Since this specification is targeted solely at these peering
-use cases, RIPP fundamentally combines signalling and media together on
+media. Since this specification is targeted at inter-domain peering
+cases, RIPP fundamentally combines signalling and media together on
 the same connection. To ensure low latency, it uses multiple
 independent request/response transactions - each running in parallel
 over unique QUIC streams - to transmit media. 
@@ -393,11 +440,12 @@ client with OAuth tokens. For calls in the reverse direction, the
 roles are reversed.
 
 To make it possible to easily pass calls in both directions, RIPP
-allows one domain to act as the customer of another, the trunking
-provider. The customer domain authenticates with the provider and
-obtains an OAuth token using traditional techniques. RIPP then allows
-the customer domain to automatically create a bearer token for inbound
-calls and pass it to the provider.
+allows one domain to act as the customer of another, the provider. The
+customer domain authenticates with the provider and obtains an OAuth
+token using traditional techniques. RIPP then allows the customer
+domain to automatically create a bearer token for inbound calls and
+pass it to the provider, along with the URI for receipt of inbound
+calls. 
 
 
 ## TLS not SRTP or SIPS
@@ -421,7 +469,14 @@ built-in encryption of media and signalling between peering domains,
 which is a notable improvement over the current deployment
 situation. It is also necessary in order to utilize HTTP/3.
 
-Because of this, RIPP does not support SRTP. If a client receives a
+For reasons of interoperability, and to enable e2e media encryption in several
+inter-domain use cases, RIPP assumes each media chunk may be
+encrypted, and if so, it contains a key ID which dereferences the
+encryption keys, ciphers and other information needed to decrypt the
+packet. The exchange of these keys and ciphers is done entirely out of
+band of RIPP. 
+
+However, RIPP does not support SRTP. If a client receives a
 SIP call with SRTP, it must terminate the SRTP and decrypt media
 before sending it over RIPP. This matches existing practice in many
 cases. 
@@ -434,13 +489,13 @@ SIP enables one domain to initiate calls to another domain without
 authenticated caller ID.
 
 With RIPP, we remedy this by requiring the client and servers to
-implement STIR. Since RIPP is meant for peering between providers (and
-not client-to-server connections), STIR is applicable. RIPP clients
-must either insert a signed passport, or pass one through if it
-exists. Similarly, RIPP servers must act as verifying parties and
-reject any calls that omit a passport.
+implement STIR. RIPP clients must either insert a signed passport, or
+pass one through. Similarly, RIPP servers must act as
+verifying parties and reject any calls that omit a passport. In cases
+where the RIPP client is an end device, it still inserts a passport -
+but uses a self-signed certificate. 
 
-* CJ - Need to check we have all the things needed in an Passport.
+[TODO: Need to check we have all the things needed in an Passport.]
 
 ## Calls Separate from Connections
 
@@ -470,13 +525,73 @@ HTTP approaches for these problems. Consequently, RIPP does not
 utilize ICE and has no specific considerations for NAT traversal, as
 these are handled by HTTP/3 itself.
 
+# Terminology (#terminology)
 
-# Reference Architecture
+This specification follows the terminology of HTTP/3 - specifically:
+
+RIPP Client: The entity that initiates a call, by acting as an HTTP
+client.
+
+RIPP Server: The entity that receives a call, by acting as an HTTP
+server.
+
+RIPP Connection: An HTTP connection between a RIPP client and RIPP
+server.
+
+RIPP Endpoint: Either a RIPP client or RIPP server.
+
+RIPP Peer: An endpoint.  When discussing a particular endpoint, "peer"
+refers to the endpoint that is remote to the primary subject of
+discussion.
+
+This specification defines the following additional terms:
+
+RIPP Terminal Group (TG): A container for calls between a trunking
+provider and trunking consumer. A RIPP TG is identified by a pair of
+URI - the Provider TG (hosted by the provider) and the Consumer TG
+(hosted by the consumer). A TG acts as a unit of policy and
+capabilities, including rules such as rate limits, allowed phone
+numbers, and so on. The acronym is a nod to its circuit switched
+predecessor, the Trunk Group. 
+
+Call: A real-time voice and/or video session established by a RIPP
+client. A call is always associated with a TG.
+
+Consumer: An administrative entity that utilizes communications
+services from the provider in order to make and receive calls. The
+relationship between the consumer and provider is
+static and does not vary from call to call. (e.g., Verizon would be
+the provider to an enterprise consumer, and the enterprise
+would be the consumer of Verizon. A consumer
+implements a RIPP client to initiate calls to the provider,
+and a RIPP server to receive them.
+
+Provider: The administrative entity that provides communications
+services to the consumer. The provider implements a RIPP server to receive
+calls from the consumer, and a RIPP client to send calls to
+the consumer
+
+Provider TG: An HTTP resource and URI hosted by the provider, which
+represents the RIPP TG from its perspective.
+
+Consumer TG: An HTTP resource and URI hosted by the consumer, which
+represents the RIPP TG from its perspective. Since RIPP is meant to be
+used in environments where there is an asymetric relationship between
+provider and consumer, the consumer TG URI can be registered
+provider during configuration time. 
+
+Byway: A bidirectional byte stream between a RIPP provider and
+consumer. A Byway passes its data through a long-running HTTP request
+and a long-running HTTP response. Byways are used for signalling and
+media.
+
+
+# Reference Architecture (#refarch)
 
 The RIPP reference architecture is shown in Figure 1.
 
 ~~~ ascii-art
- Trunk Provider             Trunk Consumer
+   Consumer A                Provider B
 
                  Calls
 +-------------+  From      +-------------+
@@ -497,7 +612,7 @@ The RIPP reference architecture is shown in Figure 1.
 +-------------+            +-------------+
 ~~~
 
-RIPP is used between a RIPP trunk provider and a RIPP trunk
+RIPP is used between a RIPP provider and a RIPP 
 consumer. Both entities implement the RIPP client and RIPP server
 roles; the latter to receive calls, and the former to send them.
 
@@ -542,12 +657,25 @@ balancer, as shown below:
 
 ~~~
 
-Since both the trunk provider and trunk consumer implement the client
-and server roles, both entities will typically have a load balancer - perhaps a server component, or a cloud-based service, 
-used to receive incoming calls. This is not required, of course. It is
-worth restating that this load balancer is NOT specific to RIPP - it
-is any off-the-shelf HTTP load balancer which supports HTTP/3. No
-specific support for RIPP is required. RIPP is just a usage of HTTP. 
+The consumer and provider role is asymmetric. Typically the consumer
+is quite literally a customer of the provider, purchasing
+services. From a protocol perspective, RIPP assumes that the consumer
+has an account with the provider, and it is possible for the consumer
+to obtain an OAuth token which can be used to authenticate. 
+
+In order to receive inbound calls, the consumer can use RIPP to
+register its consumer TG URI with the provider. In cases where the
+client is behind a NAT, it can utilize protocols like STUN or TURN to
+obtain a URL reachable by the provider. This registration also
+includes a bearer token for authentication.
+
+Since both the provider and consumer implement the client and server
+roles, both entities will typically have a load balancer - perhaps a
+server component, or a cloud-based service, used to receive incoming
+calls. This is not required, of course. It is worth restating that
+this load balancer is NOT specific to RIPP - it is any off-the-shelf
+HTTP load balancer which supports HTTP/3. No specific support for RIPP
+is required. RIPP is just a usage of HTTP.
 
 Because RIPP clients and servers are nothing more than HTTP/3
 applications, the behavior or RIPP is specified entirely by describing
@@ -556,144 +684,457 @@ to applications - opening connections, closing connections, sending
 requests and responses, receiving requests and responses, and setting
 header fields and bodies. That's it.
 
+# Deployment Examples (#deployments)
 
-# Terminology
+RIPP enables communications between a pair of administrative
+domains. This enables its usage in many use cases where there are
+bilateral relationships requiring real-time communications. This
+section contains several use cases which are target use cases for
+deployment of RIPP.
 
-This specification follows the terminology of HTTP/3 - specifically:
+## Enterprise Voice Trunking
 
-RIPP Client: The entity that initiates a call, by acting as an HTTP
-client.
+In this use case, the provider is a telco that enables connectivity to
+the PSTN. The consumer is an enterprise, utilizing an enterprise
+PBX. Or, it might be a contact center provider. This is the use case
+for which SIP trunking is widely deployed today.
 
-RIPP Server: The entity that receives a call, by acting as an HTTP
-server.
+In this use case, a key goal is to facilitate automated configuration
+of SIP trunks - a process which is, today, complex and error
+prone. This section discusses how RIPP can make such configuration as
+easy as a web app login.
 
-RIPP Connection: An HTTP connection between a RIPP client and RIPP
-server.
+Consider a simple use case of a small business hosting a single IP PBX
+server, on a single machine, which is being used to make and receive
+calls. To set up the IP PBX for peering, the administrator would go to
+the configuration web application on the IP PBX.
 
-RIPP Endpoint: Either a RIPP client or RIPP server.
+The  web application would have a page for selecting their trunking
+provider, with a list of supported providers. The user clicks on
+"Comcast". This begins a standard OAuth flow. The end user would be
+directed to the login page for Comcast, provide their credentials, and
+then be asked to authorize the IP PBX to access their Comcast account
+on their behalf. It would also display the permissions being requested
+(which Comcast would define and the IP PBX would request). In this
+case, probably the ability to make and recieve calls on their
+behalf. The user would click on "approve". The standard OAuth flow
+would then have deposited an OAuth access token on the IP PBX.
 
-RIPP Peer: An endpoint.  When discussing a particular endpoint, "peer"
-refers to the endpoint that is remote to the primary subject of
-discussion.
+The IP PBX would use the API defined below to obtain the list of TG
+URIs which are available for that user (which will often just be
+one), and present the user with the list of such trunks. The user
+would select one, if needed. At this point, the IP PBX now has the
+user's OAuth token and the provider TG URI, which are the only two
+pre-requisites for placing calls. 
 
-This specification defines the following additional terms:
+No further configuration or setup is required. Using RIPP, the IP PBX
+will read an advertisement associated with the TG URI to learn its
+capabilities and features, create and
+upload its own TG URI and bearer token, and now be able to make and
+receive calls. 
 
-RIPP Trunk: A container for calls between a trunking provider and
-trunking consumer. A RIPP trunk is identified by a pair of URI - the
-RIPP Trunk Provider URI (hosted by the trunking provider) and the RIPP
-Trunk Consumer URI (hosted by the trunking consumer). RIPP trunks act
-as a unit of policy and capabilities, including rules such as rate
-limits, allowed phone numbers, and so on.
+## BYO Voice for CCaaS
 
-Call: A VoIP session established by a RIPP client for the purposes of
-exchanging audio and signalling information. A call is always
-associated with a RIPP trunk. 
+In a related case, an enterprise has purchased voice services from
+Comcast as in the case above. However, rather than deploying an IP
+PBX, they wish to utilize the services of a Contact Center as a
+Service (CCaaS), such as Five9. In this example, Five9 supports a
+"BYO" model where the enterprise customer can purchase their voice
+services from another provider - such as Comcast, and then authorize a
+third party - in this case Five9 - to access them on their behalf.
 
-Trunking Consumer: An administrative entity that utilizes trunking
-services from the trunking provider. The relationship between the
-trunking consumer and trunking provider is static and does not vary
-from call to call. (e.g., Verizon would be the trunking provider to an
-enterprise consumer, and the enterprise would be the trunking consumer of
-Verizon. A trunking consumer implements a RIPP client to initiate
-calls to the trunking provider, and a RIPP server to receive them. 
+The flow works almost identically to the above case. The end user
+would visit five9.com, log in using their Five9 account, and click on
+the button to enable Comcast as their BYO provider. The user would be
+directed to log into their Comcast account, and then authorize Five9
+to access their Comcast account for making and receiving calls. The
+user would approve, and then setup is complete.
 
-Trunking Provider: The administrative entity that provides telephony
-trunking services to the trunking consumer. The relationship between
-the trunking consumer and trunking provider is static and does not
-vary from call to call. (e.g., Verizon would be the trunking provider
-to an enterprise, and the enterprise would be the trunking customer of
-Verizon. The trunking provider implements a RIPP server to receive
-calls from the trunking consumer, and a RIPP client to send calls to
-the trunking consumer
+In essence, a side effect of using OAuth for authentication and
+authorization is that it enables a wide range of access models for
+telecommunications services. Access can be granted to servers (as in
+the IP PBX case above), or to other cloud services (as in this case),
+with a common mechanism. 
 
-Trunking Customer: The administrative entity which purchases trunking
-services from the trunking provider. The trunking customer may be the
-same as the trunking consumer - such as an enterprise purchasing and
-then consuming trunking services from a telco. Or, it can be different
-- such as an enterprise purchasing trunking services from a telco, and
-then authorizing a cloud PBX or cloud contact center provider to
-consume those trunking services on their behalf.
+## Inter-Carrier Voice Peering
 
-RIPP Trunk Provider URI: An HTTP URI hosted by the trunking provider, which
-represents the RIPP trunk from its perspective.
+In this case, a pair of telcos exchange voice traffic
+bidirectionally. Today this is done using SIP NNI interfaces as well
+as traditional SS7. This is accomplished in RIPP by having both telcos
+implement the provider role with a server only, as well as the
+consumer role with a client only. When initiating outbound calls, the
+carrier would act as a consumer, and when receiving them, as a
+provider. This enables a fully symmetric interconnect.
 
-RIPP Trunk Consumer URI: An HTTP URI hosted by the trunking consumer, which
-represents the RIPP trunk from its perspective.
+The authentication and authorization flow differs in this use case
+from the ones above. Since it symmetric, each side will need to have
+an account set up for the other. Administrators for both sides will
+then need to subsequently log into the other side and perform the
+OAuth flow to obtain an OAuth token for the other.
 
-Byway: A bidirectional byte stream between a RIPP provider and
-consumer. A Byway passes its data through a long-running HTTP request
-and a long-running HTTP response. Byways are used for signalling and
-media.
+
+## IP Phone to UCaaS Provider (#ipphone)
+
+In this case, an enterprise has purchased telephony services from a
+UCaaS provider. The enterprise has deployed both hard and soft phones
+to consume this service. Some of those devices reside on campus, some
+outside of campus - perhaps a user's home, or running on an user's PC
+in an Internet cafe.
+
+In this model, the UCaaS provider (say, provider.com) is the
+provider. It will have a TG URI for each end user, since the TG URI is
+bound to the phone numbers and other policies and permissions. The IP
+phone starts with just the domain name of the provider and an OAuth
+token. Using [@draft-nottingham-rfc5785bis] it will learn the RIPP
+root URI. From there, the IP phone queries the list of provider TGs it
+can access, and finds only one. With the provider TG URI in hand, it
+can use it to register its own consumer TG (and a bearer token for
+authentication), and can then place and receive calls.
+
+In the case of a softphone, the OAuth token can be easily obtained by
+login. The end user would only enter the provider name (e.g.,
+provider.com). Once again using [@draft-nottingham-rfc5785bis] it will
+construct the RIPP root URI and a URI for triggering an OAuth flow for
+RIPP. The URI for the OAuth flow will allow the user to log in and
+grant permission to the IP phone, thus giving it the needed OAuth
+token. As with the hardphone, the RIPP root URI is used to learn the
+one and only provider TG URI which is needed.
+
+In most cases the IP phone will not have a publically reachable
+IP. Its consumer TG URI needs to be reachable from the provider for
+RIPP to work. It can obtain one through any number of techniques,
+which are discussed in more detail below. 
+
+Note that, in this use case, media will always flow from the IP phone
+to the UCaaS provider. If a user on one phone called a user on another
+phone, the media would flow from phone one, the UCaaS provider, to
+phone 2, even if the two phones sat on the same LAN.
+
+## Video Endpoint to Meetings Provider
+
+In this use case, there is a video conferencing device. The end user
+wishes to join a meeting hosted on a meeting provider. The meeting
+would be modeled as number@domain, where the number is the meeting
+number used for the meeting. Using the domain, the video endpoint
+would construct the RIPP root URI and then query to discover the
+available provider TGs. This request will not be authenticated,
+because the video endpoint has no relationship with the meeting
+provider. Consequently, the meeting provider returns a provider TG URI
+which corresponds to an "unauthenticated meeting join" TG.
+
+Of course, if the video endpoint were a user of the meeting provider,
+it could have such a token and use it for the call.
+
+Finally, the video endpoint would place a call to the meeting
+address. 
+
+The video endpoint does not need to register a consumer TG URI
+with the meetings provider, because it will never receive incoming
+calls. 
+
+## Consumer Voice with E2E Encryption
+
+In this use case, there is a provider that offers an e2e encrypted
+voice communications service to end users. These users access the
+service via the web browser.
+
+In this case, let us assume that RIPP is implemented in the browser
+itself, in essence a next-generation version of webRTC. The use would
+visit the website of the provider, and log in. The Javascript API
+would expose a small number of APIs - one to connect (which takes the
+provider TG URI and then pushes the consumer TG URI to the server, as
+described in (#ipphone)),
+one to place a call, and a callback for receiving calls. There would
+also be configuration which specifies the desire for e2e encryption of
+the media.
+
+Using out-of-band techniques, such as those described in
+[@draft-ietf-mls-protocol], the Javascript app would obtain the
+necessary encryption keys and ciphersuite, and tell the browser to
+utilize them when sending media to the server via the call API, which
+initates a RIPP call.
+
+In this case, the media will be e2e encrypted, but will still flow
+through the provider. 
+
+## Browser to Browser Video
+
+In this use case, a provider is offering video services, but desires
+the video to flow directly between the two browsers in the call.
+
+For this use case, RIPP is not used between the browser and the
+provider. This is because the media always follows the signaling. To
+enable this use case, the browser would utilize webRTC along with some
+web APIs for rendezvous and exchange of offers and answers that are
+strictly for a data channel. This is NOT RIPP!
+
+Once the offer/answer exchange is completed, the browser can open to
+open a data channel to the other browser, and tunnel RIPP over it. The
+RIPP exchange would be used to start and stop the call, along with the
+exchange of advertisements, setup of calls and then exchange of media.
 
 
 # Overview of Operation
 
-RIPP begins with a configuration phase. This configuration  phase occurs
-when an OAuth2.0 client application (such as a softswitch, cloud PBX,
-cloud contact center, etc) wishes to enable trunking customers to
-provision RIPP trunks against a trunking provider. The trunking
-provider acts as the resource provider in OAuth2.0
-parlance. Consequently, The configuration phase is identical to the way
-in which client applications register with resource providers in
-OAuth2.0, the details of which are beyond the scope of this
-specification, but expected to follow existing best practices used by
-web applications.
+The basic operation of RIPP is broken into several steps - discovery,
+login, TG retrieval, consumer TG pushing, advertisement exchange, call
+establishment, and media exchange.
 
-The next step is provisioning. Once a trunking customer has obtained access to 
-services from a trunking provider (by purchasing them , for example), the trunking customer can perform
-provisioning. Provisioning is the process by which a trunking customer
-connects a RIPP trunk from a trunking provider to trunking
-consumer. Provisioning is accomplished using  
-OAuth2.0 code authorization techniques. In the case of RIPP, the
-OAuth resource owner is the trunking customer. The OAuth client is the
-RIPP implementation within the trunking consumer. The resource server
-is the RIPP implementation in the trunking provider.
+## Discovery
 
-To provision a RIPP trunk, the trunking customer will visit a web page
-hosted by the trunking consumer, and typically click on a button
-labeled with their trunking provider. This will begin the OAuth 2
-authorization code flow. The trunking customer will authenticate with
-the trunking provider. The trunking provider authorizes the access,
-generates an authorization code, and generates a RIPP trunk provider
-URI. The provider URI is included in a new OAuth parameter defined by
-this specification, and is returned as a parameter in the authorization
-response. The trunking consumer trades the authorization code for a
-refresh and access token, and stores the provider URI. Finally, the
-trunking consumer mints a bearer token associated with the new RIPP
-trunk, and also mints a RIPP trunk consumer URI for receiving calls
-from the provider on this trunk. Both of these are passed to the
-trunking provider via a POST operation to /consumerTrunk on the RIPP
-trunk provider URI. 
+Discovery is the process by which a consumer starts with just the
+domain name of the provider - such as five9.com or comcast.net or
+cisco.com - and uses that to discover the two URI which may be needed
+to bootstrap everything else.
 
-The usage of the OAuth2.0 flows enables the trunking consumer and
-trunking customer to be the same (i.e., a cloud PBX provider purchases
-services from a telco), or different (i.e., an enterprise customer has
-purchased trunking services from a telco, and wishes to
-provision them into a cloud contact center that acts as the trunking
-consumer). The latter is often referred to informally as "BYOSIP" in
-traditional SIP trunking and is explicitly supported by RIPP using
-OAuth2.0.
+One of these URI is a URI which can be used to kickoff a web-based
+OAuth flow for generating an OAuth token. The other is the RIPP root
+URI. Both of these are well-known URI as defined by
+[@draft-nottingham-rfc5785bis]. Consequently, they are constructed
+using the syntax defined in [@draft-nottingham-rfc5785bis].
 
-Once provisioned, both sides obtain capability declarations for the
-RIPP trunk by performing a GET to /capAdv of its peers trunk URI. The
-capabilities declaration is a simple document, whose syntax is
-described in Section (#syntax). It conveys the receive capabilities of
-the entity sending it, and includes parameters like maximum bitrate
-for audio. This process is optional, and each parameter has a
-default. Either side can update its capabilities for the RIPP trunk at
-any time, and trigger a fresh GET via an HTTP push. Capability
-declarations occur outside of a call, are optional, and convey static
-receive capabilities which are a fixed property of the RIPP
-trunk. Consequently, capability declaration is significantly different
-from SDP offer/answer.
+Their IANA registrations can be found in (#iana).
 
-Either the trunking consumer or provider can initiate calls by posting
-to the /calls on RIPP trunk URI of its peer.
-The request contains the target phone number in the
-request URI and an Identity header field in the HTTP Request. The
-Identity header field is identical in syntax and semantics to the SIP
-Identity header field defined in [@RFC8224], just carried in HTTP
-instead of SIP. This request returns a globally unique call URI in the
+For example, for comcast.net, the RIPP OAuth URI is
+https://comcast.net/.well-known/ripp-oauth, and the RIPP root URI is
+https://comcast.net/.well-known/ripp. 
+
+## Login
+
+Login is the process by which an OAuth token is delivered to the
+consumer. This is always done through some technique outside of the
+scope of RIPP. If the use case is to be done where the user is in
+front of a browser, the application can direct the user to visit the
+OAuth page learned from the discovery process above.
+
+## TG Retrieval
+
+The consumer needs to figure out which of the provider's TG it wishes
+to connect to. There may be cases where the provider is offering this
+consumer more than one.
+
+To obtain the list, the consumer queries the well-known RIPP root URI
+
+https://example.com/.well-known/ripp
+
+this URI will return the list of TG available to the consumer. This
+list has, for each, the TG URI and a name and description in prose,
+meant for a user to select. Selection should only be needed in
+enterprise and service provider use cases.
+
+In most cases, the server will require the client to authenticate in
+order to retrieve this document. Typically, a provider would have many
+TGs provisioned, and each TG is associated with a specific customer
+which will connect to it. The customer ID would be associated with the
+trunk group, and that same customer ID would normally be placed into
+the OAuth token that the consumer obtains during login. This allows
+the origin server to determine who the customer is, and what TG(s)
+they are allowed to connect to. This is standard procedure for most
+web APIs when a query is performed - the set of resources returned
+depend on who is asking. 
+
+## Consumer TG Registration
+
+If the consumer wishes to receive incoming calls, it will need to
+implement the server role of RIPP. Its consumer TG URI needs to be
+registered with the provider. To do this, it performs a POST to the
+provider TG URI, and sets two parameters - its own URI, and a bearer
+token used for authentication of inbound requests.
+
+The consumer TG URI has to be reachable by the provider in order for
+the consumer to receive calls. If the consumer is behind a NAT, it can
+obtain a publically reachable URL through any number of techniques
+outside of the scope of this specification.
+
+One technique would be to 
+utilize TURN [@RFC5766]. As another example, the consumer could
+utilize STUN against a STUN server run by the provider. If the client
+finds its behind a server reflexive NAT, it can use the STUN server to
+generate a server reflexive address, and then generate its consumer TG
+URI from there. Note that both STUN and TURN work best with UDP. This
+is a great match for HTTP/3 which ultimately runs over UDP as well. 
+
+## Advertisement Exchange
+
+An advertisement is a semi-static declaration which declares features,
+codecs, and other properties of the TG. Advertisements are semi-static
+in that they do not change on a call by call basis. They change only
+when some kind of significant configuration change happens. For
+example, if a RIPP server receives an upgrrade to support a new codec,
+its advertisement would change. Consequently, advertisements are
+expected to change perhaps a few times a year.
+
+When an advertisement does change, an endpoint can tell its peer using
+HTTP push. 
+
+Both sides obtain the others capability declaration for the RIPP trunk
+by performing a GET to /advertisement of its peers TG URI. The
+advertisement declaration is a simple document, whose syntax is
+described in Section (#syntax).
+
+The advertisement has a list of media sources and sinks that the
+endpoint has, and an ID for each which monotonically increases from
+0. There are four types - mics, cameras, screens and speakers. An
+endpoint can have more than one of each. The case of PSTN gateways or
+traditional voice-only phones is simple - they have a single mic and a
+single speaker, mapping to sending and receiving audio. This is true
+for a PSTN gateway regardless of its capacity. In other words, if a
+PSTN gateway has a circuit switched line card with 100 ports, its
+advertisement still has just one mic and one speaker.
+
+A three-screen telepresence system might have three screens,
+three mics, three cameras, and three speakers, and represents the
+opposite end of the spectrum in terms of complexity.
+
+For each source or sink, there are one or more parameter sets that can
+be specified. Each parameter in the parameter set has a name and a
+value. The value is always an integer from 0 to 65535. Parameters are
+typically standardized and registered with IANA. The registration
+indicates the meaning of the values - their units and allowed
+values. Most importantly, the parameter is always expressed in a way
+where the value represents a maximum of some sort. This enables
+booleans (where the maximum is 1), integral ranges (where the maximum
+is a large-ish integer), or ordered enums (where the enum values
+correspond to integers in order). When a parameter is not specified,
+it takes on a default. Similarly, if the advertisement document is not
+present, the default can be assumed for all parameters.
+
+Codec support is signaled using boolean parameters, with names that
+match the media subtypes defined in the IANA protocol registry for
+media types [@RFC4855]. 
+
+When a call is to be placed, the client takes the advertisement from
+its peer, takes its own advertisement, and figures out what it will
+send, and what the other side must send. It takes the latter - the
+definition of what the other side must send - and constructs a
+directive out of it. This directive is sent to the callee during call
+setup - see below. The directive has the same syntax as an
+advertisement. However, it only includes media sources (since by
+definition the directive tells the remote peer what to send), there is
+one parameter set per source, and for each parameter, the value
+indicates what the peer should send. The directive is always specified
+in a way that makes the value of each parameter less than the maximum
+value for both the sender and receiver. 
+
+Another important consequence of this design is that media packets
+must be self-describing, without any kind of reference to a specific
+call. This is because the directive is constructed from the
+advertisements only, and the advertisements are semi-static. This
+means RIPP does not use dynamic payload types to identify codecs.
+
+A device with a single microphone and speaker that support G.711 and
+opus might have an advertisement that looked like:
+
+~~~ ascii-art
+{
+  "mic": {
+    "id" : 0,
+    "param-sets" : {
+      "opus" : 1,
+      "PCMU" : 1,
+      "PCMA" : 1
+    }
+  }
+  "spk" : {
+    "id" : 1,
+    "param-sets" : {
+      "opus" : 1,
+      "PCMU" : 1,
+      "PCMA" : 1
+    }
+  }
+}
+~~~
+
+A device with a camera that could support H.264 at 4K and av1 at 1080p
+might have a advertisement that looked like, in part:
+
+~~~ ascii-art
+"cam": {
+   "id" : "1",
+   "param-sets": [
+        {
+	 "H264" : 1,
+	 "max-res" : 3840
+        },
+        {
+	 "AV1" : 1,
+	 "max-res" : 1920
+        }
+   ]
+}   
+~~~
+
+
+An video phone that could support opus and H.264 at 720p @ 30 fps might look
+like:
+
+~~~ ascii-art
+{
+
+ "mic": {
+    "id" : 0,
+    "param-sets" : {
+      "opus" : 1,
+     }
+  }
+  "spk" : {
+    "id" : 1,
+    "param-sets" : {
+      "opus" : 1,
+     }
+  }
+  "cam":  {
+    "id" : 2,
+    "param-sets" : {
+      "H264" : 1,
+      "max-res" : 1280,
+      "max-fps" : 30
+    }
+  }
+  "screen":  {
+    "id" : 3,
+    "param-sets" : {
+      "H264" : 1,
+      "max-res" : 3920,
+      "max-fps" : 60
+    }
+  }
+  
+}
+~~~
+
+As with any kind of capabilities techology, the one defined here
+cannot describe arbitrary constraints. It cannot express dependencies
+that may arise between audio and video, or between encoding and
+decoding. It, in essence, represents each as an OR-of-ANDS construct,
+and while all boolean expressions can be reduced to this form, it will
+produce extremely unwieldy results with complex expressions. It cannot
+represent ranges of values.
+
+We believe this represents the minimum technique which can be used to
+describe modern AV systems.
+
+In addition to classic media-related capabilities, the advertisement
+can contin other properties of the TG. These include features (such as
+support for takeback-and-transfer or hold). They can also include a
+list of the IPs of all of the origin servers associated with the
+authority in the URI and the fraction of load each is supposed to
+receive. This enables a broad set of load balancing techniques that
+facilitate adoption of RIPP into classic telco networks which utilize
+farms of SBCs - identified by IP - as the outermost network ingress
+point. 
+
+## Call Establishment
+
+Either the consumer or provider can initiate calls by posting
+to /calls on TG URI of its peer.  The request contains the target
+phone number and Passport [@RFC8225] as URI parameters. The body
+contains a proposal, which follows the format for an advertisement and
+specifies what media the callee must send. (#proposal) describes the
+normative procedures for its construction. 
+
+This request returns a globally unique call URI in the
 Location header field of a 201 response sent by the server. Typically
 the response will also include a session cookie, bound to the call, to
 facilitate sticky session routing in HTTP proxies. This allows all
@@ -706,51 +1147,236 @@ is initiated from the client to the server for purposes of
 signalling. One is a GET, retrieving call events from its peer. THe
 other is a PUT, sending call events to its peer. Each of these
 produces a unidirectional data stream, one in the forwards direction,
-one in the reverse. These are called byways. HTTP/3
+one in the reverse. These are called signaling byways. HTTP/3
 ensures zero RTT for setup of these byways.
 
 Signaling commands are encoded into the signalling byway using
 streaming JSON in both directions. Each JSON object encodes an event
-and its parameters. Events are defined for alerting, connected, ended,
-migrate, keepalive, and transfer-and-takeback. 
+and its parameters. A set of events common to all deployments of RIPP
+are defined for alerting, connected, ended, migrate, and keepalive, An
+additional set are defined targeted at server to server cases, such as
+SIP trunking and inter-provider peering. These include
+transfer-and-takeback. There is a separate set meant for signaling
+from phones to servers - hold, transfer, park, pickup, mute, unmute,
+retrieve.
 
-The media byways carry a simple binary encoding in both
-directions. Even though data can flow in both directions, a media
+## Media Exchange
+
+Media exchange makes use of webtransport over HTTP3
+[@draft-vvv-webtransport-http3] when it is available, falling back to
+media byways when it is not.
+
+Once the call signaling is complete, the caller attempts to open a
+webtransport session within the current HTTP3 connection. If this
+succeeds, the caller and callee can both send media chunks as
+webtransport datagrams.
+
+If the connection does not support webtransport, the caller takes
+responsibility for opening media byways, which carry media chunks in
+both directions. Even though data can flow in both directions, a media
 byway is unidirectional in terms of media transmission. A forward
 media byway carries media from the client to the server, and a reverse
-byway carries media from the server to the client. To eliminate HOL
-blocking for media, a media packet is sent on a media byway when it is
-first established. After the first packet, the client cannot be sure a
-subsequent packet will be delayed due to the ordering guarantees
-provided by HTTP/3 within a stream. To combat this, both sides
-acknowledge the receipt of each packet using an ACK message sent over
-the media byways, in the opposite direction of the
-media. Consequently, in a forward media byway, ACK messages are
-carried from server to client, and in a reverse media byway, they are
-carried from client to server.  Once a media packet is acknowledged,
-the media byway can be used once again without fear of HOL
-blocking. Because each media packet is acknowledged independently,
-each side can compute statistics on packet losses and
-delays. Consequently, the equivalent of RTCP sender and receiver
+byway carries media from the server to the client. These map directly
+to HTTP PUT and GET respectively, as they do for signaling byways.
+
+Unlike signaling byways where sequenced, in-order and reliable
+delivery is desired, these are undesirable for media.
+
+To eliminate them for media in the forward direction, for each and
+every media chunk to send, the client will open a media byway with a
+new PUT transaction, send the media chunk, and immediately close the
+transaction. When run over HTTP3, this process takes place with
+zero-RTT. When the server receives the request and associated media
+chunk, it immediately sends a 200 OK response, includes a payload
+containing an acknowledgement media chunk, thus completing the
+transaction. Since HTTP3 will use a different QUIC stream for each
+HTTP transaction, each of these transactions occurs on a different
+stream, and therefore there is no HOL blocking between media packets. 
+
+Receiving media is more complex, since the server cannot initiate
+HTTP requests in the reverse direction. To solve this, the client
+initiates 20 GET requests to the server to retrieve media chunks. These GET
+requests contain no body. The server, when it wishes to send a media
+chunk, chooses an existing GET transaction and sends the chunk as a
+response body. The client, upon receiving this, immediately opens a
+new GET transaction to replace the one it just received a response
+on. Consequently, a client always maintains 20 open GET
+transactions. [TODO: need to tune this and justify its value]. In
+addition, the client will include an acknowledgement media chunk along
+with its next media chunk that is sent in a forward byway.
+
+The use of acknowledgements provides the ability for clients and
+servers to elect to retransmit media as well as to generate detailed
+statistics on packet loss and delay on a packet-by-packet basis. 
+Consequently, the equivalent of RTCP sender and receiver
 reports are not needed.
 
-RIPP defines some basic requirements for congestion control at the
-client side. Specifically, clients drop media packets if there are too
-many media byways in the blocked state.
+## Graceful Migration
 
 RIPP provides a simple technique for allowing a call to
-seamlessly migrate from one client instance to another on a different
-host, or from one server instance to another on a different host. For a
-client, it need only end the byways in use for the call and
-re-initiate from a different instance. Similarly, a server can request
-migration, and this triggers the client to perform this same
-action. The call state persists independently of the state of the HTTP
+gracefully migrate from one client instance to another on a different
+host, or from one server instance to another on a different host. The
+client always performs the migration action. It can be instructed by
+the server to do so via a migration event. Or, it can decide to do so
+on its own. This technique is also called call preservation. 
+
+The migration process is meant to support two key use cases - one is
+when a traditional HTTP load balancer is used, and the other is when
+there is none. 
+
+In the first case, there is a traditional HTTP load balancer fronting a
+farm of HTTP origin servers. The migration operation is meant to move
+the call from one origin server to another. A server can request this
+in order to shed load. Or, it can request this because it has been
+instructed to shut down and restart, perhaps to perform a software
+upgrade, or to migrate its docker container to another node. It is
+assumed that some kind of shared database is used to store any state
+that needs to be passed between origin servers. RIPP is designed such
+that the only state which needs to be stored is call state, and not
+media state.
+
+In this use case, if the origin server handling the call does not
+desire to receive new calls (including the one it is about to
+migrate), it would be removed from the pool of available servers in
+the load balancer. The means for this is outside the scope of this
+specification. Then, the origin server sends a migration event to the
+client. 
+
+This event can contain an IP to which the transaction should be
+directed. When an HTTP load balancer is used, this is not needed. This
+will cause the client to end its current signaling and media
+byways. It then re-opens them, reusing the existing connection it has
+to the HTTP load balancer. Crucially, these new requests do NOT
+contain any session cookies. This means that the HTTP load balancer
+will send the new request to one of the available origin servers,
+which will no longer include the one which is being brought down for
+maintenance. The responses will contain session cookies in order to
+enable sticky session routing for subsequent requests for this call.
+
+In the second case, there is no traditional HTTP load
+balancer. Rather, the provider is using a farm of RIPP-capable
+SBCs, each of which can act as an origin server. The advertisement in
+the TG can include a configuration of the IPs of the SBCs, with
+information on the relative load that each SBC should receive. In
+essence, it provides similar information to that present in an
+[@RFC3263] SIP DNS SRV record. When the client is told to migrate, it
+will re-initiate the signaling and media byways, and it will send the
+call to one of the other SBCs besides the one it had originally
+selected for the call. Similarly, the migrate event can contain a
+reference to the specific SBC instance to which the call should be
+moved, by IP address. This allows providers fined grained controls on the
+balancing of calls between servers.
+
+In additon, since RIPP utilizes HTTP PUSH to tell the client to
+refresh the TG advertisement, a provider can inform the consumer about
+updates to the IP addresses immediately. This allows providers to
+expand or contract their cluster sizes, and communicate this to all
+clients which are currently connected. The update propagates without
+dependency on DNS propagation times. The ability to update without
+dependency on DNS propagation is key to enabling load balancing, since
+this is one of the reasons why DNS-based load balancing as envisioned
+in [@RFC3263] does not work in elastic deployments. 
+
+Whether client or server initiated, when a migration occurs, both
+sides buffer their media packets and signaling events until the byways
+are ready to carry them. This enables the migrations to occur with
+literally no gap in media. The migration takes only a single RTT
+between client and server, and thus will often occur within the
+boundaries of jitter buffer depths. 
+
+Note that the call state persists independently of the state of the HTTP
 connection or the byways embedded in HTTP transactions, so that a
-reconnect can continue where things left off.
+reconnect can continue where things left off. This is why, when a call
+migrates, the client does NOT initiate a new call, it opens signaling
+and media byways to the existing call URI it already has.
 
-Finally, RIPP trunks can be destroyed by a trunking consumer by
-issuing a DELETE against the RIPP trunk provider URI. 
+## Non-Graceful Migration
 
+RIPP is also designed to handle failures of clients, servers and
+network connectivity issues, and to reconnect calls with a minimum of
+disruption. It does this by providing implementors with tools to
+enable such resiliency, without being overly prescriptive on exactly
+how it is implemented. 
+
+The asymmetric nature of RIPP means that it is always the
+responsibility of the caller (i.e., the client) to recover from
+network failures and failures of a downstream server or load
+balancer. 
+
+The first failure case is that of a closure of the actual HTTP
+connection, either gracefully or non-gracefully. In this case, the
+client retries the connection with an exponential backoff, the backoff
+timer being another parameter which can be specified in the provider
+advertisement. Once the connection is re-established, it initiates the
+signaling and media byways, and will reuse any session cookies it had
+previously received. 
+
+RIPP also requires clients to send keepalive signaling events
+periodically for each call, and the server responds to these
+events. If the client ceases to receive the server keepalives for a certain
+duration (a value again that has a default but which can be tuned in
+the TG advertisement), it treats this identically to a request for a
+migration. This will cause it to end its signaling and media byway
+transactions, and re-initiate them without session cookies.
+
+Finally, the media byways are used for rapid failure detection. If the
+client fails to receive acknowledgements for the media it has sent for
+period of time (this timer not being subject to standardization as it
+is entirely a matter of local configuration), the client can
+re-establish the signaling and media byways as if it were a
+migration. 
+
+The above cases handle failures in the network and of the origin
+servers and intermediate load balancers. If there was a failure of the
+origin server and it was not able to recover sufficient call state for
+re-establishment, it rejects the re-establishment of the media and
+signaling byways. This causes a call termination from the perspective
+of the client, which it would typically pass upstream if needed, as an
+event. And indeed for the origin server to recover, it will need to
+stash state. Specifically, it will need to stash the callID and the
+downstream entity to which the call was set when it was
+established. If the downstream entity is a RIPP server, the TG URI,
+call URI, selected IP address (from either DNS or using the IP in the
+advertiseent), and session cookie are stored. These facilitate
+reconnection to the same downstream instance.
+
+In inter-domain peering arrangements, such as enterprise voice
+trunking or inter-carrier NNI voice peering, both sides will typically
+have a cluster of software agents (VMs, docker containers, bare-metal
+servers, dedicated hardware products, or whatever) acting as both clients and
+servers. Consequently, we need to consider what happens to the client
+transactions when these fail.
+
+In such a case, failure recovery is always delegated to the upstream
+client. In this case, let us assume that the consumer had this cluster
+of agents at its perimeter. It would be receiving calls from some
+further upstream elements. If those elements were using RIPP, it would
+mean that the roles were reversed - a particular agent was acting as a
+server to receive a call, and then as a client to send it
+downstream. If that agent fails, the upstream client would detect
+this, and migrate to a different agent. This new agent - which has no
+in-memory state for the call - would look up the
+state of the call in some shared database, see where it was routed (in
+this case, to the provider TG), and retrieve the session cookie which
+had also been stored after the call was established. This new agent
+then re-establishes the media and signaling byways, perhaps even
+opening a fresh HTTP connection to do so. The use of the session
+cookie (or the stored IP of where the original call was routed),
+enables the byways to be re-established to the provider's origin
+server that has been, and is still - handling the call.
+
+This allows a chain of RIPP clients and servers in back-to-back
+configuration to recover from failures of any intermediate element
+without dropping calls. Furthermore, failure detection and recovery
+are rapid, especially when using load balancers. When an origin server
+fails, the client can still reuse its connection to the load balancer,
+such that connection establishment is not needed. Indeed, the time to
+recover from failure is only 1/2 RTT between consumer and provider,
+once the consumer has detected the downstream failure.
+
+Of course, the downstream element may be SIP-based and not RIPP. In
+such a case, INVITE with Replaces is a good solution, and vendors of
+highly reliable SIP gear are encouraged to support it. 
 
 # Example
 
@@ -762,46 +1388,67 @@ The sequence diagram for the outbound call flow is here:
 
 <{{seq-diagram-out.txt}}
 
-The first stage is for Webex to set up their service to be able to work as
-an OAuth Client, working with Comcast as the Authorization
-Server, and to obtain the baseURI that Comcast uses for RIPP authorization. Assume
-that this is "https\://ripp.comcast.com". The next stage is the admin
-from ACME logs on to their Webex account and selects Comcast as the RIPP
-provider.  This will cause the OAUTH dance and the admin will end up
-having approved Webex to use Acme's account at Comcast for RIPP. Webex
-will have received an OAuth access and refresh token from Comcast and be
-passed the new Provider Trunk URI. At this point, provisioning is complete
-and calls can start. Assume the provider trunk URI returned is
-"https\://ripp.comcast.com/trunks/123".
+The first stage is for Webex to set up their service to be able to
+work as an OAuth Client, working with Comcast as the Authorization
+Server, and to obtain the baseURI that Comcast uses for RIPP
+authorization. Assume that this is
+"https\://comcast.net/.well-known/ripp-oauth". The next stage is the
+admin from ACME logs on to their Webex account and selects Comcast as
+the RIPP provider.  This will cause the OAUTH dance and the admin will
+end up having approved Webex to use Acme's account at Comcast for
+RIPP. Webex will have received an OAuth access and refresh token from
+Comcast and be passed the new Provider Trunk URI. At this point,
+provisioning is complete and calls can start. Webex will query the
+well-known RIPP root URI - "GET
+https\://comcast.net/.well-known/ripp" which returns the list of valid
+TGs. In this case, there is only one - trunk URI returned is
+"https\://ripp.comcast.com/trunks/123". 
 
 Webex will start by setting up for incoming calls at
 "https\://ripp.webex/trunks/abc" with an opaque security token of
 "secret1234". This is done by making a HTTP PUT to
-https\://ripp.comcast.com/trunks/123/consumerTrunk with a JSON
+https\://ripp.comcast.com/trunks/123/consumerTG with a JSON
 body of:
 
 ~~~
 {
-"consumerTrunkURI":"https://ripp.webex/trunks/abc" ,
+"consumerTG":"https://ripp.webex/trunks/abc" ,
 "consumerToken":"secret1234"
 }
 ~~~
 
 The Comcast server will then find out the advertised capability of the
 Webex trunk by doing a 
-GET to https\://ripp.webex/trunks/abc/capAdv and using the
+GET to https\://ripp.webex/trunks/abc/advertisement and using the
 secret1234 as an authorization token. Webex supports the default values
 but also support G.729 as an additional codec. It returns a JSON body of:
 
-~~~
-{  "audio/g729": true }
+~~~ ascii-art
+{
+  "mic": {
+    "id" : 0,
+    "param-sets" : {
+      "PCMU" : 1,
+      "PCMA" : 1,
+      "G729" : 1
+    }
+  }
+  "spk" : {
+    "id" : 1,
+    "param-sets" : {
+      "PCMU" : 1,
+      "PCMA" : 1,
+      "G729" : 1      
+    }
+  }
+}
 ~~~
 
 Similarly, the Webex server will find out the advertised capability of
 the trunk by doing a GET to
-https\://ripp.comcast.com/trunks/123/capAdv, using its OAuth
+https\://ripp.comcast.com/trunks/123/advertisement, using its OAuth
 token. In this case, the response is empty, indicating that the
-capabilities are all default.
+advertisement are all defaults.
 
 At this point we are ready for inbound or outbound calls.
 
@@ -809,30 +1456,20 @@ At this point we are ready for inbound or outbound calls.
 
 A PSTN calls arrives at Comcast that is routed to the this trunk via a
 Comcast SBC that will convert it from SIP to RIPP. The SBC knows which
-codecs the trunk supports (G.729, Opus and G.711) and can immediately send the SIP answer in
-a 183. It can then can make an HTTP post to the consumer trunk URI to set up the
-incoming call. This is done by doing a POST to
-"https\://ripp.webex/trunks/abc/calls&target=14085551212@e164.arpa" using the authorization token
-"secret1234". This will return a new call URI for this call of
-"https\://ripp.webex/call/xyz".
+codecs the trunk supports (G.729 and G.711) and can immediately
+send the SIP answer in a 183. It can then can make an HTTP post to the
+consumer TG URI to set up the incoming call. This is done by doing
+a POST to
+"https\://ripp.webex/trunks/abc/calls?target=14085551212@e164.arpa &passport=PASSPORT_DATA"
+using the authorization token "secret1234". This will return a new
+call URI for this call of "https\://ripp.webex/call/xyz".
 
 At this point the SBC can make a long poll GET and PUT to
 "https\://ripp.webex/call/xyz/events" to receive and send signaling
 events for
-this call. The SBC will also open a number of media byways by making POST
-requests to "https\://ripp.webex/call/xyz/media-forward" and
-"https\://ripp.webex/call/xyz/media-reverse" to send and receive media.
-
-For each of the media-forward byways, the Comcast SBC will send a BywayPreamble
-that tells the other side meta data about what will be sent on this
-byway. For the media-reverse byways, the Webex server will send the
-BywayPreamble. The BywayPreamble contains the name of the codec, the
-base sequence number, frameTime, and baseTime. After this BywayPreamble,
-media frames can be sent that contain a seqOffset number, media length,
-and then the media data. The receiver compute the time sequence number
-for the frame by adding the baseSeqNum for the byway to the seqOffset
-for the frame. The timestamp for the media is computed using the
-baseTime for the byway plus the packeTime multiplied by the seqNum.
+this call. The SBC will also open a number of media byways by
+performing PUT and GET
+requests to "https\://ripp.webex/call/xyz/media". 
 
 The data from the "https\://ripp.webex/call/xyz/events" request will be
 an infinite JSON array of Events. When the Webex server answers the
@@ -845,11 +1482,13 @@ call, the event returned would look like:
 ## Outbound Call
 
 For Webex to make it outbound call, it is the same as the inbound call
-other than the provider trunk URI is used. The Webex server would act as
-a client and do a HTTP POST to
-"https\://ripp.comcast.com/trunks/123/calls&target=14085551212@e164.arpa" to create a call URI
-of "https\://ripp.comcast.com/call/c789". From that point the flow is
-roughly the same as inbound with the client and server roles reversed.
+other than the provider trunk URI is used. The Webex server would act
+as a client and do a HTTP POST to
+"https\://ripp.comcast.com/trunks/123/calls?target=14085551212@e164.arpa
+& passport=PASSPORT_DATA"
+to create a call URI of "https\://ripp.comcast.com/call/c789". From
+that point the flow is roughly the same as inbound with the client and
+server roles reversed.
 
 ## End of call 
 
@@ -866,195 +1505,167 @@ either case the event looks like:
 ~~~
 
 
-# Detailed Behaviours
+# Normative Protocol Specification
 
-This section provides an overview of the operation of RIPP.
+This section contains the normative specification of RIPP.
 
-## Configuration
+## Discovery
 
-RIPP configuration happens when a trunking consumer wishes to be able
-to provision, on demand, new RIPP trunks with a trunking
-provider.
+A RIPP client that wishes to obtain an OAuth token to a specified
+authority through a web interface MUST construct a well known RIPP
+Oauth URI using [@draft-nottingham-rfc5785bis] with ripp-oauth as the
+well-known service, and use this to trigger the Oauth process.
 
-One example use case is that of an enterprise, which has deployed an
-IP PBX of some sort within its data centers. Once deployed, the
-enterprise needs to enable the PBX to place and receive calls towards
-the PSTN. The enterprise contracts with a RIPP trunking provider. All
-of this happens as a precursor to configuration. At the end of the
-contracting process, the enterprise administrator will visit the
-configuration web page, and be able to register their enterprise
-PBX. This process will typically return a client-ID, client-secret, and
-authorization endpoint URL. The administrator manually enters these
-into the configuration of their PBX. [[OPEN ISSUE: OpenID connect?]]
+Similarly, a RIPP client wishing to access the resources defined in
+this specification, against an authority (such as example.com) MUST
+use [@draft-nottingham-rfc5785bis] with ripp as the well-known
+service, and use this to trigger the Oauth process. The result is the
+RIPP root URI for that authority.
 
-As another example use case, a cloud contact center, cloud PBX
-provider, or any other saas application which wishes to obtain
-trunking services, can contract with a RIPP trunking provider. In a
-similar process to the enterprise case above, the administrator
-obtains a clientID, client-secret, and authorization endpoint URL
-which are configured into their service.
+## TG Retrieval
 
-In the final use case, an enterprise administrator has purchased
-trunking services from a RIPP trunking provider. They separately have
-purchased cloud PBX, cloud contact center, or another saas service
-which requires connectivity to a RIPP trunk. In this case, the cloud
-PBX, cloud contact center, or other saas service acts as the RIPP
-trunk consumer. The RIPP trunk consumer would configure itself as a
-client with a variety of RIPP trunking providers, and for each, obtain
-the clientID, client-secret and authorization URL. This will allow the
-customers of the RIPP trunking consumer to provision RIPP trunks
-automatically, and point them to the RIPP trunking consumer. 
+All clients MUST perform a GET query to the RIPP root API for an
+authority they wish to connect to. Origin servers MUST provide a
+resource at this URI. It MUST be constructed using the
+JSON syntax described in (#syntax), and MUST have one or more provider
+TG URI in the list. It is RECOMMENDED that the origin server specify
+that this document can be cached. 
 
+If the client receives a document and there is only one provider TG
+URI, it uses this for subsequent outound calls to the provider. If
+there is more than one, the client SHOULD request user input if it has
+such a facility. If not, it SHOULD select the first.
 
-## RIPP Trunk Provisioning
+At the end of this process, the client will have a provider TG URI.
 
-Once a RIPP consumer has been configured as an OAuth client
-application with a RIPP provider, a RIPP customer can provision a RIPP
-trunk on-demand using a web form. RIPP consumers will typically provide a
-self-service web form for such provisioning, since self-service and
-instant provisioning are key goals of RIPP.
+## Consumer TG Registration
 
-The RIPP customer visits this web form, and selects their
-provider. The RIPP consumer would then initiate an OAuth2.0
-authorization code flow. This utilizes the clientID, client-secret
-and authorization endpoint URL configured previously. The RIPP
-customer will authenticate to the RIPP provider, and authorize
-creation of a new RIPP trunk. 
+If a consumer also needs to receive inbound calls, it MUST register a
+consumer TG. To do that, it MUST initiate an HTTPS PUT request towards
+/consumertg on the provider TG URI. This request MUST be authenticated
+by the origin server. The request MUST include a RIPP provisioning
+object in the body. This object is specified in Section (#syntax).
 
-Once the RIPP customer authorizes creation of a RIPP trunk, the RIPP
-provider MUST generate an authorization code and follow the procedures
-defined in [@RFC6749] for the authorization code grant
-flow. Furthermore, the RIPP provider MUST mint a new URI identifying
-this new RIPP trunk. This URI MUST contain a path component, and MUST
-NOT contain any URI parameters. This URI MUST be an HTTPS URI, and
-HTTP/3 MUST be supported for this URI. The path component MUST be a
-globally unique identifier for this trunk, and not depend on the authority
-component as part of the namespace for purposes of uniqueness. 
-
-As an example, the following is a valid RIPP trunk URI:
-
-"https\://ripp.comcast.com/trunks/6ha937fjjj9"
-
-This URI MUST be returned in the OAuth2.0 parameter "ripp-trunk", and
-MUST be base64 encoded.
-
-The RIPP consumer MUST follow the procedures defined in [@RFC6749] for
-an OAuth client, trade in its authorization code for both a refresh
-and access token. The RIPP provider MUST issue both refresh and access
-tokens. It is expected that the refresh token will last a long time,
-in order to avoid the resource owner needing to manually
-re-authorize. The trunk consumer MUST be prepared for its access and
-refresh tokens to be invalidated at any time. The RIPP consumer MUST
-extract the "ripp-trunk" OAuth parameter from the authorization
-response, decode, and persist it.
-
-Once the RIPP consumer has obtained an access token, it MUST initiate
-an HTTPS PUT request towards /consumerTrunk on the provider trunk URI. This request MUST contain
-an Authorization header field utilizing the access token just
-obtained. It MUST include a RIPP provisioning object in the body. This
-object is specified in Section (#syntax).
-
-The RIPP provisioning object MUST contain a RIPP trunk consumer URI and
-a RIPP bearer token. The RIPP consumer MUST mint an HTTPS URI for the
-RIPP Trunk consumer URI. This URI MUST support HTTP/3, and MUST implement
-the behaviours associated with capabilities and new call operations as
-defined below. This URI MUST have a path component,  MUST NOT
-contain any URI parameters, and MUST have a path segment which is
-globally unique.
+The RIPP provisioning object MUST contain a consumer TG URI and
+a bearer token. The consumer TG URI MUST be unique for each distinct
+provider TG URI to which it is registered. This URI MUST support
+HTTP/3, and MUST implement the /advertisements, /calls, /events and
+/media resources and their associated behaviors. This URI MUST be
+reachable by the provider. The URI MUST utilize HTTPS, and SHOULD
+utilize a domain name for the authority component. It MAY utilize an
+IP address, in which case the TLS certificate presented MUST be
+self-signed. 
 
 In addition, the RIPP consumer MUST mint a bearer token to be used by
 the RIPP provider when performing operations against the RIPP Trunk
 Client URI. The bearer token MAY be constructed in any way desired by
 the RIPP consumer. The token and URI SHOULD remain valid for at least
-one day, however, a security problem could cause them to be invalidated.
+one day, however, a security problem MAY cause them to be invalidated.
 The RIPP consumer MUST refresh the provisioning against the
 RIPP trunk at least one hour in advance of the expiration, in order to
-ensure no calls are delayed.
+ensure no calls are delayed. The token MUST be unique for each unique
+provider TG. 
 
 At this point, the RIPP trunk is provisioned. Both the RIPP provider
 and RIPP consumer have a RIPP trunk URI and an Authorization token to
 be used for placing calls in each direction.
 
-## Capabilities
+## Advertisement Exchange
 
-Once provisioned, each side obtains receive capabilities about the
-trunk from its peer. To do that, each client performs an HTTP GET
-to /capAdv on its peer's RIPP trunk URI. The response body MUST be a
-RIPP capabilities object as defined in Section (#syntax).
+Prior to placing a call towards a TG, a client MUST have a
+valid advertisement for it. If it has none, it MUST perform a GET on the
+/advertisement resource on the provider TG URI. The origin server MUST
+return a RIPP advertisement object as defined in Section (#syntax).
 
-Once established, either side MAY update the capabilities by sending
+It is RECOMMENDED that the advertisement utilize HTTP caching. It is
+RECOMMENDED that it be valid for one month. 
+
+Once established, either side MAY update the advertisement by sending
 an HTTP push to trigger its peer to fetch a fresh capability
 document. Due to race conditions, it is possible that the client
-may receive calls compliant to the old capabilities document for a
+may receive calls compliant to the old advertisement document for a
 brief interval. It MUST be prepared for this.
 
-When the trunk resource is destroyed, its associated capabilities are
-also destroyed.
-
-The capabilities are descriebd by an Advertisement 
-
-Capabilities are bound to the RIPP trunk, and are
-destroyed when the RIPP trunk is destroyed.
+Advertisements are bound to the TG, and are destroyed when the
+TG is destroyed. 
 
 In general, an entity MUST declare a capability for any characteristic
 of a call which may result in the call being rejected. This
 requirement facilitates prevention of call failures, along with clear
 indications of why calls have failed when they do. For example, if a
-RIPP trunk provider provisions a trunk without support for G.729, but
-the consumer configures their to utilize this codec, this will be
+provider provisions a TG without support for G.729, but
+the consumer configures theirs to utilize this codec, this will be
 known as a misconfiguration immediately. This enables validation of
-trunk configurations in an automated fashion, without placing test
+TG misconfigurations in an automated fashion, without placing test
 calls or calling customer support.
 
-## Advertisement
+## Advertisement Format
 
-[[ CJ - Propose we move this section and next to a separate draft ]]
+An advertisement is a set of parameters, each of which is a name-value
+pair. This specification defines several well-known names and
+establishes an IANA registry for future extensions. Every capability
+has a default, so that if no document is posted, or it is posted but a
+specific capability is not included, the capability for the peer is
+understood.
 
-The RIPP advertisement  is a list of media sources and sinks along with
-the codecs they suppor and a set of name-value pairs, which
-specify a capability of the codec on that source or sink.
+The following parameters are general purpose configuration:
 
-A device with a single microphone and speaker that support G.711 and
-opus might have an advertisement that looked like:
 
-~~~ ascii-art
-mic1: opus,PCMU,PCMA
-spk1: opus,PCUM,PCMA
-~~~
+* retry-backoff: In the event of a closure of the HTTP connection,
+  this parameter specifies the initial time value to use before
+  retrying the connection. If a retry fails again, the client will try
+  again but this time wait twice the value of this timer, then four
+  times, eight times, etc. The value of this parameter is an integer,
+  in units of milliseconds. Its default is 2000.
 
-A device with a camera that could support H.264 at 4K and av1 at 1080p
-might have a advertisement that looked like:
+* media-timeout: If a client fails to receive media ack packets after
+  the timeout specified in this parameter, it considers the call dead
+  and initiates migration. The value of this parameter is an integer,
+  in units of milliseconds. Its default is 1000.
 
-~~~ ascii-art
-cam1: H264 @size=1920x1080
-cam1: av1 @size=3840x2160
-~~~
+* server-ip: When present, this parameter indicates that the client
+  should not utilize DNS to resolve the authority component of the
+  associated TG URI, and rather, utilize the IP addresses which are
+  the value of this parameter. The value is a JSON array with one or
+  more elements. Each element contains an IP address and an load
+  value. The load value MUST be between 0 and 100. The sum of the load
+  values across all of the elements in the array MUST be 100. This
+  parameter is optional. When omitted, the client MUST utilize normal
+  DNS resolution for HTTP.
 
-The syntax is a names  for the source or sink, followed by a
-comma separated list of supported codecs, followed by at @ sign then
-a comma separated set of limits. The name for a source or sink can
-occur multiple times with each line indicating a different codec and
-limits.
+These parameters specify support for telephony features:
 
-Sources that are only send audio have a name starting with mic while
-video start with cam.  Sinks that receive only audio have a name
-starting with spk and video sinks start with dis. Device that sources
-and sink audio start with aud while ones that source and sink video
-start with vid. If a device and source and sink audo and video is can
-start with av.
+* hold: When present, indicates that the server supports clients
+  performing a hold operation on calls. Its value is a boolean, with a
+  default of FALSE. 
 
-An video phone that could support opus and H.264 at 720p @ 30 fps might look
-like:
+* transfer: When present, indicates that the server supports clients
+  performing transfer operations on calls. Its value is a boolean, with a
+  default of FALSE.
 
-~~~ ascii-art
-av1: H264,opus @size=1280x720,fps=30
-~~~
+* park: When present, indicates that the server supports clients
+  performing park and retrieve operation on calls. Its value is a
+  boolean, with a default of FALSE.
 
-Every capability has a default, so that if no
-document is posted, or it is posted but a specific capability is not
-included, the capability for the peer is understood.
+* mute: When present, indicates that the server supports clients
+  performing park and retrieve operation on calls. Its value is a
+  boolean, with a default of FALSE.
 
-This specification defines the following capability set for audio codecs. 
+Four parameters are defined for media capabilites - mic, spk, cam,
+screen, corresponding to the ability to generate audio, receive audio,
+generate video, and receive video. There MUST be one instance of these
+parameters for each corresponding source and sink which can
+simultaneously send or receive its media in a single call. Each
+instance MUST have a unique id within the advertisement. Each instance
+MUST include one or more param-sets. Each param-set is a set of
+parameters. Each parameter MUST specify the
+maximum that the sink can receive, or source can send, for that
+parameter. The server MUST include a parameter and its value when it
+differs from the default, and SHOULD NOT include it when it matches
+the default. 
+
+
+This specification defines the following parameters for mic and spk:
 
 * sr: The maximum sample rate for audio. This is specified in Hz. The
   default is 48000.
@@ -1063,21 +1674,20 @@ This specification defines the following capability set for audio codecs.
   in bits. It MUST be greater than or equal to 8. The default is 16. 
 
 * cbr: If present, indicates whether the entity requires constant
-  bitrate (CBR) media only. Default is not constant bit rate.
+  bitrate (CBR) media only. It has value of 1 (indicating CBR only) or
+  zero (no constraint on rate). Zero is default. 
 
 * ch: Indicates whether the entity supports  multiple
-  audio channels.  The default is 1.
+  audio channels.  The default is 1 for support.
 
 * ptime: max duration of media encoded in single packet in ms. Default is 30. 
 
-This specification defines the following capability set for video
-codecs:
+This specification defines the following parameters for cam and screen:
 
 * fps: The maximum frame rate for video. This is specified in frames per
   second. The default is 30.
 
-* size: the max width in pixels followed by and x then the max height
-  in pixels. Default is TBD.
+* max-res: the max width in pixels. Default is TBD.
 
 * pr: the max pixel rate ( pixels / second ). Default is 2^64-1. 
 
@@ -1101,71 +1711,48 @@ and video codecs.
   encoded media from the codec and not the rate transmitted over the
   network. Default is 2^64-1.
 
-* tnt: If present Indicates whether the entity supports the
-  takeback-and-transfer (TNT) command. The default is does not support
-  TNT.
+* codec names - The codec names are defined in the IANA registry
+"Media Types" at
+https://www.iana.org/assignments/media-types/media-types.xhtml. For
+each one, the value of the parameter is either 1 or 0, 1 indicating
+support, and 0 indicating no support.
 
-A PSTN gateway that supported G.711 and TNT might have an advertisement
-that looked like:
-
-~~~ ascii-art
-aud1:PCMU,PCMA@tnt
-~~~
-
-This capabilities are extensible through an IANA registry. [[ TODO ]] 
-
-The codec names are defined in the IANA registry "Media Types" at
-https://www.iana.org/assignments/media-types/media-types.xhtml
+All RIPP implementations MUST support G.711 and Opus audio codecs. All
+implementations MUST support [@RFC2833] for DTMF, and MUST support
+[@RFC3389] for comfort noise, for both sending and receiving.
 
 
-## Proposal
+## Call Establishment
 
-[[ CJ - Propose we move this section and previous to a separate draft ]]
+To initiate a call, a client MUST have a valid advertisement for the
+TG against which it will place the call, and MUST know its own
+advertisement for the TG which will initiate the call. The proposal
+MUST be a valid advertisement JSON document, as specified in
+(#syntax). 
 
-The proposal uses the same syntax as the advertisement and is used to
-configure what media sources send. The proposal can be full accepted or
-rejected by the media source that is being configured with proposal but
-partial acceptance is not allowed.
+The client MUST construct a proposal, which tells the server what
+media to send. This proposal MUST include zero or more mic parameters,
+and zero or more cam parameters, corresponding to the sources and
+that the client wishes the server to send. These MUST be a subset of
+those present in the advertisement from the peer. The client MUST
+specify the values for any codec which are not the default. The value
+for each parameter MUST be less than the value specified in the
+advertisement from the peer, and also MUST be less than its own
+maximum value from its own advertisement. If a selected value differs
+from the default, it MUST be included in the proposal. The proposal
+MUST include the "id" attribute for the source. This is crucial to
+inform the peer which of its sources to send.
 
-For example, a controller could configure a camera to with the following
-proposal:
+Similarly, the client chooses which of its sources will send, and to
+which sinks on its peer it will send. It MUST NOT send media for which
+there is not a corresponding sink on its peer which is a match for the
+media type. It MUST send utilizing media parameters which are less
+than the values specified in the advertisement in the peer for that
+sink.
 
-~~~ ascii-art
-cam1: H264@size=1280x720,fps=30
-mic1: opus@br=20
-~~~
-
-This would tell the camera to send video at resolutions and frame rates up
-to 720p at 30fps. The camera might send less than this due to congestion
-of other reasons but it would not exceed this. It would send  audio
-using opus but encoded not to exceed a bandwith of 20 kbps.
-
-The source and sink names must match the names in the advertisement from
-this device. 
-
-## Initiating Calls
-
-HTTP connections are completely independent of RIPP trunks or
-calls. As such, RIPP clients SHOULD reuse existing HTTP connections
-for any request targeted at the same authority to which an existing
-HTTP connection is open. RIPP clients SHOULD also utilize 0-RTT HTTP
-procedures in order to speed up call setup times. 
-
-To initiate a new call, a RIPP client creates an HTTPS POST request to
-/calls endpoint on the RIPP trunk URI of its peer. For a trunking
-consumer, this is the 
-RIPP trunk URI provisioned during the OAuth2.0 flow. For the trunking
-provider, it is the RIPP trunk consumer URI learned through the
-provisioning POST operation. This MUST be an HTTP/3 transaction. The
-client MUST validate that the TLS certificate that is returned matches
-the authority component of the RIPP trunk URI. 
-
-This request MUST contain the token that the client has
-obtained out-of-band. For the RIPP trunk consumer, this is the OAuth
-token. For the RIPP trunk provider, it is the bearer token learned
-through the provisioning POST operation.
-
-The client MUST also add the "target" URI parameter. This parameter
+To place a call, the client performs a POST request to the peer TG
+URI, using the /calls resource. This request MUST include the target
+and passport URI parameters. The target parameter
 MUST be of the form user@domain. If the target is a phone number on
 the PSTN, this must take the form <e164>@e164.arpa, where <e164> is a
 valid E.164 number. RIPP also supports private trunks, in which case
@@ -1175,78 +1762,41 @@ NOT be used for E.164 numbers. Finally, RIPP can be used to place call
 to application services - such as a recorder - in which case the
 parameter would take the form of an RFC822 email address.
 
-The client MUST add an HTTP Identity header field. This header field
-is defined in Section (#iana) as a new HTTP header field. Its contents MUST
-be a valid Identity header field as defined by [@RFC8224]. This
-ensures that all calls utilize secure caller ID. A RIPP client MUST
-NOT place the caller ID in any place except for the Identity header
-field in this request. Specifically, a "From", "Contact", or
-"P-Asserted-ID" header field MUST NOT ever appear.
+The passport URI parameter MUST be a valid passport as defined by
+[@RFC8224]. It identifies the calling party and includes signature
+information which can be used to verify it. If the client has no
+official certificate proving ownership of the identity in the
+passport, it MUST generate a self-signed certificate and use that. 
 
-* CJ - I would prefer to add this another way without using a header. 
-
-The server MUST validate the OAuth token, MUST act as the verifying
-party to verify the Identity header field, and then authorize the
-creation of a new call, and then either accept or reject the
-request. If accepted, it indicates that the server is willing to
-create this call. The server MUST return a 201 Created response, and
-MUST include a Location header field containing an HTTPS URI which
-identifies the call that has been created. The URI identifying the
-call MUST include a path segment which contains a type 4 UUID,
-ensuring that call identifiers are globally unique.
+The server MAY authorize creation of the call using any criteria it so
+desires. If it decides to create the call, the server MUST return a
+201 Created response, and MUST include a Location header field
+containing an HTTPS URI which identifies the call that has been
+created. The call URI MUST be globally unique in time and space, with
+randomness properties identical to a type 4 UUID. 
 
 The server MAY include HTTP session cookies in the 201 response. The
 client MUST support receipt of cookies [@RFC6265]. It MUST be prepared
 to receive up to 10 cookies per call. The client MUST destroy all
 cookies associated with a call, when the call has ended. Cookies MUST
-NOT be larger the 5K.
+NOT be larger the 5K. The 201 response MUST NOT contain a body. 
 
-The usage of an HTTP URI to identify the call itself, combined with
-session cookies, gives the terminating RIPP domain a great deal of
-flexibility in how it manages state for the call. In traditional
-softswitch designs, call and media state is held in-memory in the
-server and not placed into databases. In such a design, a RIPP server
-can use the session cookie in combination with sticky session routing
-in the load balancers to ensure that subsequent requests for the same
-call go to the same call server. Alternatively, if the server is not
-using any kind of HTTP load balancer at all, it can use a specific
-hostname in the URI to route all requests for this call to a specific
-instance of the server. This technique is particularly useful for
-telcos who have not deployed HTTP infrastructure, but do have SBCs
-that sit behind a single virtual IP address. The root URI can use a domain whose A
-record maps to this IP. Once a call has landed on
-a particular SBC, the call URI can indicate the specific IP of
-the SBC.
+If the server cannot setup the call because the proposal is invalid or
+the passport is invalid, it MUST generate a 400 response. If the
+request is otherwise valid, but the target of the call cannot be
+reached through the TG URI, it MUST generate a 404 response. If the
+request is valid and the target can be reached, but the client is not
+allowed to do so for policy reasons it MUST generate a 403 response.
 
-For example, the RIPP trunk URI for such a telco operator might be:
+## Signaling and Media Byway Establishment
 
-"https\://sbc-farm.comcast.com/trunks/6ha937fjjj9"
-
-which always resolves to 1.2.3.4, the VIP shared amongst the SBC
-farm. Consequently, a request to this RIPP trunk would hit a specific
-SBC behind the VIP. This SBC would then create the call and return a
-call URL which points to its actual IP, using DNS
-
-"https\://sbc23.sbc-farm.comcast.com/call/ha8d7f6fso29s88clzopa"
-
-However, the HTTP URI for the call MUST NOT contain an IP address; it
-MUST utilize a valid host or domain name. This is to ensure that TLS
-certificate validation functions properly without manual
-configuration of certificates (a practice which is required still for
-SIP based peering).
-
-Neither the request, nor the response, contain bodies.
-
-
-## Establishing the Signaling Byways
-
-To perform signalling for this call, the client MUST
-initiate an HTTP GET and PUT request towards the call URI that it
-just obtained, targeted at the /event endpoint. 
-
-The signaling is accomplished by a long running HTTP transaction, with
-a stream of JSON in the PUT request, and a stream of JSON in the GET
-response.
+If the server returns a 200 OK to the client, the client MUST
+establish the forward and reverse signaling byways by sending a PUT request and
+GET request, respectively, to the /events resource on the call URI
+obtained from the Location header field in the 201 response. The GET
+request MUST NOT contain a body. The PUT request and GET response MUST
+contain an infinitely long JSON document. The client MUST hold both
+transactions open until the call has ended. 
 
 The body begins with an open square bracket to indicate the start of an
 JSON array, and after that is a
@@ -1254,16 +1804,172 @@ series of JSON objects, each starting with a curly bracket, and ending
 with a curly bracket. Consequently, each side MUST immediately send
 their respective open square brackets after the HTTP header fields. We
 utilize streaming JSON in order to facilitate usage of tools like CURL
-for signalling operations. 
+for signalling operations.
 
-## The Media Chunk Format
+The server MUST immediately send the current state of the call as far
+as it is concerned, by generating an event in the response which
+indicates this state. For a brand new call, this MUST be the
+proceeding event. For any call, a server MUST support multiple
+reverse signaling byways, in which case it MUST send all call events
+on all open reverse signaling byways. A server MUST NOT
+terminate the call if there are no signaling byways established;
+rather it utilizes timeouts as described below.
 
-[[ Propose move this section to it's own draft ]]
+Each event is a JSON object embedded in the signalling stream, which
+conveys the event as perceived by the client or server.  The event
+MUST contain a direction field, which indicates whether the event was
+sent from client to server, or server to client. It also MUST contains
+a timestamp field, representing universal time, which indicates the
+time of the event as perceived by the sender. The event MUST contain a
+call field, which contains the URI of the call in question. The event
+MUST contain an event type field, which conveys the type of
+event. This is followed by additional fields which are specific to the
+event type.
 
-[[ Note - moved from frame to chunk as frame is too confusing  with video ]]
+Events are also defined so that the resulting state is uniquely
+defined by the event itself. This ensures that knowing the most recent
+event is sufficient to determine the state of the call. 
 
-In RIPP, media is represented as a continuous sequence of RIPP media
-chunks.
+In addition, the client MUST immediately establish 20 reverse media
+byways by initiating 20 GET requests to the /media resource on the call
+URI. These requests MUST NOT contain a body. The media byways are
+required before call answer to support early media. For any call, a
+server MUST support up to 30 reverse media byways open. 
+
+## Basic Call State Management
+
+
+The server always maintains definitive state for the call. The basic
+state of the call is manipulated through events passed from one side
+to another. 
+
+This specification defines the following events which MUST be
+implemented by all RIPP client and servers: These events are
+asymmetric, in that the direction of call establishment impacts who
+can send which events, and when. 
+
+proceeding: Passed from server to client, indicating that call setup
+is in progress but has not reached the recipient. 
+
+alerting: Passed from server to client, indicating that the recipient
+is alerting.
+
+accepted: Passed from server to client, indicating that the call was
+accepted by the recipient. At this point, the call is considered
+established. 
+
+rejected: Passed from server to client, indicating that the call was
+rejected by the user.
+
+failed: Passed from server to client, indicating that the call was
+rejected by server or downstream servers, not by the user, but due to
+some kind of error condition. 
+
+noanswer: Passed from server to client, indicating that the call was
+delivered to the receiving user but was not answered, and the server
+or a downstream server timed out the call.
+
+end: initiated by either client or server, it indicates that the call
+is to be terminated. Note that this does NOT delete the HTTP resource,
+it merely changes its state to call end. Furthermore, a call cannot be
+ended with a DELETE against the call URI; DELETE is not permitted and
+MUST be rejected by the server. 
+
+migrate: sent from server to client, it instructs the client to
+terminate the media and signaling byways, and re-establish them. The
+event MAY contain an IP address to which the media and signaling
+byways will be established.
+
+keepalive: This event is always initiated by the client. When received
+by a server, the server MUST generate a keepalive response. The
+keepalive MAY contain a nonce, and if so, the server MUST echo it in
+the response. 
+
+## Telephony Features
+
+The following events are optional. They can be sent by either side of
+a call, an generally apply only once a call is established. Each
+feature has one side that invokes the feature, and another side which
+handles it. The specification does not define how the handler handles
+the feature, it only specifies behavior on the interface between
+them. 
+
+An originator MUST NOT invoke a feature unless the corresponding
+feature support has been indicated in the advertisement on the TG.
+
+### Blind Transfer
+
+Performs a blind transfer of the call. The event contains a string
+which MUST be a valid value for the target URI parameter used when
+setting up a new call. Once the transfer has initiated, the server
+MUST generate a transfer-reject event if it is unwilling to perform
+the transfer. If it attempts the transfer, it MUST send a
+transfer-pending event indicating that the transfer is in
+progress. If the transfer target answers the call, the server MUST
+generate a transfer-success event, followed by an end event,
+indicating the call is over for this user. If the transfer fails, the
+server MUST generate a transfer-failed event, in which case the call
+continues. Once the transfer target answers, it MUST be sent a
+transferred-from event, containing the URI of the call from which the
+transfer happened.
+
+### Warm Transfer
+
+transfer-warm: performs a warm transfer. For this to work, the
+endpoint sending the event must be in two calls. It sends this event
+on the one to be transferred to the other. The event has a single
+parameter which specifies the URI of the call to which the transfer is
+taking place. This two calls MUST have the same authority component of
+their call URI. Once the peer receives this event, it MUST perform the
+transfer. The transfer will either complete almost immediately else
+fail. If it succeeds, the peer MUST respond with a transfer-success
+event; if it fails, respond with a transfer-failed event, in which
+case the call continues. Furthermore, if the transfer succeeds, the
+transfer target MUST be sent a transferred-from event, containing the
+URI of the call from which the transfer happened.
+
+### Hold and Resume
+
+hold: performs a call hold on the call. Either side can initiate this,
+but only if its peer indicates support. Similarly, to inform its peer
+that it has been placed on hold, either side may send an on-hold event
+to its peer, but only if hold has been indicated as a capability. When
+an endpoint has been told it is on-hold, it MUST send silence for
+audio and black screen for video. The peer MAY generate music-on-hold
+or any other suitable content to render while the endpoint is on hold.
+
+### Mute Indication
+
+mute: informs the peer that it has muted. This is informative for UI
+purposes, useful in conference calls for example. When an endpoint
+mutes, in addition to sending the mute event, it MUST send silence for
+audio and black screen for video. Similarly, if an endpoint wishes to
+inform its peer that it is muting its media, it sends a mute event.
+
+### Park and Retrieve
+
+TBD
+
+## Sending and Receiving Media
+
+Media is always associated with a call. Within a call, media has a
+direction (c2s or s2c) relative to call establishment. Within a
+direction, media belongs to a stream, where a stream is transmitted
+between a source and a sink. As such there can be many streams in each
+direction. A stream is an ordered sequence of media
+chunks. There is a sequence number space and timestamp space
+associated with each stream. A stream is uniquely identified by the
+call URI, the direction, the source ID and sink ID. 
+
+The forward and reverse byways each contain an unordered sequence of
+media chunks and control chunks. The only control chunk defined by
+this specification is the acknowledgement chunk. Any media or control
+chunk, for any stream, MAY be sent in any forward or reverse byway for
+c2s and s2c streams respectively. 
+
+
+### The Media Chunk Format
+
 
 Each ripp media chunk has an outer envelope that is not encrypted,
 except by the transport the chunk is sent over, and an inner package
@@ -1272,16 +1978,40 @@ tag length values (TLV) tuples.
 
 Each media chunk has the following properties in the envelope part:
 
+* Media or Control: a boolean which indicates whether this is a media
+  or control packet. The remaining parameters apply when it is media.
+
 * The truncated sequence number, which provides the absolute ordering
-  of the packets for the codec. (tag = 1)
+  of the packets for the codec. (tag = 1). The sequence number is
+  actually 64 bits long, but the encoding is of variable length. This
+  allows for any number of bits to be sent on the wire. If N bits are
+  sent, where N is less than 64, the value is treated as the truncated
+  version of the actual sequence number, and the recipient computes it
+  from prior packets. Clients MUST send full values until such time
+  as they receive an acknowledgement of the media packet containing a
+  full value, and after that, SHOULD send truncated values. For video,
+  if the media is an intra-frame, the full value MUST be present.
 
 * The truncated timestamp, which provides the wall clock time in ms of
-   when the first sample of media in the chunk was recorded. Full
-   values is sent periodically but all packets should have a truncated
-   version.  (tag = 2)
+   when the first sample of media in the chunk was recorded. Like
+   sequence number, this value is represented with 64 bits, but
+   truncated values can be sent. The client MUST send full values
+   until the first packet containing a full value has been
+   acknowleded, and after that, SHOULD send truncated values. For
+   video, if the media is an intra-frame, the full value MUST be
+   present. (tag = 2)
 
-* An optional codec type that is sent periodically. Value is a string
-   such as "opus".  (tag = 3)
+* The truncated payload type, which is a 32 bit integer specifying the
+   codec in use. The integral values are maintained an in IANA
+   registry and directly map to the media type names. It is encoded as
+   a variable length field, enabling a small number of bits for
+   frequent codecs. (tag = 3)
+
+* The media source, which is an 8 bit integer specifying the ID of the
+  media source for this chunk. 
+
+* The media sink, which is an 8 bit integer specifying the ID of the
+  media sync for this chunk. 
 
 * Optional Reference frame flag. Indicates other chunks are encoded
   based on this frame. Typically used with video codecs and only set
@@ -1310,139 +2040,81 @@ and the package to an AEAD cipher. The chunk is created by taking the
 truncated auth tags of the cipher followed by output of the AEAD
 cipher.  The keys for the cipher to use, the keys for the cipher, and
 the authentication tag truncation are set by mechanisms outside this
-section.
+section. It not specified, they default to the NULL cipher with no
+keys. 
 
-The default cipher is AEAD_AES_128_GCM, the IV is formed by
-concatenating the 64 bit version of the timestamp with 64 bit version
-of sequence number. By default the authentication tag is truncated to
-0 bits as authentication is provided by the TLS transport protocol
-this is sent over.
+### The Control Chunk
 
-[[ TODO - IANA section for tags ]]
+The control chunk also has an envelope and payload, and is structured
+identically to media chunks. Its envelope has the following
+parameters:
 
-[[ TODO - IANA section for ciphers with auth truncation length ]]
-
-[[ TODO - example ]]
-
-
-## Opening Media Byways
-
-The client bears the responsibility for opening media byways - both
-forward and reverse. Consequently, the server is strongly dependent on the
-client opening reverse  byways; it cannot send media unless they've been
-opened.
-
-A client MUST open a new forward byway whenever it has a media frame to send,
-all existing forward byways (if any) are in the blocked state, and the client
-has not yet opened 20 byways.
-
-Furthermore, the client MUST keep a minimum of 10 reverse byways open
-at all times. This ensures the server can send media. The client MUST
-open these byways immediately, in parallel. 
-
-The use of multiple media byways in either direction is essential to
-low latency operation of RIPP. This is because, as describe below,
-media frames are sprayed across these byways in order to ensure that
-there is never head-of-line blocking. This is possible because, in
-HTTP/3, each transaction is carried over a separate QUIC stream, and
-QUIC streams run on top of UDP. Furthermore, a QUIC stream does not
-require a handshake to be established - creation of new QUIC streams
-is a 0-RTT process.
-
-The requests to create these transactions MUST include Cookie headers for any
-applicable session cookies.
-
-To open a forward media byway, the client MUST initiate a POST request
-to the /media-forward endpoint on the call URI, and MUST include a RIPP-Media header field in the request
-headers. Similarly, to open a reverse media byway, the client MUST
-initiate a POST request to the /media-reverse endpoint of the call
-URI. It MUST NOT include a RIPP-Media header field
-in the request headers. The server MUST include the RIPP-Media header
-in the response headers. The RIPP-Media header contains the properties for the
-byway - the sequence number base, the timestamp base, and the name of
-the codec.
-
-RIPP supports multiple audio channels, meant for SIPREC use cases.  Each
-channel MUST be on a separate byway. When multi-channel audio is being
-used, the client MUST include the multi-channel parameter and MUST
-include the channel number, starting at 1.
-
-All RIPP implementations MUST support G.711 and Opus audio codecs. All
-implementations MUST support [@RFC2833] for DTMF, and MUST support
-[@RFC3389] for comfort noise, for both sending and receiving.
-
-The sequence number space is unique for each direction, channel, and
-call (as identified by the call URI). Each side MUST start the
-sequence number at zero, and MUST increment it by one for each
-subsequent media frame. The sequence number base is represented as a
-string corresponding to a 32 bit unsigned integer, and the sequence
-number offset in the media frame is variable length, representing an
-unsigned integer. Consequently, the sequence number space for a media
-stream within a call has a total space of 32 bits. With a minimum
-frame size of 10ms, RIPP can support call 
-durations as long as 11,930 hours. Rollover of the sequence number is
-not permitted, the client or server MUST end the call before
-rollover. This means that the combination of call URI, direction
-(client to server, or server to client), channel number, and sequence
-number represent a unique identifier for media
-packets.
-
-## Sending and Receiving Media
-
-The approach for media is media striping. 
-
-To avoid HOL blocking, we cannot send a second media packet on a byway
-until we are sure the prior media packet was received. This is why the
-client opens multiple media byways.
-
-When either the client or server sends a media frame on a byway, it
-immediately marks the byway as blocked. At that point, it SHOULD NOT
-send another media frame on that byway. The client or server notes the
-sequence number and channel number for that media frame. Once it
-receives an acknowledgement for that
-corresponding media frame, it marks the byway as UNBLOCKED. A client
-or server MAY send a media frame on any unblocked byway.
-
-The sequence number for the media frame is computed based on the rules
-described above. 
-
-Per the logic described above, the client will open additional byways
-once the number of blocked byways goes above a threshold. If a the
-number of blocked byways in either direction hits 75% of the total for
-that direction, this is a signal that congestion has occurred. In such
-a case, the client or server MUST either drop packets at the
-application layer, or buffer them for later transmission. [[TODO: can
-we play with QUIC priorities to prioritize newer media frames over
-older?]]
-
-When a client or server receives a media frame, it MUST send an
-acknowledge message. This message MUST be sent on the same byway on
-which the media was received. This acknowledgement
-message MUST contain the full sequence number and channel number for
-the media packet that was received. It MUST also contain the
-timestamp, represented as wallclock time, at which the media packet was
-received.
-
-If the server has marked 75% of the reverse media byways
-as blocked, it MUST send a signaling event
-instructing the client to open another reverse media byway. Once this command
-is received, the client MUST open a new reverse byway, unless the total number
-of byways has reached 20. 
-
-A client MAY terminate media byways gracefully if they have not
-sent or received packets on that byway for 5 or more
-seconds. This is to clean up unused byways.
-
-There is no need for sender or receiver reports. The equivalent
-information is knowable from the application layer acknowledgements.
+* Media or Control: a boolean which indicates whether this is a media
+  or control packet. The remaining parameters apply when it is
+  control.
 
 
-## Terminating and Re-establishing Connections and  Byways
+* Control Type: a 16 bit integer which indicates the type. Only one
+  type is defined by this specification - acknowledgement.
+
+
+The payload then depends on the control type. For an acknowledgement, the
+payload contains the direction, media sourceID and media sink ID of
+the chunk being acknowledged. The final component needed to identify a
+chunk - the callID - is inferred from that of the
+media byway in which the acknowledgement is sent. 
+
+
+### Client Media handling
+
+If the HTTP connection supports webtransport, media chunks MUST be sent
+(and received) as datagrams over the webtrasport session.
+
+If not, to send media, the client MUST create a new HTTP PUT request
+to the /media resource on call URI for each media chunk to send. The
+body of the request MUST include the media chunk. If the client has
+received any chunks from the peer for this call since the last time it
+has sent a media packet for this call, it MUST include an
+acknowledgement control packet in the body as well, one for each
+unacknowledged media chunk. Once the one media chunk and zero or more
+acknowledgement packets have been sent, the client MUST end the
+transaction.
+
+To receive media, the client will have a large number of reverse media byways
+open (as GET requests to the /media resource for the call). If a
+response is received, the client extracts the contents, which will
+always be one media chunk and zero or more control chunks. 
+
+### Server Media Handling
+
+If the HTTP connection supports webtransport, media chunks MUST be sent
+(and received) as datagrams over the webtrasport session.
+
+If not, to send media, the server MUST select an open GET request to
+/media. It is RECOMMENDED that the server select the oldest one. The
+server MUST place its media chunk in the body of the response. If the server has
+received any media chunks from the peer for this call since the last time it
+has sent a media packet for this call, it MUST include an
+acknowledgement control packet in the body as well, one for each
+unacknowledged media chunk. Once the one media chunk and zero or more
+acknowledgement packets have been sent, the server MUST end the
+transaction. If the server is unable to send media for the call
+because there are no open requests, it MUST generate the "media-panic"
+event on the event stream towards the client, which indicates this
+problem. The server MUST drop the media chunk. The call will
+eventually trigger migration as the client will timeout on
+acknowledgements. 
+
+The server will receive one media and zero or more control chunks as
+the body of the PUT requests. 
+
+## Connection and Byway Lifecycle Management
 
 The state of the connection, the QUIC streams, and byways, is separate
 from the state of the call. The client MAY terminate an HTTP
 connection or byway at any time, and re-establish it. Similarly, the
-server or client may end the a byway at any time.
+server or client may end the a byway at any time, neither affects call
+state directly. 
 
 If a byway ends or the connection breaks or is migrated, the client
 MUST re-initiate the byways immediately, or risk loss of media
@@ -1451,103 +2123,6 @@ re-establishment takes time, both client and server MUST buffer their
 signalling and media streams for at least 5 seconds, and then once the
 connections and byways are re-established, it sends all buffered data
 immediately.
-
-Note that it is the sole responsibility of the client to make sure
-byways are re-established if they fail unexpectedly. 
-
-
-## Signaling - Events
-
-Signaling is performed by having the client and server exchange
-events. Each event is a JSON object embedded in the signalling
-stream, which conveys the event as perceived by the client or
-server. Each event has a sequence number, which starts at zero for a
-call, and increases by one for each event. The sequence number space
-is unique in each direction. The event also contains a direction
-field, which indicates whether the event was sent from client to
-server, or server to client. It also contains a timestamp field, which
-indicates the time of the event as perceived by the sender. This
-timestamp is not updated when retransmissions happen; the timestamp
-exists at the RIPP application layer and RIPP cannot directly observe
-HTTP retransmits.
-
-It also contains a call field, which contains the URI of the call in
-question. 
-
-Finally, there is an event type field, which conveys the type of
-event. This is followed by additional fields which are specific to the
-event type.
-
-This structure means that each event carried in the signalling is
-totally self-describing, irregardless of the enclosing connection and
-stream. This greatly facilitates logging, debugging, retransmissions,
-retries, and other race conditions which may deliver the same event
-multiple times, or deliver an event to a server which is not aware of
-the call.
-
-Events are also defined so that the resulting state is uniquely
-defined by the event itself. This ensures that knowing the most recent
-event is sufficient to determine the state of the call. 
-
-This specification defines the following events:
-
-alerting: Passed from server to client, indicating that the recipient
-is alerting.
-
-accepted: Passed from server to client, indicating that the call was
-accepted.
-
-rejected: Passed from server to client, indicating that the call was
-rejected by the user.
-
-failed: Passed from server to client, indicating that the call was
-rejected by server or downstream servers, not by the user, but due to
-some kind of error condition. This event contains a response code and
-reason phrase, which are identical to the response codes and reason
-phrases in SIP.
-
-noanswer: Passed from server to client, indicating that the call was
-delivered to the receiving user but was not answered, and the server
-or a downstream server timed out the call.
-
-end: initiated by either client or server, it indicates that the call
-is to be terminated. Note that this does NOT delete the HTTP resource,
-it merely changes its state to call end. Furthermore, a call cannot be
-ended with a DELETE against the call URI; DELETE is not permitted and
-MUST be rejected by the server. The call end event SHOULD contain a
-reason, using the Reason codes defined for SIP.
-
-* CJ - Not keen on SIP reason codes - they did not conatin enough info
-  for all the Q950 stuff and were not particually extensible. I think it
-  would be better to define a set here with clear mapping to SIP and SIP
-  +Q950 reasons. 
-
-migrate: sent from server to client, it instructs the client to
-terminate the connections and re-establish them to a new URI which
-replaces the URI for the call. The event contains the new URI to
-use. This new URI MUST utilize the same path components, and MUST have
-a different authority component.
-
-open-reverse: sent from server to client, it instructs the client to
-open an additional set of reverse media byways.
-
-* CJ - would it work to have this all far simplier and just have the
-  trunk cap advertisemtn say how many to open up ? 
-
-tnt: send from consumer to provider, it invokes a
-takeback-and-transfer operation. It includes the phone number to which
-the call should be transferred. The provide will then transfer the
-call to the target number. This event is meant to invoke the feature
-as it has been implemented by the provider. RIPP does not define
-additional behaviors.
-
-## Call Termination
-
-Signaling allows an application layer call end to be sent. This will
-also cause each side to terminate the the outstanding transactions
-using end flags per HTTP/3 specs. However, the opposite is not true -
-ending of the transactions or connection does not impact the call
-state.
 
 A server MUST maintain a timer, with a value equal to one second, for
 which it will hold the call in its current state without any active
@@ -1559,73 +2134,60 @@ If the server receives a signalling or media byway for a call that
 is TERMINATED, it MUST reject the transaction with an 404
 response code, since the resource no longer exists.
 
+Note that it is the sole responsibility of the client to make sure
+byways are re-established if they fail unexpectedly. 
 
+## Retrieving Call List
 
-## GET Transactions
+A client MAY initiate a GET request against the /calls resource in the
+TG. The server MUST return a body with the list of all calls which
+currently exist on the server. This is just a list of call URI. This
+is useful for a client which restarts and wishes to rebuild its view
+of call state.
 
-A client MAY initiate a GET request against the call URI at any
-time. This returns the current state of the resource. This request
-returns the most recent event, either sent
-by the server or received by the server.
+## Graceful Call Migration
 
-* CJ - lets call this previosEvent as the event part waits till the
-  next event on a long poll. Be good to say something about how this is
-  used as it is not clear to me it is needed. 
+A server MAY initiate a call migration at any time for a specific
+call. To do so, it MUST send a migration event to the client over the
+signaling byway. The client MUST honor this request for migration. The
+client MAY choose to migrate the call to a different server at any
+time.
 
-## Graceful Call Migration: Server
+If, and only if, the server has included the "server-ip" parameter in
+its advertisement - meaning it is not utilzing an HTTP load balancer,
+it MAY request the client to migrate the call to a named instance. The
+named instance is specified by IP address as an optional parameter in
+the migrate event. The client MUST verify that this IP is one of the
+ones present list of server-ip.
 
-To facilitate operational maintenance, the protocol has built in
-support for allowing a server instance to drain all active calls to
-another server instance.
+To perform the migration, the client MUST end all outstanding HTTP
+transactions for the call (signaling and media byways). It MUST
+initiate a new signaling byway for the call, 
+targeting the IP if it has been specified by the server. This may
+require the client to open a new HTTP connection, if it does not
+already have one open to the target. The client MUST NOT include a
+session cookie in the POST to /events. This is essential to cause the
+request to route to a different instance behind the load balancer,
+which will typically be configured with sticky routing. The server MAY
+respond to this request with a new session cookie. The client MUST NOT
+initiate forward or reverse media byways  until the client receives
+response headers to the signaling byway creation. This is to enable
+session cookies to be included in these requests for sticky routing. 
 
-The server can issue a migrate event over the signalling byway,
-which includes a new call URI that the peer should use. Once received,
-the client closes all transactions to the current call URI. It then
-establishes new signalling, media and media control byways to the URI
-it just received. All media that the client wishes to transmit, but
-was unable to do so during the migration, is buffered and then sent in
-a burst once the media byways are re-established. This ensures there
-is no packet loss (though there will be jitter) during the migration
-period. 
-
-We don't use QUIC layer connection migration, as that is triggered by
-network changes and not likely to be exposed to applications.
-
-## Graceful Call Migration: Client
-
-Clients can move a call from one client instance to another easily. No
-commands are required. The client simply ends the in-progress
-transactions for signalling and media, and then reinitiates them to the
-existing call URI from whatever server is to take over. Note that the
-client MUST do this within 1s or the server will end the call. 
+The client SHOULD cache all media that the client wishes
+to transmit, but was unable to do so during the migration. The media
+MUST then be sent in a burst once the media byways are
+re-established. This ensures there is no packet loss (though there
+will be jitter) during the migration period.
 
 ## Ungraceful Call Migration
 
-Since all media packets are acknowledged at the application layer, it
-is possible for endpoints to very quickly detect remote failures,
-network failures, and other related problems.
-
-Failure detection falls entirely at the hands of the client. A failure
-situation is detected when any one of the following happens:
-
-1. The QUIC connection closes unexpectedly
-2. Any outstanding signalling or media byway is reset by the
-peer
-3. No media packets are received from the peer for 1s
-4. No acknowledgements are received for packets that have been sent in
-the last 1s
-
-If the client detects such a failure, it MUST abort all ongoing
-transactions to the server, terminate the QUIC connection, and then
-establish a new connection using 0-RTT, and re-establish signalling
-and media transactions. If this retry fails, the client MUST consider
-the call terminated. It SHOULD NOT a further attempt to re-establish
-the call.
-
-* CJ - Note there is no way to know if it can use 0-RTT or not, all
-  depends on cached state so the best it can do is hope it might work. 
-
-
+If the origin server or HTTP load balancer fails unexpectedly, this is
+handled by the client. If the client (1) receives a reset on the
+signaling byway, or (2) receives no media packets for 5s, or (3)
+receives no acknowledgements for media packets it has sent for 1s, or
+(4) receives a ungraceful closure of the HTTP connection, it MUST
+initiate a migration as defined in the prior section.
 
 
 # SIP Gateway 
@@ -1639,7 +2201,7 @@ and encryption, and it must de-packetize RTP packets to extract their
 timestamps, sequence numbers, and codec types.
 
 SIP to RIPP gateways are not transparent. SIP header fields which are
-unknown or do not map to RIPP functionality as described here, MUST be
+unknown or do not map to RIPP functionality as described here, gets
 discarded.
 
 Any configuration and provisioning for RIPP happens ahead of receipt
@@ -1662,6 +2224,32 @@ gateway function in order to maximize interoperability.
 
 
 # IANA Considerations {#iana}
+
+## Registration of Well-Known Web Services
+
+This specification defines two new well-known web services as defined
+in [@draft-nottingham-rfc5785bis] - ripp and ripp-oauth.
+
+## RIPP
+
+URI suffix: ripp
+
+Change controller:  IETF
+
+Specification document(s): This specification.
+
+Status:  Permanent.
+
+## RIPP-Oauth
+
+URI suffix: ripp-oauth
+
+Change controller:  IETF
+
+Specification document(s): This specification.
+
+Status:  Permanent.
+
 
 # Security Considerations
 
