@@ -1,0 +1,1880 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <title>Real Time Internet Peering Protocol</title>
+
+  <style type="text/css" title="Xml2Rfc (sans serif)">
+  /*<![CDATA[*/
+	  a {
+	  text-decoration: none;
+	  }
+      /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+      a.info {
+          /* This is the key. */
+          position: relative;
+          z-index: 24;
+          text-decoration: none;
+      }
+      a.info:hover {
+          z-index: 25;
+          color: #FFF; background-color: #900;
+      }
+      a.info span { display: none; }
+      a.info:hover span.info {
+          /* The span will display just on :hover state. */
+          display: block;
+          position: absolute;
+          font-size: smaller;
+          top: 2em; left: -5em; width: 15em;
+          padding: 2px; border: 1px solid #333;
+          color: #900; background-color: #EEE;
+          text-align: left;
+      }
+	  a.smpl {
+	  color: black;
+	  }
+	  a:hover {
+	  text-decoration: underline;
+	  }
+	  a:active {
+	  text-decoration: underline;
+	  }
+	  address {
+	  margin-top: 1em;
+	  margin-left: 2em;
+	  font-style: normal;
+	  }
+	  body {
+	  color: black;
+	  font-family: verdana, helvetica, arial, sans-serif;
+	  font-size: 10pt;
+	  max-width: 55em;
+	  
+	  }
+	  cite {
+	  font-style: normal;
+	  }
+	  dd {
+	  margin-right: 2em;
+	  }
+	  dl {
+	  margin-left: 2em;
+	  }
+	
+	  ul.empty {
+	  list-style-type: none;
+	  }
+	  ul.empty li {
+	  margin-top: .5em;
+	  }
+	  dl p {
+	  margin-left: 0em;
+	  }
+	  dt {
+	  margin-top: .5em;
+	  }
+	  h1 {
+	  font-size: 14pt;
+	  line-height: 21pt;
+	  page-break-after: avoid;
+	  }
+	  h1.np {
+	  page-break-before: always;
+	  }
+	  h1 a {
+	  color: #333333;
+	  }
+	  h2 {
+	  font-size: 12pt;
+	  line-height: 15pt;
+	  page-break-after: avoid;
+	  }
+	  h3, h4, h5, h6 {
+	  font-size: 10pt;
+	  page-break-after: avoid;
+	  }
+	  h2 a, h3 a, h4 a, h5 a, h6 a {
+	  color: black;
+	  }
+	  img {
+	  margin-left: 3em;
+	  }
+	  li {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol p {
+	  margin-left: 0em;
+	  }
+	  p {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  pre {
+	  margin-left: 3em;
+	  background-color: lightyellow;
+	  padding: .25em;
+	  }
+	  pre.text2 {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f0f0f0;
+	  width: 69em;
+	  }
+	  pre.inline {
+	  background-color: white;
+	  padding: 0em;
+	  }
+	  pre.text {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  width: 69em;
+	  }
+	  pre.drawing {
+	  border-style: solid;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  padding: 2em;
+	  }
+	  table {
+	  margin-left: 2em;
+	  }
+	  table.tt {
+	  vertical-align: top;
+	  }
+	  table.full {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.headers {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.tt td {
+	  vertical-align: top;
+	  }
+	  table.full td {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.tt th {
+	  vertical-align: top;
+	  }
+	  table.full th {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.headers th {
+	  border-style: none none inset none;
+	  border-width: 1px;
+	  }
+	  table.left {
+	  margin-right: auto;
+	  }
+	  table.right {
+	  margin-left: auto;
+	  }
+	  table.center {
+	  margin-left: auto;
+	  margin-right: auto;
+	  }
+	  caption {
+	  caption-side: bottom;
+	  font-weight: bold;
+	  font-size: 9pt;
+	  margin-top: .5em;
+	  }
+	
+	  table.header {
+	  border-spacing: 1px;
+	  width: 95%;
+	  font-size: 10pt;
+	  color: white;
+	  }
+	  td.top {
+	  vertical-align: top;
+	  }
+	  td.topnowrap {
+	  vertical-align: top;
+	  white-space: nowrap; 
+	  }
+	  table.header td {
+	  background-color: gray;
+	  width: 50%;
+	  }
+	  table.header a {
+	  color: white;
+	  }
+	  td.reference {
+	  vertical-align: top;
+	  white-space: nowrap;
+	  padding-right: 1em;
+	  }
+	  thead {
+	  display:table-header-group;
+	  }
+	  ul.toc, ul.toc ul {
+	  list-style: none;
+	  margin-left: 1.5em;
+	  margin-right: 0em;
+	  padding-left: 0em;
+	  }
+	  ul.toc li {
+	  line-height: 150%;
+	  font-weight: bold;
+	  font-size: 10pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  ul.toc li li {
+	  line-height: normal;
+	  font-weight: normal;
+	  font-size: 9pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  li.excluded {
+	  font-size: 0pt;
+	  }
+	  ul p {
+	  margin-left: 0em;
+	  }
+	
+	  .comment {
+	  background-color: yellow;
+	  }
+	  .center {
+	  text-align: center;
+	  }
+	  .error {
+	  color: red;
+	  font-style: italic;
+	  font-weight: bold;
+	  }
+	  .figure {
+	  font-weight: bold;
+	  text-align: center;
+	  font-size: 9pt;
+	  }
+	  .filename {
+	  color: #333333;
+	  font-weight: bold;
+	  font-size: 12pt;
+	  line-height: 21pt;
+	  text-align: center;
+	  }
+	  .fn {
+	  font-weight: bold;
+	  }
+	  .hidden {
+	  display: none;
+	  }
+	  .left {
+	  text-align: left;
+	  }
+	  .right {
+	  text-align: right;
+	  }
+	  .title {
+	  color: #990000;
+	  font-size: 18pt;
+	  line-height: 18pt;
+	  font-weight: bold;
+	  text-align: center;
+	  margin-top: 36pt;
+	  }
+	  .vcardline {
+	  display: block;
+	  }
+	  .warning {
+	  font-size: 14pt;
+	  background-color: yellow;
+	  }
+	
+	
+	  @media print {
+	  .noprint {
+		display: none;
+	  }
+	
+	  a {
+		color: black;
+		text-decoration: none;
+	  }
+	
+	  table.header {
+		width: 90%;
+	  }
+	
+	  td.header {
+		width: 50%;
+		color: black;
+		background-color: white;
+		vertical-align: top;
+		font-size: 12pt;
+	  }
+	
+	  ul.toc a::after {
+		content: leader('.') target-counter(attr(href), page);
+	  }
+	
+	  ul.ind li li a {
+		content: target-counter(attr(href), page);
+	  }
+	
+	  .print2col {
+		column-count: 2;
+		-moz-column-count: 2;
+		column-fill: auto;
+	  }
+	  }
+	
+	  @page {
+	  @top-left {
+		   content: "Internet-Draft"; 
+	  } 
+	  @top-right {
+		   content: "December 2010"; 
+	  } 
+	  @top-center {
+		   content: "Abbreviated Title";
+	  } 
+	  @bottom-left {
+		   content: "Doe"; 
+	  } 
+	  @bottom-center {
+		   content: "Expires June 2011"; 
+	  } 
+	  @bottom-right {
+		   content: "[Page " counter(page) "]"; 
+	  } 
+	  }
+	
+	  @page:first { 
+		@top-left {
+		  content: normal;
+		}
+		@top-right {
+		  content: normal;
+		}
+		@top-center {
+		  content: normal;
+		}
+	  }
+  /*]]>*/
+  </style>
+
+  <link href="#rfc.toc" rel="Contents">
+<link href="#rfc.section.1" rel="Chapter" title="1 Introduction">
+<link href="#rfc.section.1.1" rel="Chapter" title="1.1 Background">
+<link href="#rfc.section.1.2" rel="Chapter" title="1.2 Problem Statement">
+<link href="#rfc.section.1.3" rel="Chapter" title="1.3 Core Concept">
+<link href="#rfc.section.2" rel="Chapter" title="2 Structure of this Document">
+<link href="#rfc.section.3" rel="Chapter" title="3 Solution Requirements">
+<link href="#rfc.section.4" rel="Chapter" title="4 Design Approaches">
+<link href="#rfc.section.4.1" rel="Chapter" title="4.1 HBH, not E2E">
+<link href="#rfc.section.4.2" rel="Chapter" title="4.2 Client-Server, not Agent-to-Agent">
+<link href="#rfc.section.4.3" rel="Chapter" title="4.3 Signaling and Media Together">
+<link href="#rfc.section.4.4" rel="Chapter" title="4.4 URIs not IPs">
+<link href="#rfc.section.4.5" rel="Chapter" title="4.5 OAuth not MTLS or private IP">
+<link href="#rfc.section.4.6" rel="Chapter" title="4.6 TLS not SRTP or SIPS">
+<link href="#rfc.section.4.7" rel="Chapter" title="4.7 Authenticated CallerID">
+<link href="#rfc.section.4.8" rel="Chapter" title="4.8 Calls Separate from Connections">
+<link href="#rfc.section.4.9" rel="Chapter" title="4.9 Path Validation, not ICE">
+<link href="#rfc.section.5" rel="Chapter" title="5 Terminology">
+<link href="#rfc.section.6" rel="Chapter" title="6 Reference Architecture">
+<link href="#rfc.section.7" rel="Chapter" title="7 Deployment Examples">
+<link href="#rfc.section.7.1" rel="Chapter" title="7.1 Enterprise Voice Trunking">
+<link href="#rfc.section.7.2" rel="Chapter" title="7.2 BYO Voice for CCaaS">
+<link href="#rfc.section.7.3" rel="Chapter" title="7.3 Inter-Carrier Voice Peering">
+<link href="#rfc.section.7.4" rel="Chapter" title="7.4 IP Phone to UCaaS Provider">
+<link href="#rfc.section.7.5" rel="Chapter" title="7.5 Video Endpoint to Meetings Provider">
+<link href="#rfc.section.7.6" rel="Chapter" title="7.6 Consumer Voice with E2E Encryption">
+<link href="#rfc.section.7.7" rel="Chapter" title="7.7 Browser to Browser Video">
+<link href="#rfc.section.8" rel="Chapter" title="8 Overview of Operation">
+<link href="#rfc.section.8.1" rel="Chapter" title="8.1 Discovery">
+<link href="#rfc.section.8.2" rel="Chapter" title="8.2 Login">
+<link href="#rfc.section.8.3" rel="Chapter" title="8.3 TG Retrieval">
+<link href="#rfc.section.8.4" rel="Chapter" title="8.4 Consumer TG Registration">
+<link href="#rfc.section.8.5" rel="Chapter" title="8.5 Advertisement Exchange">
+<link href="#rfc.section.8.6" rel="Chapter" title="8.6 Call Establishment">
+<link href="#rfc.section.8.7" rel="Chapter" title="8.7 Media Exchange">
+<link href="#rfc.section.8.8" rel="Chapter" title="8.8 Graceful Migration">
+<link href="#rfc.section.8.9" rel="Chapter" title="8.9 Non-Graceful Migration">
+<link href="#rfc.section.9" rel="Chapter" title="9 Example">
+<link href="#rfc.section.9.1" rel="Chapter" title="9.1 Inbound Call">
+<link href="#rfc.section.9.2" rel="Chapter" title="9.2 Outbound Call">
+<link href="#rfc.section.9.3" rel="Chapter" title="9.3 End of call">
+<link href="#rfc.section.10" rel="Chapter" title="10 Normative Protocol Specification">
+<link href="#rfc.section.10.1" rel="Chapter" title="10.1 Discovery">
+<link href="#rfc.section.10.2" rel="Chapter" title="10.2 TG Retrieval">
+<link href="#rfc.section.10.3" rel="Chapter" title="10.3 Consumer TG Registration">
+<link href="#rfc.section.10.4" rel="Chapter" title="10.4 Advertisement Exchange">
+<link href="#rfc.section.10.5" rel="Chapter" title="10.5 Advertisement Format">
+<link href="#rfc.section.10.6" rel="Chapter" title="10.6 Call Establishment">
+<link href="#rfc.section.10.7" rel="Chapter" title="10.7 Signaling and Media Byway Establishment">
+<link href="#rfc.section.10.8" rel="Chapter" title="10.8 Basic Call State Management">
+<link href="#rfc.section.10.9" rel="Chapter" title="10.9 Telephony Features">
+<link href="#rfc.section.10.9.1" rel="Chapter" title="10.9.1 Blind Transfer">
+<link href="#rfc.section.10.9.2" rel="Chapter" title="10.9.2 Warm Transfer">
+<link href="#rfc.section.10.9.3" rel="Chapter" title="10.9.3 Hold and Resume">
+<link href="#rfc.section.10.9.4" rel="Chapter" title="10.9.4 Mute Indication">
+<link href="#rfc.section.10.9.5" rel="Chapter" title="10.9.5 Park and Retrieve">
+<link href="#rfc.section.10.10" rel="Chapter" title="10.10 Sending and Receiving Media">
+<link href="#rfc.section.10.10.1" rel="Chapter" title="10.10.1 The Media Chunk Format">
+<link href="#rfc.section.10.10.2" rel="Chapter" title="10.10.2 The Control Chunk">
+<link href="#rfc.section.10.10.3" rel="Chapter" title="10.10.3 Client Media handling">
+<link href="#rfc.section.10.10.4" rel="Chapter" title="10.10.4 Server Media Handling">
+<link href="#rfc.section.10.11" rel="Chapter" title="10.11 Connection and Byway Lifecycle Management">
+<link href="#rfc.section.10.12" rel="Chapter" title="10.12 Retrieving Call List">
+<link href="#rfc.section.10.13" rel="Chapter" title="10.13 Graceful Call Migration">
+<link href="#rfc.section.10.14" rel="Chapter" title="10.14 Ungraceful Call Migration">
+<link href="#rfc.section.11" rel="Chapter" title="11 SIP Gateway">
+<link href="#rfc.section.11.1" rel="Chapter" title="11.1 RIPP to SIP">
+<link href="#rfc.section.11.2" rel="Chapter" title="11.2 SIP to RIPP">
+<link href="#rfc.section.12" rel="Chapter" title="12 RAML API">
+<link href="#rfc.section.13" rel="Chapter" title="13 IANA Considerations">
+<link href="#rfc.section.13.1" rel="Chapter" title="13.1 Registration of Well-Known Web Services">
+<link href="#rfc.section.13.2" rel="Chapter" title="13.2 RIPP">
+<link href="#rfc.section.13.3" rel="Chapter" title="13.3 RIPP-Oauth">
+<link href="#rfc.section.14" rel="Chapter" title="14 Security Considerations">
+<link href="#rfc.section.15" rel="Chapter" title="15 Acknowledgements">
+<link href="#rfc.references" rel="Chapter" title="16 Informative References">
+<link href="#rfc.authors" rel="Chapter">
+
+
+  <meta name="generator" content="xml2rfc version 2.22.3 - https://tools.ietf.org/tools/xml2rfc" />
+  <link rel="schema.dct" href="http://purl.org/dc/terms/" />
+
+  <meta name="dct.creator" content="Rosenberg, J., Jennings, C., Minessale, A., Livingood, J., and J. Uberti" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-rosenbergjennings-dispatch-ripp-04" />
+  <meta name="dct.issued" scheme="ISO8601" content="2020-01-13" />
+  <meta name="dct.abstract" content="This document specifies the Realtime Internet Peering Protocol (RIPP). RIPP is used to provide peering of voice and video communications between administrative domains. These include a traditional voice trunking provider (such as a telco), and a trunking consumer (such as an enterprise PBX or contact center), or between a video conferencing endpoint deployed in an enterprise, and a video conferencing SaaS service. RIPP is an alternative to SIP, SDP and RTP for this use case, and is designed as a web application using HTTP/3. Using HTTP/3 allows trunking consumers to more easily build their applications on top of cloud platforms, such as AWS, Azure and Google Cloud, all of which are heavily focused on HTTP based services. RIPP also addresses many of the challenges of traditional SIP-based peering. It supports modern techniques for load balancing, autoscaling, and failover, adds mid-call failovers and graceful call migrations, is secure by default, requires STIR-based caller ID, and has built-in techniques for provisioning and capabilities - all of which have been challenges with traditional SIP peering and voice trunking. Since it runs over HTTP/3, it works through NATs and firewalls with the same ease as HTTP does " />
+  <meta name="description" content="This document specifies the Realtime Internet Peering Protocol (RIPP). RIPP is used to provide peering of voice and video communications between administrative domains. These include a traditional voice trunking provider (such as a telco), and a trunking consumer (such as an enterprise PBX or contact center), or between a video conferencing endpoint deployed in an enterprise, and a video conferencing SaaS service. RIPP is an alternative to SIP, SDP and RTP for this use case, and is designed as a web application using HTTP/3. Using HTTP/3 allows trunking consumers to more easily build their applications on top of cloud platforms, such as AWS, Azure and Google Cloud, all of which are heavily focused on HTTP based services. RIPP also addresses many of the challenges of traditional SIP-based peering. It supports modern techniques for load balancing, autoscaling, and failover, adds mid-call failovers and graceful call migrations, is secure by default, requires STIR-based caller ID, and has built-in techniques for provisioning and capabilities - all of which have been challenges with traditional SIP peering and voice trunking. Since it runs over HTTP/3, it works through NATs and firewalls with the same ease as HTTP does " />
+
+</head>
+
+<body>
+
+  <table class="header">
+    <tbody>
+    
+    	<tr>
+<td class="left">Network Working Group</td>
+<td class="right">J. Rosenberg</td>
+</tr>
+<tr>
+<td class="left">Internet-Draft</td>
+<td class="right">Five9</td>
+</tr>
+<tr>
+<td class="left">Intended status: Standards Track</td>
+<td class="right">C. Jennings</td>
+</tr>
+<tr>
+<td class="left">Expires: July 16, 2020</td>
+<td class="right">Cisco Systems</td>
+</tr>
+<tr>
+<td class="left"></td>
+<td class="right">A. Minessale</td>
+</tr>
+<tr>
+<td class="left"></td>
+<td class="right">Signalwire/Freeswitch</td>
+</tr>
+<tr>
+<td class="left"></td>
+<td class="right">J. Livingood</td>
+</tr>
+<tr>
+<td class="left"></td>
+<td class="right">Comcast</td>
+</tr>
+<tr>
+<td class="left"></td>
+<td class="right">J. Uberti</td>
+</tr>
+<tr>
+<td class="left"></td>
+<td class="right">Google</td>
+</tr>
+<tr>
+<td class="left"></td>
+<td class="right">January 13, 2020</td>
+</tr>
+
+    	
+    </tbody>
+  </table>
+
+  <p class="title">Real Time Internet Peering Protocol<br />
+  <span class="filename">draft-rosenbergjennings-dispatch-ripp-04</span></p>
+  
+  <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
+<p>This document specifies the Realtime Internet Peering Protocol (RIPP). RIPP is used to provide peering of voice and video communications between administrative domains. These include a traditional voice trunking provider (such as a telco), and a trunking consumer (such as an enterprise PBX or contact center), or between a video conferencing endpoint deployed in an enterprise, and a video conferencing SaaS service. RIPP is an alternative to SIP, SDP and RTP for this use case, and is designed as a web application using HTTP/3. Using HTTP/3 allows trunking consumers to more easily build their applications on top of cloud platforms, such as AWS, Azure and Google Cloud, all of which are heavily focused on HTTP based services. RIPP also addresses many of the challenges of traditional SIP-based peering. It supports modern techniques for load balancing, autoscaling, and failover, adds mid-call failovers and graceful call migrations, is secure by default, requires STIR-based caller ID, and has built-in techniques for provisioning and capabilities - all of which have been challenges with traditional SIP peering and voice trunking. Since it runs over HTTP/3, it works through NATs and firewalls with the same ease as HTTP does </p>
+<h1 id="rfc.status"><a href="#rfc.status">Status of This Memo</a></h1>
+<p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
+<p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
+<p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
+<p>This Internet-Draft will expire on July 16, 2020.</p>
+<h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
+<p>Copyright (c) 2020 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
+<p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
+
+  
+  <hr class="noprint" />
+  <h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1>
+  <ul class="toc">
+
+  	<li>1.   <a href="#rfc.section.1">Introduction</a>
+</li>
+<ul><li>1.1.   <a href="#rfc.section.1.1">Background</a>
+</li>
+<li>1.2.   <a href="#rfc.section.1.2">Problem Statement</a>
+</li>
+<li>1.3.   <a href="#rfc.section.1.3">Core Concept</a>
+</li>
+</ul><li>2.   <a href="#rfc.section.2">Structure of this Document</a>
+</li>
+<li>3.   <a href="#rfc.section.3">Solution Requirements</a>
+</li>
+<li>4.   <a href="#rfc.section.4">Design Approaches</a>
+</li>
+<ul><li>4.1.   <a href="#rfc.section.4.1">HBH, not E2E</a>
+</li>
+<li>4.2.   <a href="#rfc.section.4.2">Client-Server, not Agent-to-Agent</a>
+</li>
+<li>4.3.   <a href="#rfc.section.4.3">Signaling and Media Together</a>
+</li>
+<li>4.4.   <a href="#rfc.section.4.4">URIs not IPs</a>
+</li>
+<li>4.5.   <a href="#rfc.section.4.5">OAuth not MTLS or private IP</a>
+</li>
+<li>4.6.   <a href="#rfc.section.4.6">TLS not SRTP or SIPS</a>
+</li>
+<li>4.7.   <a href="#rfc.section.4.7">Authenticated CallerID</a>
+</li>
+<li>4.8.   <a href="#rfc.section.4.8">Calls Separate from Connections</a>
+</li>
+<li>4.9.   <a href="#rfc.section.4.9">Path Validation, not ICE</a>
+</li>
+</ul><li>5.   <a href="#rfc.section.5">Terminology</a>
+</li>
+<li>6.   <a href="#rfc.section.6">Reference Architecture</a>
+</li>
+<li>7.   <a href="#rfc.section.7">Deployment Examples</a>
+</li>
+<ul><li>7.1.   <a href="#rfc.section.7.1">Enterprise Voice Trunking</a>
+</li>
+<li>7.2.   <a href="#rfc.section.7.2">BYO Voice for CCaaS</a>
+</li>
+<li>7.3.   <a href="#rfc.section.7.3">Inter-Carrier Voice Peering</a>
+</li>
+<li>7.4.   <a href="#rfc.section.7.4">IP Phone to UCaaS Provider</a>
+</li>
+<li>7.5.   <a href="#rfc.section.7.5">Video Endpoint to Meetings Provider</a>
+</li>
+<li>7.6.   <a href="#rfc.section.7.6">Consumer Voice with E2E Encryption</a>
+</li>
+<li>7.7.   <a href="#rfc.section.7.7">Browser to Browser Video</a>
+</li>
+</ul><li>8.   <a href="#rfc.section.8">Overview of Operation</a>
+</li>
+<ul><li>8.1.   <a href="#rfc.section.8.1">Discovery</a>
+</li>
+<li>8.2.   <a href="#rfc.section.8.2">Login</a>
+</li>
+<li>8.3.   <a href="#rfc.section.8.3">TG Retrieval</a>
+</li>
+<li>8.4.   <a href="#rfc.section.8.4">Consumer TG Registration</a>
+</li>
+<li>8.5.   <a href="#rfc.section.8.5">Advertisement Exchange</a>
+</li>
+<li>8.6.   <a href="#rfc.section.8.6">Call Establishment</a>
+</li>
+<li>8.7.   <a href="#rfc.section.8.7">Media Exchange</a>
+</li>
+<li>8.8.   <a href="#rfc.section.8.8">Graceful Migration</a>
+</li>
+<li>8.9.   <a href="#rfc.section.8.9">Non-Graceful Migration</a>
+</li>
+</ul><li>9.   <a href="#rfc.section.9">Example</a>
+</li>
+<ul><li>9.1.   <a href="#rfc.section.9.1">Inbound Call</a>
+</li>
+<li>9.2.   <a href="#rfc.section.9.2">Outbound Call</a>
+</li>
+<li>9.3.   <a href="#rfc.section.9.3">End of call</a>
+</li>
+</ul><li>10.   <a href="#rfc.section.10">Normative Protocol Specification</a>
+</li>
+<ul><li>10.1.   <a href="#rfc.section.10.1">Discovery</a>
+</li>
+<li>10.2.   <a href="#rfc.section.10.2">TG Retrieval</a>
+</li>
+<li>10.3.   <a href="#rfc.section.10.3">Consumer TG Registration</a>
+</li>
+<li>10.4.   <a href="#rfc.section.10.4">Advertisement Exchange</a>
+</li>
+<li>10.5.   <a href="#rfc.section.10.5">Advertisement Format</a>
+</li>
+<li>10.6.   <a href="#rfc.section.10.6">Call Establishment</a>
+</li>
+<li>10.7.   <a href="#rfc.section.10.7">Signaling and Media Byway Establishment</a>
+</li>
+<li>10.8.   <a href="#rfc.section.10.8">Basic Call State Management</a>
+</li>
+<li>10.9.   <a href="#rfc.section.10.9">Telephony Features</a>
+</li>
+<ul><li>10.9.1.   <a href="#rfc.section.10.9.1">Blind Transfer</a>
+</li>
+<li>10.9.2.   <a href="#rfc.section.10.9.2">Warm Transfer</a>
+</li>
+<li>10.9.3.   <a href="#rfc.section.10.9.3">Hold and Resume</a>
+</li>
+<li>10.9.4.   <a href="#rfc.section.10.9.4">Mute Indication</a>
+</li>
+<li>10.9.5.   <a href="#rfc.section.10.9.5">Park and Retrieve</a>
+</li>
+</ul><li>10.10.   <a href="#rfc.section.10.10">Sending and Receiving Media</a>
+</li>
+<ul><li>10.10.1.   <a href="#rfc.section.10.10.1">The Media Chunk Format</a>
+</li>
+<li>10.10.2.   <a href="#rfc.section.10.10.2">The Control Chunk</a>
+</li>
+<li>10.10.3.   <a href="#rfc.section.10.10.3">Client Media handling</a>
+</li>
+<li>10.10.4.   <a href="#rfc.section.10.10.4">Server Media Handling</a>
+</li>
+</ul><li>10.11.   <a href="#rfc.section.10.11">Connection and Byway Lifecycle Management</a>
+</li>
+<li>10.12.   <a href="#rfc.section.10.12">Retrieving Call List</a>
+</li>
+<li>10.13.   <a href="#rfc.section.10.13">Graceful Call Migration</a>
+</li>
+<li>10.14.   <a href="#rfc.section.10.14">Ungraceful Call Migration</a>
+</li>
+</ul><li>11.   <a href="#rfc.section.11">SIP Gateway</a>
+</li>
+<ul><li>11.1.   <a href="#rfc.section.11.1">RIPP to SIP</a>
+</li>
+<li>11.2.   <a href="#rfc.section.11.2">SIP to RIPP</a>
+</li>
+</ul><li>12.   <a href="#rfc.section.12">RAML API</a>
+</li>
+<li>13.   <a href="#rfc.section.13">IANA Considerations</a>
+</li>
+<ul><li>13.1.   <a href="#rfc.section.13.1">Registration of Well-Known Web Services</a>
+</li>
+<li>13.2.   <a href="#rfc.section.13.2">RIPP</a>
+</li>
+<li>13.3.   <a href="#rfc.section.13.3">RIPP-Oauth</a>
+</li>
+</ul><li>14.   <a href="#rfc.section.14">Security Considerations</a>
+</li>
+<li>15.   <a href="#rfc.section.15">Acknowledgements</a>
+</li>
+<li>16.   <a href="#rfc.references">Informative References</a>
+</li>
+<li><a href="#rfc.authors">Authors' Addresses</a>
+</li>
+
+
+  </ul>
+
+  <h1 id="rfc.section.1">
+<a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a>
+</h1>
+<h1 id="rfc.section.1.1">
+<a href="#rfc.section.1.1">1.1.</a> <a href="#background" id="background">Background</a>
+</h1>
+<p id="rfc.section.1.1.p.1">Cloud computing platforms, such as those provided by Amazon, Azure, and Google, have now become mainstream for the development of software applications. These platforms are targeted at enabling web applications, and as such many of their features are based on the usage of HTTP.  </p>
+<p id="rfc.section.1.1.p.2">One example are HTTP load balancers. Cloud computing platforms provide highly scalable, geographically distributed, redundant load balancers. These load balancers can monitor the state of downstream servers and can uniformly distribute load amongst them. The load balancers can compensate for failure of individual nodes and send new traffic to other nodes.  </p>
+<p id="rfc.section.1.1.p.3">Autoscaling is another example. The cloud computing platforms can automatically add new instances of a server backend, or remove them, and automatically configure the load balancers to include them in the pool of available servers.  </p>
+<p id="rfc.section.1.1.p.4">Yet another example is Kubernetes, which allows web-based applications to be deployed into containers (typically Docker), with load balancing, scaling, and HTTP request routing.  </p>
+<p id="rfc.section.1.1.p.5">Another example are HTTP tracing tools, which facilitate the tracing of requests through distributed microservices. These tools can autogenerate sequence diagrams and facilitate in troubleshooting.  </p>
+<p id="rfc.section.1.1.p.6">Yet another example are API gateways (such as APIGee and Kong), which provide authentication and authorization, provisioning of applications, rate limiting, analytics, sandboxing for testing, embedded documentation, and so on.  </p>
+<p id="rfc.section.1.1.p.7">And yet another example are denial-of-service prevention techniques, typically done using BGP peering and re-routing. Though in principle these techniques can work for VoIP, they are deployed in conjunction with the load balancers which represent the entry point into these cloud provider networks. Consequently, the protections these cloud providers offer do not extend to applications which merely use these platforms for virtual machines.  </p>
+<p id="rfc.section.1.1.p.8">A more recent technology are service meshes, such as Istio, which utilize sidecar HTTP proxies to facilitate inter-service communications. These systems come with robust control planes which enable additional routing features, such as canary deploys, percentage based routing, and so on.  </p>
+<h1 id="rfc.section.1.2">
+<a href="#rfc.section.1.2">1.2.</a> <a href="#problem-statement" id="problem-statement">Problem Statement</a>
+</h1>
+<p id="rfc.section.1.2.p.1">Unfortunately, there are many applications being deployed into these cloud platforms which require interconnection with the public switched telephone network (PSTN). Examples of such applications include cloud PBXs, cloud contact centers, cloud meetings applications, and so on. Furthermore, commerce websites would like to allow customers to call into the telephone network for customer support.  </p>
+<p id="rfc.section.1.2.p.2">In order for these applications to connect to the PSTN, or to connect voice and video services in other domains, they typically deploy Session Initiation Protocol (SIP) <a href="#RFC3261" class="xref">[RFC3261]</a> based servers - SBCs, SIP proxies, and softswitches, to provide this interconnection. Unfortunately, SIP based applications cannot make use of the many capabilities these cloud platforms afford to HTTP based applications. These SIP servers are usually deployed on bare metal or VMs at best. Application developers must build their own load balancing, HA, failover, clustering, security, and scaling technologies, rather than using the capabilities of these platforms.  </p>
+<p id="rfc.section.1.2.p.3">Another problem has been call drops. SIP's original design where call state lived only in the endpoints and media was sent p2p - provided extremely high reliability. In practice, SIP networks are full of state that resides in server intermediaries (softswitches, SBCs, and so on), and has seen media transmitted through these intermediaries. Unfortunately, the SIP protocol did not provide built-in mechanisms which enable call preservation - the ability of a call to survive failure of any server component without call drops. As a result, many of these servers rely on layer 3 solutions (such as shared VIPs with proprietary state replication), which are expensive, hard to deploy, and of limited scale. In other cases, they are absent, in which case a server failure will cause all calls to be dropped, requiring the end user themselves to re-initiate the call.  </p>
+<p id="rfc.section.1.2.p.4">All of this has created a barrier to entry, particularly for applications such as websites which are not expert in VoIP technologies. Furthermore, it has meant that VoIP applications have been unable to take advantage of the many technology improvements that have come to networking and protocol design since the publication of RFC 3261 in 2002.  </p>
+<p id="rfc.section.1.2.p.5">In addition, SIP trunking has suffered from complex provisioning operations, oftentimes requiring the exchange of static IPs and ports. These operations are almost never self-service and consequently, SIP trunk turn ups can take weeks.  </p>
+<p id="rfc.section.1.2.p.6">Finally, perhaps the biggest challenge with SIP trunking has been its abuse for injecting robocalls, and in general weak deployment of security.  </p>
+<p id="rfc.section.1.2.p.7">In summary - there are four core problems which this specification is addressing in the traditional usage of SIP peering between entities: </p>
+<p></p>
+
+<ol>
+<li>The difficulty of deploying real-time communications servers into web-centric cloud platforms, which can enable modern solutions for load balancing, infinite scale, autoscaling, hitless software upgrade, and so on.</li>
+<li>Lack of built-in protocol mechanisms for call preservation</li>
+<li>Lack of standardized and automated techniques for provisioning and configuration of SIP trunks</li>
+<li>Lack of secure caller ID</li>
+</ol>
+
+<p> </p>
+<h1 id="rfc.section.1.3">
+<a href="#rfc.section.1.3">1.3.</a> <a href="#core-concept" id="core-concept">Core Concept</a>
+</h1>
+<p id="rfc.section.1.3.p.1">The core concept of RIPP is simple - to make voice and video peering yet another application that sits on top of HTTP.  </p>
+<p id="rfc.section.1.3.p.2">Though SIP was inspired by HTTP, it is not HTTP itself. SIP and HTTP are peers - application protocols running ontop of the Internet. In the intervening years, HTTP evolved to become a general purpose substrate for delivering Internet applications. It is fair to say that today, almost all applications users consume over the Internet run over HTTP (with obvious exception of inter-server email - much client to server email is also now run over HTTP).  </p>
+<p id="rfc.section.1.3.p.3">This resulted - in essence - a rift between telecommunications technologies and web technologies. Both had their own protocol stacks, their own sets of products and services, and so on.  </p>
+<p id="rfc.section.1.3.p.4">RIPP is an attempt to seal this rift by reunifying web and telecommunications technologies, with web as the "winner".  </p>
+<p id="rfc.section.1.3.p.5">The idea of re-converging HTTP and SIP is certainly not new, and indeed has been discussed in the hallways of IETF for many years. However, several significant limitations made this previously infeasible: </p>
+<p></p>
+
+<ol>
+<li>HTTP utilized TCP, which meant that it created head-of-line blocking which would delay lost packets rather than just discard them. This will often provide intolerable latency for VoIP.</li>
+<li>HTTP was request response, allowing the client to send requests and receive a response. There as no way for a server to asynchronously send information to the client in an easy fashion.</li>
+</ol>
+
+<p> </p>
+<p id="rfc.section.1.3.p.7">HTTP2 <a href="#RFC7540" class="xref">[RFC7540]</a> addressed the second of these with the introduction of pushes and long running requests. However, its usage of TCP was still a problem. This has finally been addressed with the arrival of QUIC <a href="#I-D.ietf-quic-transport" class="xref">[I-D.ietf-quic-transport]</a> and HTTP/3. QUIC is based on UDP, and it introduces the concept of a stream that can be set up with zero RTT. These streams are carried over UDP, and though are still reliable, there is no head of line blocking across streams. This change has made it possible for HTTP to support real-time applications.  </p>
+<p id="rfc.section.1.3.p.8">As a result, RIPP uses HTTP/3 <a href="#I-D.ietf-quic-http" class="xref">[I-D.ietf-quic-http]</a>, but is not an extension to it. This means that RIPP inherits the benefits of classic HTTP deployments - easy load balancing, easy expansion and contraction of clusters (including auto-scaling), standard techniques for encryption, authentication, and denial-of-service prevention, and so on.  </p>
+<h1 id="rfc.section.2">
+<a href="#rfc.section.2">2.</a> <a href="#structure-of-this-document" id="structure-of-this-document">Structure of this Document</a>
+</h1>
+<p id="rfc.section.2.p.1">The document is broadly split into two parts - explanatory and normative materials. The explanatory text is non-normative, and contains no <a href="#RFC2119" class="xref">[RFC2119]</a> language. Much of this text is meant to help readers familiar with SIP, understand how SIP concepts translate (or don't) into RIPP. These sections include Requirements <a href="#req" class="xref">Section 3</a>, Design Approaches <a href="#design" class="xref">Section 4</a>, Terminology <a href="#terminology" class="xref">Section 5</a>, Reference Architecture <a href="#refarch" class="xref">Section 6</a>, Deployment Examples <a href="#deployments" class="xref">Section 7</a> </p>
+<p id="rfc.section.2.p.2">The normative content is split into four components - creating a reverse tg, tg, call, and media, each of which represents a web service. These are sections TODO.  </p>
+<h1 id="rfc.section.3">
+<a href="#rfc.section.3">3.</a> <a href="#req" id="req">Solution Requirements</a>
+</h1>
+<p id="rfc.section.3.p.1">The protocol defined here is based on the following requirements: </p>
+<p id="rfc.section.3.p.2">REQ1: The solution shall not require extensions or modifications to HTTP/3.  </p>
+<p id="rfc.section.3.p.3">REQ2: The solution shall work with both L4 and L7 HTTP load balancers </p>
+<p id="rfc.section.3.p.4">REQ3: The solution shall work in ways that are compatible with best practices for load balancers and proxies supporting HTTP/3, and not require any special changes to these load balancers in order to function.  </p>
+<p id="rfc.section.3.p.5">REQ4: The solution should hide the number of servers behind the load balancer, allow the addition or removal of servers from the cluster at will, and not expose any of this information to the peer </p>
+<p id="rfc.section.3.p.6">REQ5: The solution shall enable the usage of autoscaling technologies used in cloud platforms, without any special consideration for RIPP - its just a web app </p>
+<p id="rfc.section.3.p.7">REQ6: The solution shall provide call preservation in the face of failures of the server or client. It is acceptable for a brief blip of media due to transient packet loss, but thats it </p>
+<p id="rfc.section.3.p.8">REQ7: The solution shall support built-in migration, allowing a server to quickly shed load in order to be restarted or upgraded, without any impact to calls in progress </p>
+<p id="rfc.section.3.p.9">REQ8: The solution will be easy to interoperate with SIP </p>
+<p id="rfc.section.3.p.10">REQ9: The solution shall be incrementally deployable - specifically it must be designed for easy implementation by SBCs and easy deployment by PSTN termination and origination providers who do not utilize cloud platforms </p>
+<p id="rfc.section.3.p.11">REQ10: The solution shall require authentication and encryption, with no opportunity to disable them. Furthermore, it will require secure callerID, with no provision for insecure callerID </p>
+<p id="rfc.section.3.p.12">REQ11: The solution shall provide low latency for media </p>
+<p id="rfc.section.3.p.13">REQ12: The solution shall support audio and video </p>
+<p id="rfc.section.3.p.14">REQ13: The solution must support secure caller ID out of the gate and not inherit any of the insecure techniques used with SIP </p>
+<p id="rfc.section.3.p.15">REQ14: The solution shall include mandatory-to-implement provisioning operations for cases where there is a customer-provider relationship </p>
+<h1 id="rfc.section.4">
+<a href="#rfc.section.4">4.</a> <a href="#design" id="design">Design Approaches</a>
+</h1>
+<p id="rfc.section.4.p.1">To meet the requirements stated above, RIPP makes several fundamental changes compared to SIP. These changes, and their motivations, are described in the sections below.  </p>
+<h1 id="rfc.section.4.1">
+<a href="#rfc.section.4.1">4.1.</a> <a href="#hbh-not-e2e" id="hbh-not-e2e">HBH, not E2E</a>
+</h1>
+<p id="rfc.section.4.1.p.1">SIP was designed as an end-to-end protocol. As such, it explicitly incorporates features which presume the existence of a network of elements - proxies and registrars in particular. SIP provides many features to facilitate this - Via headers, record-routing, and so on.  </p>
+<p id="rfc.section.4.1.p.2">HTTP on the other hand - is strictly a hop-by-hop technology. Though it does support the notion of proxies (ala the CONNECT method for reverse proxies), the protocol is fundamentally designed to be between a client and an authoritative server. What happens beyond that authoritative server is beyond the scope of HTTP, and can (and often does) include additional HTTP transactions.  </p>
+<p id="rfc.section.4.1.p.3">Consequently, in order to reside within HTTP, RIPP follows the same pattern and only concerns itself with HBH behaviours. Like HTTP, a RIPP server can of course act as a RIPP client and further connect calls to downstream elements. However, such behavior requires no additional specification and is therefore not discussed by RIPP.  </p>
+<h1 id="rfc.section.4.2">
+<a href="#rfc.section.4.2">4.2.</a> <a href="#clientserver-not-agenttoagent" id="clientserver-not-agenttoagent">Client-Server, not Agent-to-Agent</a>
+</h1>
+<p id="rfc.section.4.2.p.1">SIP is based fundamentally on the User Agent, and describes the communications between a pair of user agents. Either user agent can initiate requests towards the other. SIP defines the traditional role of client and server as bound to a specific transaction.  </p>
+<p id="rfc.section.4.2.p.2">HTTP does not operate this way. In HTTP, one entity is a client, and the other is a server. There is no way for the server to send messages asynchronously towards the client. HTTP/3 does enable two distinct techniques that facilitate server messaging towards the client. But to use them, RIPP must abide by HTTP/3 rules, and that means distinct roles for clients and servers. Clients must always initiate connections and send requests, not servers.  </p>
+<p id="rfc.section.4.2.p.3">To handle this, RIPP specifies that the domain associated with the caller implements the RIPP client, and the domain receiving the calls is the RIPP server. For any particular call, the roles of client and server do not change. To facilitate calls in either direction, a domain can implement both RIPP client and RIPP server roles. However, there is no relationship between the two directions.  </p>
+<h1 id="rfc.section.4.3">
+<a href="#rfc.section.4.3">4.3.</a> <a href="#signaling-and-media-together" id="signaling-and-media-together">Signaling and Media Together</a>
+</h1>
+<p id="rfc.section.4.3.p.1">One of the most fundamental design properties of SIP was the separation of signalling and media. This was fundamental to the success of SIP, since it enabled high quality, low latency media between endpoints inside of an enterprise or consumer domain.  </p>
+<p id="rfc.section.4.3.p.2">This design technique is quite hard to translate to HTTP, especially when considering load balancing and scaling techniques. HTTP load balancing is effective because it treats each request/response pair as an independent action which can route to any number of backends. In essence, the request/response transaction is atomic, and consequentially RIPP needs to operate this way as well.  </p>
+<p id="rfc.section.4.3.p.3">Though SIP envisioned that signalling and media separation would also apply to inter-domain calls, in practice this has not happened. Inter-domain interconnect - including interconnection with the PSTN - is done traditionally with SBCs which terminate and re-originate media. Since this specification is targeted at inter-domain peering cases, RIPP fundamentally combines signalling and media together on the same connection. To ensure low latency, it uses multiple independent request/response transactions - each running in parallel over unique QUIC streams - to transmit media.  </p>
+<h1 id="rfc.section.4.4">
+<a href="#rfc.section.4.4">4.4.</a> <a href="#uris-not-ips" id="uris-not-ips">URIs not IPs</a>
+</h1>
+<p id="rfc.section.4.4.p.1">SIP is full of IP addresses and ports. They are contained in Via headers, in Route and Record-Route headers. In SDP. In Contact headers. The usage of IPs is one of the main reasons why SIP is so difficult to deploy into cloud platforms. These platforms are based on the behavior of HTTP which has been based on TCP connections and therefore done most of its routing at the connection layer, and not the IP layer.  </p>
+<p id="rfc.section.4.4.p.2">Furthermore, modern cloud platforms are full of NATs and private IP space, making them inhospitable to SIP based applications which still struggle with NAT traversal.  </p>
+<p id="rfc.section.4.4.p.3">HTTP of course does not suffer from this. In general, "addressing", to the degree it exists at all, is done with HTTP URIs. RIPP follows this pattern. RIPP - as a web application that uses HTTP/3 - does not use or convey any IP addresses or ports. Furthermore, the client never provides addressing to the server - all traffic is sent in the reverse direction over the connection.  </p>
+<h1 id="rfc.section.4.5">
+<a href="#rfc.section.4.5">4.5.</a> <a href="#oauth-not-mtls-or-private-ip" id="oauth-not-mtls-or-private-ip">OAuth not MTLS or private IP</a>
+</h1>
+<p id="rfc.section.4.5.p.1">When used in peering arrangements today, authentication for the SIP connections is typically done using mutual TLS. It is also often the case that security is done at the IP layer, and sometimes even via dedicated MPLS connections which require pre-provisioning. Unfortunately, these techniques are quite incompatible with how modern cloud platforms work.  </p>
+<p id="rfc.section.4.5.p.2">HTTP - due to its client-server nature, uses asymmetric techniques for authentication. Most notably, certificate based authentication is done by the client to verify that it is speaking to the server it thinks it should be speaking to. For the server to identify the client, modern platforms make use of OAuth2.0. Though OAuth is not actually an authentication protocol, the use of OAuth has allowed authentication to be done out of band via separate identity servers which produce OAuth tokens which can then be used for authentication of the client.  </p>
+<p id="rfc.section.4.5.p.3">Consequently, RIPP follows this same approach. For each call, one domain acts as the client, and the other, as the server. When acting as a server, the domain authenticates itself with TLS and verifies the client with OAuth tokens. For calls in the reverse direction, the roles are reversed.  </p>
+<p id="rfc.section.4.5.p.4">To make it possible to easily pass calls in both directions, RIPP allows one domain to act as the customer of another, the provider. The customer domain authenticates with the provider and obtains an OAuth token using traditional techniques. RIPP then allows the customer domain to automatically create a bearer token for inbound calls and pass it to the provider, along with the URI for receipt of inbound calls.  </p>
+<h1 id="rfc.section.4.6">
+<a href="#rfc.section.4.6">4.6.</a> <a href="#tls-not-srtp-or-sips" id="tls-not-srtp-or-sips">TLS not SRTP or SIPS</a>
+</h1>
+<p id="rfc.section.4.6.p.1">SIP has provided encryption of both signalling and media, through the usage of SIP over TLS and SIPS, and SRTP, respectively. Unfortunately, these have not been widely deployed. The E2E nature of SRTP has made keying an ongoing challenge, with multiple technologies developed over the years. SIP itself has seen greater uptake of TLS transport, but this remains uncommon largely due to the commonality of private IP peering as an alternative.  </p>
+<p id="rfc.section.4.6.p.2">Because of the HBH nature of RIPP, security is done fundamentally at the connection level - identically to HTTP. Since media is also carrier over the HTTP connection, both signalling and media are covered by the connection security provided by HTTP/3.  </p>
+<p id="rfc.section.4.6.p.3">Because of the mandatory usage of TLS1.3 with HTTP/3, and the expected widespread deployment of HTTP/3, running VoIP on top of HTTP/3 will bring built-in encryption of media and signalling between peering domains, which is a notable improvement over the current deployment situation. It is also necessary in order to utilize HTTP/3.  </p>
+<p id="rfc.section.4.6.p.4">For reasons of interoperability, and to enable e2e media encryption in several inter-domain use cases, RIPP assumes each media chunk may be encrypted, and if so, it contains a key ID which dereferences the encryption keys, ciphers and other information needed to decrypt the packet. The exchange of these keys and ciphers is done entirely out of band of RIPP.  </p>
+<p id="rfc.section.4.6.p.5">However, RIPP does not support SRTP. If a client receives a SIP call with SRTP, it must terminate the SRTP and decrypt media before sending it over RIPP. This matches existing practice in many cases.  </p>
+<h1 id="rfc.section.4.7">
+<a href="#rfc.section.4.7">4.7.</a> <a href="#authenticated-callerid" id="authenticated-callerid">Authenticated CallerID</a>
+</h1>
+<p id="rfc.section.4.7.p.1">Robocalling is seeing a dramatic rise in volume, and efforts to combat it continue. One of the causes of this problem is the ease of which SIP enables one domain to initiate calls to another domain without authenticated caller ID.  </p>
+<p id="rfc.section.4.7.p.2">With RIPP, we remedy this by requiring the client and servers to implement STIR. RIPP clients must either insert a signed passport, or pass one through. Similarly, RIPP servers must act as verifying parties and reject any calls that omit a passport. In cases where the RIPP client is an end device, it still inserts a passport - but uses a self-signed certificate.  </p>
+<p id="rfc.section.4.7.p.3">[TODO: Need to check we have all the things needed in an Passport.] </p>
+<h1 id="rfc.section.4.8">
+<a href="#rfc.section.4.8">4.8.</a> <a href="#calls-separate-from-connections" id="calls-separate-from-connections">Calls Separate from Connections</a>
+</h1>
+<p id="rfc.section.4.8.p.1">In SIP, there is a fuzzy relationship between calls and connections. In some cases, connection failures cause call terminations, and vice a versa.  </p>
+<p id="rfc.section.4.8.p.2">HTTP, on the other hand, very clearly separates the state of the resource being manipulated, with the state of the HTTP connection used to manipulate it. This design principle is inherited by RIPP. Consequently, call state on both client and server exist independently from the connections which manipulate them. This allows for greater availability my enabling connections for the same call to move between machines in the case of failures.  </p>
+<h1 id="rfc.section.4.9">
+<a href="#rfc.section.4.9">4.9.</a> <a href="#path-validation-not-ice" id="path-validation-not-ice">Path Validation, not ICE</a>
+</h1>
+<p id="rfc.section.4.9.p.1">HTTP/3 is designed to work through NAT as a client-server protocol. It has built in techniques for dealing with NAT re-bindings, IP address changes due to a client moving between networks (e.g., wifi to cellular data). It has built in path validation that ensures that HTTP cannot be used for amplification attacks.  </p>
+<p id="rfc.section.4.9.p.2">SIP has, over the years, solved these problems to some degree, but not efficiently nor completely. To work with HTTP, RIPP must utilize the HTTP approaches for these problems. Consequently, RIPP does not utilize ICE and has no specific considerations for NAT traversal, as these are handled by HTTP/3 itself.  </p>
+<h1 id="rfc.section.5">
+<a href="#rfc.section.5">5.</a> <a href="#terminology" id="terminology">Terminology</a>
+</h1>
+<p id="rfc.section.5.p.1">This specification follows the terminology of HTTP/3 - specifically: </p>
+<p id="rfc.section.5.p.2">RIPP Client: The entity that initiates a call, by acting as an HTTP client.  </p>
+<p id="rfc.section.5.p.3">RIPP Server: The entity that receives a call, by acting as an HTTP server.  </p>
+<p id="rfc.section.5.p.4">RIPP Connection: An HTTP connection between a RIPP client and RIPP server.  </p>
+<p id="rfc.section.5.p.5">RIPP Endpoint: Either a RIPP client or RIPP server.  </p>
+<p id="rfc.section.5.p.6">RIPP Peer: An endpoint.  When discussing a particular endpoint, "peer" refers to the endpoint that is remote to the primary subject of discussion.  </p>
+<p id="rfc.section.5.p.7">This specification defines the following additional terms: </p>
+<p id="rfc.section.5.p.8">RIPP Terminal Group (TG): A container for calls between a trunking provider and trunking consumer. A RIPP TG is identified by a pair of URI - the Provider TG (hosted by the provider) and the Consumer TG (hosted by the consumer). A TG acts as a unit of policy and capabilities, including rules such as rate limits, allowed phone numbers, and so on. The acronym is a nod to its circuit switched predecessor, the Trunk Group.  </p>
+<p id="rfc.section.5.p.9">Call: A real-time voice and/or video session established by a RIPP client. A call is always associated with a TG.  </p>
+<p id="rfc.section.5.p.10">Consumer: An administrative entity that utilizes communications services from the provider in order to make and receive calls. The relationship between the consumer and provider is static and does not vary from call to call. (e.g., Verizon would be the provider to an enterprise consumer, and the enterprise would be the consumer of Verizon. A consumer implements a RIPP client to initiate calls to the provider, and a RIPP server to receive them.  </p>
+<p id="rfc.section.5.p.11">Provider: The administrative entity that provides communications services to the consumer. The provider implements a RIPP server to receive calls from the consumer, and a RIPP client to send calls to the consumer </p>
+<p id="rfc.section.5.p.12">Provider TG: An HTTP resource and URI hosted by the provider, which represents the RIPP TG from its perspective.  </p>
+<p id="rfc.section.5.p.13">Consumer TG: An HTTP resource and URI hosted by the consumer, which represents the RIPP TG from its perspective. Since RIPP is meant to be used in environments where there is an asymetric relationship between provider and consumer, the consumer TG URI can be registered provider during configuration time.  </p>
+<p id="rfc.section.5.p.14">Byway: A bidirectional byte stream between a RIPP provider and consumer. A Byway passes its data through a long-running HTTP request and a long-running HTTP response. Byways are used for signalling and media.  </p>
+<h1 id="rfc.section.6">
+<a href="#rfc.section.6">6.</a> <a href="#refarch" id="refarch">Reference Architecture</a>
+</h1>
+<p id="rfc.section.6.p.1">The RIPP reference architecture is shown in Figure 1.  </p>
+<pre>
+   Consumer A                Provider B
+
+                 Calls
++-------------+  From      +-------------+
+|             |  A to B    |             |
+|             |            |             |
+|  Client     | +--------&gt; |  Server     |
+|             |            |             |
+|             |            |             |
++-------------+            +-------------+
+
+                Calls
++-------------+ From       +-------------+
+|             | B to A     |             |
+|             |            |             |
+|  Server     | &lt;--------+ |  Client     |
+|             |            |             |
+|             |            |             |
++-------------+            +-------------+
+</pre>
+<p id="rfc.section.6.p.2">RIPP is used between a RIPP provider and a RIPP consumer. Both entities implement the RIPP client and RIPP server roles; the latter to receive calls, and the former to send them.  </p>
+<p id="rfc.section.6.p.3">RIPP is also designed such that all communications between the RIPP client and the RIPP server can easily sit behind a typical HTTP load balancer, as shown below: </p>
+<pre>
+                                           +------------+ 
+                                           |            | 
+                                           |  RIPP      | 
+                                          &gt;|  Server    | 
+                                         / |            | 
+                                        /  |            | 
+                                       /   +------------+ 
+                                      /                   
+                                     /                    
+                                    /                     
+                                   /                      
+                   +---------+    /                       
+                   |         |   /                        
++------------+     |         |  /          +------------+ 
+|            |     |         | /           |            | 
+| RIPP       |     |  HTTP   |/            |  RIPP      | 
+| Client     |----&gt;|  LB     | -----------&gt;|  Server    | 
+|            |     |         |\            |            | 
+|            |     |         | \           |            | 
++------------+     |         |  \          +------------+   
+                   +---------+   \                          
+                                  \                         
+                                   \                        
+                                    \                       
+                                     \                      
+                                      \    +------------+   
+                                       \   |            |   
+                                        \  |  RIPP      |    
+                                         &gt; |  Server    |    
+                                           |            |    
+                                           |            |    
+                                           +------------+
+
+</pre>
+<p id="rfc.section.6.p.4">The consumer and provider role is asymmetric. Typically the consumer is quite literally a customer of the provider, purchasing services. From a protocol perspective, RIPP assumes that the consumer has an account with the provider, and it is possible for the consumer to obtain an OAuth token which can be used to authenticate.  </p>
+<p id="rfc.section.6.p.5">In order to receive inbound calls, the consumer can use RIPP to register its consumer TG URI with the provider. In cases where the client is behind a NAT, it can utilize protocols like STUN or TURN to obtain a URL reachable by the provider. This registration also includes a bearer token for authentication.  </p>
+<p id="rfc.section.6.p.6">Since both the provider and consumer implement the client and server roles, both entities will typically have a load balancer - perhaps a server component, or a cloud-based service, used to receive incoming calls. This is not required, of course. It is worth restating that this load balancer is NOT specific to RIPP - it is any off-the-shelf HTTP load balancer which supports HTTP/3. No specific support for RIPP is required. RIPP is just a usage of HTTP.  </p>
+<p id="rfc.section.6.p.7">Because RIPP clients and servers are nothing more than HTTP/3 applications, the behavior or RIPP is specified entirely by describing how various RIPP procedures map to the core HTTP/3 primitives available to applications - opening connections, closing connections, sending requests and responses, receiving requests and responses, and setting header fields and bodies. That's it.  </p>
+<h1 id="rfc.section.7">
+<a href="#rfc.section.7">7.</a> <a href="#deployments" id="deployments">Deployment Examples</a>
+</h1>
+<p id="rfc.section.7.p.1">RIPP enables communications between a pair of administrative domains. This enables its usage in many use cases where there are bilateral relationships requiring real-time communications. This section contains several use cases which are target use cases for deployment of RIPP.  </p>
+<h1 id="rfc.section.7.1">
+<a href="#rfc.section.7.1">7.1.</a> <a href="#enterprise-voice-trunking" id="enterprise-voice-trunking">Enterprise Voice Trunking</a>
+</h1>
+<p id="rfc.section.7.1.p.1">In this use case, the provider is a telco that enables connectivity to the PSTN. The consumer is an enterprise, utilizing an enterprise PBX. Or, it might be a contact center provider. This is the use case for which SIP trunking is widely deployed today.  </p>
+<p id="rfc.section.7.1.p.2">In this use case, a key goal is to facilitate automated configuration of SIP trunks - a process which is, today, complex and error prone. This section discusses how RIPP can make such configuration as easy as a web app login.  </p>
+<p id="rfc.section.7.1.p.3">Consider a simple use case of a small business hosting a single IP PBX server, on a single machine, which is being used to make and receive calls. To set up the IP PBX for peering, the administrator would go to the configuration web application on the IP PBX.  </p>
+<p id="rfc.section.7.1.p.4">The  web application would have a page for selecting their trunking provider, with a list of supported providers. The user clicks on "Comcast". This begins a standard OAuth flow. The end user would be directed to the login page for Comcast, provide their credentials, and then be asked to authorize the IP PBX to access their Comcast account on their behalf. It would also display the permissions being requested (which Comcast would define and the IP PBX would request). In this case, probably the ability to make and recieve calls on their behalf. The user would click on "approve". The standard OAuth flow would then have deposited an OAuth access token on the IP PBX.  </p>
+<p id="rfc.section.7.1.p.5">The IP PBX would use the API defined below to obtain the list of TG URIs which are available for that user (which will often just be one), and present the user with the list of such trunks. The user would select one, if needed. At this point, the IP PBX now has the user's OAuth token and the provider TG URI, which are the only two pre-requisites for placing calls.  </p>
+<p id="rfc.section.7.1.p.6">No further configuration or setup is required. Using RIPP, the IP PBX will read an advertisement associated with the TG URI to learn its capabilities and features, create and upload its own TG URI and bearer token, and now be able to make and receive calls.  </p>
+<h1 id="rfc.section.7.2">
+<a href="#rfc.section.7.2">7.2.</a> <a href="#byo-voice-for-ccaas" id="byo-voice-for-ccaas">BYO Voice for CCaaS</a>
+</h1>
+<p id="rfc.section.7.2.p.1">In a related case, an enterprise has purchased voice services from Comcast as in the case above. However, rather than deploying an IP PBX, they wish to utilize the services of a Contact Center as a Service (CCaaS), such as Five9. In this example, Five9 supports a "BYO" model where the enterprise customer can purchase their voice services from another provider - such as Comcast, and then authorize a third party - in this case Five9 - to access them on their behalf.  </p>
+<p id="rfc.section.7.2.p.2">The flow works almost identically to the above case. The end user would visit five9.com, log in using their Five9 account, and click on the button to enable Comcast as their BYO provider. The user would be directed to log into their Comcast account, and then authorize Five9 to access their Comcast account for making and receiving calls. The user would approve, and then setup is complete.  </p>
+<p id="rfc.section.7.2.p.3">In essence, a side effect of using OAuth for authentication and authorization is that it enables a wide range of access models for telecommunications services. Access can be granted to servers (as in the IP PBX case above), or to other cloud services (as in this case), with a common mechanism.  </p>
+<h1 id="rfc.section.7.3">
+<a href="#rfc.section.7.3">7.3.</a> <a href="#intercarrier-voice-peering" id="intercarrier-voice-peering">Inter-Carrier Voice Peering</a>
+</h1>
+<p id="rfc.section.7.3.p.1">In this case, a pair of telcos exchange voice traffic bidirectionally. Today this is done using SIP NNI interfaces as well as traditional SS7. This is accomplished in RIPP by having both telcos implement the provider role with a server only, as well as the consumer role with a client only. When initiating outbound calls, the carrier would act as a consumer, and when receiving them, as a provider. This enables a fully symmetric interconnect.  </p>
+<p id="rfc.section.7.3.p.2">The authentication and authorization flow differs in this use case from the ones above. Since it symmetric, each side will need to have an account set up for the other. Administrators for both sides will then need to subsequently log into the other side and perform the OAuth flow to obtain an OAuth token for the other.  </p>
+<h1 id="rfc.section.7.4">
+<a href="#rfc.section.7.4">7.4.</a> <a href="#ipphone" id="ipphone">IP Phone to UCaaS Provider</a>
+</h1>
+<p id="rfc.section.7.4.p.1">In this case, an enterprise has purchased telephony services from a UCaaS provider. The enterprise has deployed both hard and soft phones to consume this service. Some of those devices reside on campus, some outside of campus - perhaps a user's home, or running on an user's PC in an Internet cafe.  </p>
+<p id="rfc.section.7.4.p.2">In this model, the UCaaS provider (say, provider.com) is the provider. It will have a TG URI for each end user, since the TG URI is bound to the phone numbers and other policies and permissions. The IP phone starts with just the domain name of the provider and an OAuth token. Using <a href="#I-D.nottingham-rfc5785bis" class="xref">[I-D.nottingham-rfc5785bis]</a> it will learn the RIPP root URI. From there, the IP phone queries the list of provider TGs it can access, and finds only one. With the provider TG URI in hand, it can use it to register its own consumer TG (and a bearer token for authentication), and can then place and receive calls.  </p>
+<p id="rfc.section.7.4.p.3">In the case of a softphone, the OAuth token can be easily obtained by login. The end user would only enter the provider name (e.g., provider.com). Once again using <a href="#I-D.nottingham-rfc5785bis" class="xref">[I-D.nottingham-rfc5785bis]</a> it will construct the RIPP root URI and a URI for triggering an OAuth flow for RIPP. The URI for the OAuth flow will allow the user to log in and grant permission to the IP phone, thus giving it the needed OAuth token. As with the hardphone, the RIPP root URI is used to learn the one and only provider TG URI which is needed.  </p>
+<p id="rfc.section.7.4.p.4">In most cases the IP phone will not have a publically reachable IP. Its consumer TG URI needs to be reachable from the provider for RIPP to work. It can obtain one through any number of techniques, which are discussed in more detail below.  </p>
+<p id="rfc.section.7.4.p.5">Note that, in this use case, media will always flow from the IP phone to the UCaaS provider. If a user on one phone called a user on another phone, the media would flow from phone one, the UCaaS provider, to phone 2, even if the two phones sat on the same LAN.  </p>
+<h1 id="rfc.section.7.5">
+<a href="#rfc.section.7.5">7.5.</a> <a href="#video-endpoint-to-meetings-provider" id="video-endpoint-to-meetings-provider">Video Endpoint to Meetings Provider</a>
+</h1>
+<p id="rfc.section.7.5.p.1">In this use case, there is a video conferencing device. The end user wishes to join a meeting hosted on a meeting provider. The meeting would be modeled as number@domain, where the number is the meeting number used for the meeting. Using the domain, the video endpoint would construct the RIPP root URI and then query to discover the available provider TGs. This request will not be authenticated, because the video endpoint has no relationship with the meeting provider. Consequently, the meeting provider returns a provider TG URI which corresponds to an "unauthenticated meeting join" TG.  </p>
+<p id="rfc.section.7.5.p.2">Of course, if the video endpoint were a user of the meeting provider, it could have such a token and use it for the call.  </p>
+<p id="rfc.section.7.5.p.3">Finally, the video endpoint would place a call to the meeting address.  </p>
+<p id="rfc.section.7.5.p.4">The video endpoint does not need to register a consumer TG URI with the meetings provider, because it will never receive incoming calls.  </p>
+<h1 id="rfc.section.7.6">
+<a href="#rfc.section.7.6">7.6.</a> <a href="#consumer-voice-with-e2e-encryption" id="consumer-voice-with-e2e-encryption">Consumer Voice with E2E Encryption</a>
+</h1>
+<p id="rfc.section.7.6.p.1">In this use case, there is a provider that offers an e2e encrypted voice communications service to end users. These users access the service via the web browser.  </p>
+<p id="rfc.section.7.6.p.2">In this case, let us assume that RIPP is implemented in the browser itself, in essence a next-generation version of webRTC. The use would visit the website of the provider, and log in. The Javascript API would expose a small number of APIs - one to connect (which takes the provider TG URI and then pushes the consumer TG URI to the server, as described in <a href="#ipphone" class="xref">Section 7.4</a>), one to place a call, and a callback for receiving calls. There would also be configuration which specifies the desire for e2e encryption of the media.  </p>
+<p id="rfc.section.7.6.p.3">Using out-of-band techniques, such as those described in <a href="#I-D.ietf-mls-protocol" class="xref">[I-D.ietf-mls-protocol]</a>, the Javascript app would obtain the necessary encryption keys and ciphersuite, and tell the browser to utilize them when sending media to the server via the call API, which initates a RIPP call.  </p>
+<p id="rfc.section.7.6.p.4">In this case, the media will be e2e encrypted, but will still flow through the provider.  </p>
+<h1 id="rfc.section.7.7">
+<a href="#rfc.section.7.7">7.7.</a> <a href="#browser-to-browser-video" id="browser-to-browser-video">Browser to Browser Video</a>
+</h1>
+<p id="rfc.section.7.7.p.1">In this use case, a provider is offering video services, but desires the video to flow directly between the two browsers in the call.  </p>
+<p id="rfc.section.7.7.p.2">For this use case, RIPP is not used between the browser and the provider. This is because the media always follows the signaling. To enable this use case, the browser would utilize webRTC along with some web APIs for rendezvous and exchange of offers and answers that are strictly for a data channel. This is NOT RIPP! </p>
+<p id="rfc.section.7.7.p.3">Once the offer/answer exchange is completed, the browser can open to open a data channel to the other browser, and tunnel RIPP over it. The RIPP exchange would be used to start and stop the call, along with the exchange of advertisements, setup of calls and then exchange of media.  </p>
+<h1 id="rfc.section.8">
+<a href="#rfc.section.8">8.</a> <a href="#overview-of-operation" id="overview-of-operation">Overview of Operation</a>
+</h1>
+<p id="rfc.section.8.p.1">The basic operation of RIPP is broken into several steps - discovery, login, TG retrieval, consumer TG pushing, advertisement exchange, call establishment, and media exchange.  </p>
+<h1 id="rfc.section.8.1">
+<a href="#rfc.section.8.1">8.1.</a> <a href="#discovery" id="discovery">Discovery</a>
+</h1>
+<p id="rfc.section.8.1.p.1">Discovery is the process by which a consumer starts with just the domain name of the provider - such as five9.com or comcast.net or cisco.com - and uses that to discover the two URI which may be needed to bootstrap everything else.  </p>
+<p id="rfc.section.8.1.p.2">One of these URI is a URI which can be used to kickoff a web-based OAuth flow for generating an OAuth token. The other is the RIPP root URI. Both of these are well-known URI as defined by <a href="#I-D.nottingham-rfc5785bis" class="xref">[I-D.nottingham-rfc5785bis]</a>. Consequently, they are constructed using the syntax defined in <a href="#I-D.nottingham-rfc5785bis" class="xref">[I-D.nottingham-rfc5785bis]</a>.  </p>
+<p id="rfc.section.8.1.p.3">Their IANA registrations can be found in <a href="#iana" class="xref">Section 13</a>.  </p>
+<p id="rfc.section.8.1.p.4">For example, for comcast.net, the RIPP OAuth URI is <span>&lt;</span><a href="https://comcast.net/.well-known/ripp-oauth">https://comcast.net/.well-known/ripp-oauth</a><span>&gt;</span>, and the RIPP root URI is <span>&lt;</span><a href="https://comcast.net/.well-known/ripp">https://comcast.net/.well-known/ripp</a><span>&gt;</span>.  </p>
+<h1 id="rfc.section.8.2">
+<a href="#rfc.section.8.2">8.2.</a> <a href="#login" id="login">Login</a>
+</h1>
+<p id="rfc.section.8.2.p.1">Login is the process by which an OAuth token is delivered to the consumer. This is always done through some technique outside of the scope of RIPP. If the use case is to be done where the user is in front of a browser, the application can direct the user to visit the OAuth page learned from the discovery process above.  </p>
+<h1 id="rfc.section.8.3">
+<a href="#rfc.section.8.3">8.3.</a> <a href="#tg-retrieval" id="tg-retrieval">TG Retrieval</a>
+</h1>
+<p id="rfc.section.8.3.p.1">The consumer needs to figure out which of the provider's TG it wishes to connect to. There may be cases where the provider is offering this consumer more than one.  </p>
+<p id="rfc.section.8.3.p.2">To obtain the list, the consumer queries the well-known RIPP root URI </p>
+<p><span>&lt;</span><a href="https://example.com/.well-known/ripp">https://example.com/.well-known/ripp</a><span>&gt;</span> </p>
+<p id="rfc.section.8.3.p.4">this URI will return the list of TG available to the consumer. This list has, for each, the TG URI and a name and description in prose, meant for a user to select. Selection should only be needed in enterprise and service provider use cases.  </p>
+<p id="rfc.section.8.3.p.5">In most cases, the server will require the client to authenticate in order to retrieve this document. Typically, a provider would have many TGs provisioned, and each TG is associated with a specific customer which will connect to it. The customer ID would be associated with the trunk group, and that same customer ID would normally be placed into the OAuth token that the consumer obtains during login. This allows the origin server to determine who the customer is, and what TG(s) they are allowed to connect to. This is standard procedure for most web APIs when a query is performed - the set of resources returned depend on who is asking.  </p>
+<h1 id="rfc.section.8.4">
+<a href="#rfc.section.8.4">8.4.</a> <a href="#consumer-tg-registration" id="consumer-tg-registration">Consumer TG Registration</a>
+</h1>
+<p id="rfc.section.8.4.p.1">If the consumer wishes to receive incoming calls, it will need to implement the server role of RIPP. Its consumer TG URI needs to be registered with the provider. To do this, it performs a POST to the provider TG URI, and sets two parameters - its own URI, and a bearer token used for authentication of inbound requests.  </p>
+<p id="rfc.section.8.4.p.2">The consumer TG URI has to be reachable by the provider in order for the consumer to receive calls. If the consumer is behind a NAT, it can obtain a publically reachable URL through any number of techniques outside of the scope of this specification.  </p>
+<p id="rfc.section.8.4.p.3">One technique would be to utilize TURN <a href="#RFC5766" class="xref">[RFC5766]</a>. As another example, the consumer could utilize STUN against a STUN server run by the provider. If the client finds its behind a server reflexive NAT, it can use the STUN server to generate a server reflexive address, and then generate its consumer TG URI from there. Note that both STUN and TURN work best with UDP. This is a great match for HTTP/3 which ultimately runs over UDP as well.  </p>
+<h1 id="rfc.section.8.5">
+<a href="#rfc.section.8.5">8.5.</a> <a href="#advertisement-exchange" id="advertisement-exchange">Advertisement Exchange</a>
+</h1>
+<p id="rfc.section.8.5.p.1">An advertisement is a semi-static declaration which declares features, codecs, and other properties of the TG. Advertisements are semi-static in that they do not change on a call by call basis. They change only when some kind of significant configuration change happens. For example, if a RIPP server receives an upgrrade to support a new codec, its advertisement would change. Consequently, advertisements are expected to change perhaps a few times a year.  </p>
+<p id="rfc.section.8.5.p.2">When an advertisement does change, an endpoint can tell its peer using HTTP push.  </p>
+<p id="rfc.section.8.5.p.3">Both sides obtain the others capability declaration for the RIPP trunk by performing a GET to /advertisement of its peers TG URI. The advertisement declaration is a simple document, whose syntax is described in Section <a href="#syntax" class="xref">Section 12</a>.  </p>
+<p id="rfc.section.8.5.p.4">The advertisement has a list of media sources and sinks that the endpoint has, and an ID for each which monotonically increases from 0. There are four types - mics, cameras, screens and speakers. An endpoint can have more than one of each. The case of PSTN gateways or traditional voice-only phones is simple - they have a single mic and a single speaker, mapping to sending and receiving audio. This is true for a PSTN gateway regardless of its capacity. In other words, if a PSTN gateway has a circuit switched line card with 100 ports, its advertisement still has just one mic and one speaker.  </p>
+<p id="rfc.section.8.5.p.5">A three-screen telepresence system might have three screens, three mics, three cameras, and three speakers, and represents the opposite end of the spectrum in terms of complexity.  </p>
+<p id="rfc.section.8.5.p.6">For each source or sink, there are one or more parameter sets that can be specified. Each parameter in the parameter set has a name and a value. The value is always an integer from 0 to 65535. Parameters are typically standardized and registered with IANA. The registration indicates the meaning of the values - their units and allowed values. Most importantly, the parameter is always expressed in a way where the value represents a maximum of some sort. This enables booleans (where the maximum is 1), integral ranges (where the maximum is a large-ish integer), or ordered enums (where the enum values correspond to integers in order). When a parameter is not specified, it takes on a default. Similarly, if the advertisement document is not present, the default can be assumed for all parameters.  </p>
+<p id="rfc.section.8.5.p.7">Codec support is signaled using boolean parameters, with names that match the media subtypes defined in the IANA protocol registry for media types <a href="#RFC4855" class="xref">[RFC4855]</a>.  </p>
+<p id="rfc.section.8.5.p.8">When a call is to be placed, the client takes the advertisement from its peer, takes its own advertisement, and figures out what it will send, and what the other side must send. It takes the latter - the definition of what the other side must send - and constructs a directive out of it. This directive is sent to the callee during call setup - see below. The directive has the same syntax as an advertisement. However, it only includes media sources (since by definition the directive tells the remote peer what to send), there is one parameter set per source, and for each parameter, the value indicates what the peer should send. The directive is always specified in a way that makes the value of each parameter less than the maximum value for both the sender and receiver.  </p>
+<p id="rfc.section.8.5.p.9">Another important consequence of this design is that media packets must be self-describing, without any kind of reference to a specific call. This is because the directive is constructed from the advertisements only, and the advertisements are semi-static. This means RIPP does not use dynamic payload types to identify codecs.  </p>
+<p id="rfc.section.8.5.p.10">A device with a single microphone and speaker that support G.711 and opus might have an advertisement that looked like: </p>
+<pre>
+{
+  "mic": {
+    "id" : 0,
+    "param-sets" : {
+      "opus" : 1,
+      "PCMU" : 1,
+      "PCMA" : 1
+    }
+  }
+  "spk" : {
+    "id" : 1,
+    "param-sets" : {
+      "opus" : 1,
+      "PCMU" : 1,
+      "PCMA" : 1
+    }
+  }
+}
+</pre>
+<p id="rfc.section.8.5.p.11">A device with a camera that could support H.264 at 4K and av1 at 1080p might have a advertisement that looked like, in part: </p>
+<pre>
+"cam": {
+   "id" : "1",
+   "param-sets": [
+        {
+	 "H264" : 1,
+	 "max-res" : 3840
+        },
+        {
+	 "AV1" : 1,
+	 "max-res" : 1920
+        }
+   ]
+}   
+</pre>
+<p id="rfc.section.8.5.p.12">An video phone that could support opus and H.264 at 720p @ 30 fps might look like: </p>
+<pre>
+{
+
+ "mic": {
+    "id" : 0,
+    "param-sets" : {
+      "opus" : 1,
+     }
+  }
+  "spk" : {
+    "id" : 1,
+    "param-sets" : {
+      "opus" : 1,
+     }
+  }
+  "cam":  {
+    "id" : 2,
+    "param-sets" : {
+      "H264" : 1,
+      "max-res" : 1280,
+      "max-fps" : 30
+    }
+  }
+  "screen":  {
+    "id" : 3,
+    "param-sets" : {
+      "H264" : 1,
+      "max-res" : 3920,
+      "max-fps" : 60
+    }
+  }
+  
+}
+</pre>
+<p id="rfc.section.8.5.p.13">As with any kind of capabilities techology, the one defined here cannot describe arbitrary constraints. It cannot express dependencies that may arise between audio and video, or between encoding and decoding. It, in essence, represents each as an OR-of-ANDS construct, and while all boolean expressions can be reduced to this form, it will produce extremely unwieldy results with complex expressions. It cannot represent ranges of values.  </p>
+<p id="rfc.section.8.5.p.14">We believe this represents the minimum technique which can be used to describe modern AV systems.  </p>
+<p id="rfc.section.8.5.p.15">In addition to classic media-related capabilities, the advertisement can contin other properties of the TG. These include features (such as support for takeback-and-transfer or hold). They can also include a list of the IPs of all of the origin servers associated with the authority in the URI and the fraction of load each is supposed to receive. This enables a broad set of load balancing techniques that facilitate adoption of RIPP into classic telco networks which utilize farms of SBCs - identified by IP - as the outermost network ingress point.  </p>
+<h1 id="rfc.section.8.6">
+<a href="#rfc.section.8.6">8.6.</a> <a href="#proposal" id="proposal">Call Establishment</a>
+</h1>
+<p id="rfc.section.8.6.p.1">Either the consumer or provider can initiate calls by posting to /calls on TG URI of its peer.  The request contains the target phone number and Passport <a href="#RFC8225" class="xref">[RFC8225]</a> as URI parameters. The body contains a proposal, which follows the format for an advertisement and specifies what media the callee must send. <a href="#proposal" class="xref">Section 8.6</a> describes the normative procedures for its construction.  </p>
+<p id="rfc.section.8.6.p.2">This request returns a globally unique call URI in the Location header field of a 201 response sent by the server. Typically the response will also include a session cookie, bound to the call, to facilitate sticky session routing in HTTP proxies. This allows all further signalling and media to reach the same RIPP server that handled the initial request, while facilitating failover should that server go down.  </p>
+<p id="rfc.section.8.6.p.3">Once a call has been created, a pair of long-lived HTTP transactions is initiated from the client to the server for purposes of signalling. One is a GET, retrieving call events from its peer. THe other is a PUT, sending call events to its peer. Each of these produces a unidirectional data stream, one in the forwards direction, one in the reverse. These are called signaling byways. HTTP/3 ensures zero RTT for setup of these byways.  </p>
+<p id="rfc.section.8.6.p.4">Signaling commands are encoded into the signalling byway using streaming JSON in both directions. Each JSON object encodes an event and its parameters. A set of events common to all deployments of RIPP are defined for alerting, connected, ended, migrate, and keepalive, An additional set are defined targeted at server to server cases, such as SIP trunking and inter-provider peering. These include transfer-and-takeback. There is a separate set meant for signaling from phones to servers - hold, transfer, park, pickup, mute, unmute, retrieve.  </p>
+<h1 id="rfc.section.8.7">
+<a href="#rfc.section.8.7">8.7.</a> <a href="#media-exchange" id="media-exchange">Media Exchange</a>
+</h1>
+<p id="rfc.section.8.7.p.1">Media exchange makes use of webtransport over HTTP3 <a href="#I-D.vvv-webtransport-http3" class="xref">[I-D.vvv-webtransport-http3]</a> when it is available, falling back to media byways when it is not.  </p>
+<p id="rfc.section.8.7.p.2">Once the call signaling is complete, the caller attempts to open a webtransport session within the current HTTP3 connection. If this succeeds, the caller and callee can both send media chunks as webtransport datagrams.  </p>
+<p id="rfc.section.8.7.p.3">If the connection does not support webtransport, the caller takes responsibility for opening media byways, which carry media chunks in both directions. Even though data can flow in both directions, a media byway is unidirectional in terms of media transmission. A forward media byway carries media from the client to the server, and a reverse byway carries media from the server to the client. These map directly to HTTP PUT and GET respectively, as they do for signaling byways.  </p>
+<p id="rfc.section.8.7.p.4">Unlike signaling byways where sequenced, in-order and reliable delivery is desired, these are undesirable for media.  </p>
+<p id="rfc.section.8.7.p.5">To eliminate them for media in the forward direction, for each and every media chunk to send, the client will open a media byway with a new PUT transaction, send the media chunk, and immediately close the transaction. When run over HTTP3, this process takes place with zero-RTT. When the server receives the request and associated media chunk, it immediately sends a 200 OK response, includes a payload containing an acknowledgement media chunk, thus completing the transaction. Since HTTP3 will use a different QUIC stream for each HTTP transaction, each of these transactions occurs on a different stream, and therefore there is no HOL blocking between media packets.  </p>
+<p id="rfc.section.8.7.p.6">Receiving media is more complex, since the server cannot initiate HTTP requests in the reverse direction. To solve this, the client initiates 20 GET requests to the server to retrieve media chunks. These GET requests contain no body. The server, when it wishes to send a media chunk, chooses an existing GET transaction and sends the chunk as a response body. The client, upon receiving this, immediately opens a new GET transaction to replace the one it just received a response on. Consequently, a client always maintains 20 open GET transactions. [TODO: need to tune this and justify its value]. In addition, the client will include an acknowledgement media chunk along with its next media chunk that is sent in a forward byway.  </p>
+<p id="rfc.section.8.7.p.7">The use of acknowledgements provides the ability for clients and servers to elect to retransmit media as well as to generate detailed statistics on packet loss and delay on a packet-by-packet basis.  Consequently, the equivalent of RTCP sender and receiver reports are not needed.  </p>
+<h1 id="rfc.section.8.8">
+<a href="#rfc.section.8.8">8.8.</a> <a href="#graceful-migration" id="graceful-migration">Graceful Migration</a>
+</h1>
+<p id="rfc.section.8.8.p.1">RIPP provides a simple technique for allowing a call to gracefully migrate from one client instance to another on a different host, or from one server instance to another on a different host. The client always performs the migration action. It can be instructed by the server to do so via a migration event. Or, it can decide to do so on its own. This technique is also called call preservation.  </p>
+<p id="rfc.section.8.8.p.2">The migration process is meant to support two key use cases - one is when a traditional HTTP load balancer is used, and the other is when there is none.  </p>
+<p id="rfc.section.8.8.p.3">In the first case, there is a traditional HTTP load balancer fronting a farm of HTTP origin servers. The migration operation is meant to move the call from one origin server to another. A server can request this in order to shed load. Or, it can request this because it has been instructed to shut down and restart, perhaps to perform a software upgrade, or to migrate its docker container to another node. It is assumed that some kind of shared database is used to store any state that needs to be passed between origin servers. RIPP is designed such that the only state which needs to be stored is call state, and not media state.  </p>
+<p id="rfc.section.8.8.p.4">In this use case, if the origin server handling the call does not desire to receive new calls (including the one it is about to migrate), it would be removed from the pool of available servers in the load balancer. The means for this is outside the scope of this specification. Then, the origin server sends a migration event to the client.  </p>
+<p id="rfc.section.8.8.p.5">This event can contain an IP to which the transaction should be directed. When an HTTP load balancer is used, this is not needed. This will cause the client to end its current signaling and media byways. It then re-opens them, reusing the existing connection it has to the HTTP load balancer. Crucially, these new requests do NOT contain any session cookies. This means that the HTTP load balancer will send the new request to one of the available origin servers, which will no longer include the one which is being brought down for maintenance. The responses will contain session cookies in order to enable sticky session routing for subsequent requests for this call.  </p>
+<p id="rfc.section.8.8.p.6">In the second case, there is no traditional HTTP load balancer. Rather, the provider is using a farm of RIPP-capable SBCs, each of which can act as an origin server. The advertisement in the TG can include a configuration of the IPs of the SBCs, with information on the relative load that each SBC should receive. In essence, it provides similar information to that present in an <a href="#RFC3263" class="xref">[RFC3263]</a> SIP DNS SRV record. When the client is told to migrate, it will re-initiate the signaling and media byways, and it will send the call to one of the other SBCs besides the one it had originally selected for the call. Similarly, the migrate event can contain a reference to the specific SBC instance to which the call should be moved, by IP address. This allows providers fined grained controls on the balancing of calls between servers.  </p>
+<p id="rfc.section.8.8.p.7">In additon, since RIPP utilizes HTTP PUSH to tell the client to refresh the TG advertisement, a provider can inform the consumer about updates to the IP addresses immediately. This allows providers to expand or contract their cluster sizes, and communicate this to all clients which are currently connected. The update propagates without dependency on DNS propagation times. The ability to update without dependency on DNS propagation is key to enabling load balancing, since this is one of the reasons why DNS-based load balancing as envisioned in <a href="#RFC3263" class="xref">[RFC3263]</a> does not work in elastic deployments.  </p>
+<p id="rfc.section.8.8.p.8">Whether client or server initiated, when a migration occurs, both sides buffer their media packets and signaling events until the byways are ready to carry them. This enables the migrations to occur with literally no gap in media. The migration takes only a single RTT between client and server, and thus will often occur within the boundaries of jitter buffer depths.  </p>
+<p id="rfc.section.8.8.p.9">Note that the call state persists independently of the state of the HTTP connection or the byways embedded in HTTP transactions, so that a reconnect can continue where things left off. This is why, when a call migrates, the client does NOT initiate a new call, it opens signaling and media byways to the existing call URI it already has.  </p>
+<h1 id="rfc.section.8.9">
+<a href="#rfc.section.8.9">8.9.</a> <a href="#nongraceful-migration" id="nongraceful-migration">Non-Graceful Migration</a>
+</h1>
+<p id="rfc.section.8.9.p.1">RIPP is also designed to handle failures of clients, servers and network connectivity issues, and to reconnect calls with a minimum of disruption. It does this by providing implementors with tools to enable such resiliency, without being overly prescriptive on exactly how it is implemented.  </p>
+<p id="rfc.section.8.9.p.2">The asymmetric nature of RIPP means that it is always the responsibility of the caller (i.e., the client) to recover from network failures and failures of a downstream server or load balancer.  </p>
+<p id="rfc.section.8.9.p.3">The first failure case is that of a closure of the actual HTTP connection, either gracefully or non-gracefully. In this case, the client retries the connection with an exponential backoff, the backoff timer being another parameter which can be specified in the provider advertisement. Once the connection is re-established, it initiates the signaling and media byways, and will reuse any session cookies it had previously received.  </p>
+<p id="rfc.section.8.9.p.4">RIPP also requires clients to send keepalive signaling events periodically for each call, and the server responds to these events. If the client ceases to receive the server keepalives for a certain duration (a value again that has a default but which can be tuned in the TG advertisement), it treats this identically to a request for a migration. This will cause it to end its signaling and media byway transactions, and re-initiate them without session cookies.  </p>
+<p id="rfc.section.8.9.p.5">Finally, the media byways are used for rapid failure detection. If the client fails to receive acknowledgements for the media it has sent for period of time (this timer not being subject to standardization as it is entirely a matter of local configuration), the client can re-establish the signaling and media byways as if it were a migration.  </p>
+<p id="rfc.section.8.9.p.6">The above cases handle failures in the network and of the origin servers and intermediate load balancers. If there was a failure of the origin server and it was not able to recover sufficient call state for re-establishment, it rejects the re-establishment of the media and signaling byways. This causes a call termination from the perspective of the client, which it would typically pass upstream if needed, as an event. And indeed for the origin server to recover, it will need to stash state. Specifically, it will need to stash the callID and the downstream entity to which the call was set when it was established. If the downstream entity is a RIPP server, the TG URI, call URI, selected IP address (from either DNS or using the IP in the advertiseent), and session cookie are stored. These facilitate reconnection to the same downstream instance.  </p>
+<p id="rfc.section.8.9.p.7">In inter-domain peering arrangements, such as enterprise voice trunking or inter-carrier NNI voice peering, both sides will typically have a cluster of software agents (VMs, docker containers, bare-metal servers, dedicated hardware products, or whatever) acting as both clients and servers. Consequently, we need to consider what happens to the client transactions when these fail.  </p>
+<p id="rfc.section.8.9.p.8">In such a case, failure recovery is always delegated to the upstream client. In this case, let us assume that the consumer had this cluster of agents at its perimeter. It would be receiving calls from some further upstream elements. If those elements were using RIPP, it would mean that the roles were reversed - a particular agent was acting as a server to receive a call, and then as a client to send it downstream. If that agent fails, the upstream client would detect this, and migrate to a different agent. This new agent - which has no in-memory state for the call - would look up the state of the call in some shared database, see where it was routed (in this case, to the provider TG), and retrieve the session cookie which had also been stored after the call was established. This new agent then re-establishes the media and signaling byways, perhaps even opening a fresh HTTP connection to do so. The use of the session cookie (or the stored IP of where the original call was routed), enables the byways to be re-established to the provider's origin server that has been, and is still - handling the call.  </p>
+<p id="rfc.section.8.9.p.9">This allows a chain of RIPP clients and servers in back-to-back configuration to recover from failures of any intermediate element without dropping calls. Furthermore, failure detection and recovery are rapid, especially when using load balancers. When an origin server fails, the client can still reuse its connection to the load balancer, such that connection establishment is not needed. Indeed, the time to recover from failure is only 1/2 RTT between consumer and provider, once the consumer has detected the downstream failure.  </p>
+<p id="rfc.section.8.9.p.10">Of course, the downstream element may be SIP-based and not RIPP. In such a case, INVITE with Replaces is a good solution, and vendors of highly reliable SIP gear are encouraged to support it.  </p>
+<h1 id="rfc.section.9">
+<a href="#rfc.section.9">9.</a> <a href="#example" id="example">Example</a>
+</h1>
+<p id="rfc.section.9.p.1">This section describes a typical example where one company, Acme, is using a cloud calling service -  Webex - and gets PSTN trunking from the provider Comcast.  </p>
+<p id="rfc.section.9.p.2">The sequence diagram for the outbound call flow is here: </p>
+<pre>
++-----------+                                               +-----------+
+| consumer  |                                               | provider  |
++-----------+                                               +-----------+
+      |                                                           |
+      | PUT /trunks/123/consumerTrunk                             |
+      |----------------------------------------------------------&gt;|
+      | --------------------------------\                         |
+      |-| consumer trunk is /trunks/abc |                         |
+      | |-------------------------------|                         |
+      |                                                           |
+      |                                    GET /trunks/abc/capAdv |
+      |&lt;----------------------------------------------------------|
+      |                                                           |
+      | 200 OK w. consumer caps                                   |
+      |----------------------------------------------------------&gt;|
+      |                                                           |
+      | GET /trunks/123/capAdv                                    |
+      |----------------------------------------------------------&gt;|
+      |                                                           |
+      |                                   200 OK w. provider caps |
+      |&lt;----------------------------------------------------------|
+      |                                                           |
+      | POST /trunks/123/calls&amp;target=14085551212@e164.arpa       |
+      |----------------------------------------------------------&gt;|
+      |                                                           |
+      |                                              202 Created  |
+      |&lt;----------------------------------------------------------|
+      | ----------------------\                                   |
+      |-| Location: /call/xyz |                                   |
+      | |---------------------|                                   |
+      |                                                           |
+      | GET /call/xyz/event                                       |
+      |----------------------------------------------------------&gt;|
+      | ----------------------\                                   |
+      |-| signaling byway s2c |                                   |
+      | |---------------------|                                   |
+      |                                                           |
+      |                                                    200 OK |
+      |&lt;----------------------------------------------------------|
+      |                                                           |
+      | POST /call/xyz/media-forward                              |
+      |----------------------------------------------------------&gt;|
+      | ------------------\                                       |
+      |-| media byway c2s |                                       |
+      | |-----------------|                                       |
+      |                                                           |
+      |                                                    200 OK |
+      |&lt;----------------------------------------------------------|
+      |                                                           |
+      | POST /call/xyz/media-reverse                              |
+      |----------------------------------------------------------&gt;|
+      | ------------------\                                       |
+      |-| media byway s2c |                                       |
+      | |-----------------|                                       |
+      |                                                           |
+      |                                                    200 OK |
+      |&lt;----------------------------------------------------------|
+      |                                   ----------------------\ |
+      |                                   | ringing eg. SIP 180 |-|
+      |                                   |---------------------| |
+      |                                                           |
+      |                                             ringing event |
+      |&lt;----------------------------------------------------------|
+      |                                  -----------------------\ |
+      |                                  | accepted eg. SIP 200 |-|
+      |                                  |----------------------| |
+      |                                                           |
+      |                                                  accepted |
+      |&lt;----------------------------------------------------------|
+      | ------------------\                                       |
+      |-| caller hangs up |                                       |
+      | |-----------------|                                       |
+      |                                                           |
+      | PUT /call/xyz/event                                       |
+      |----------------------------------------------------------&gt;|
+      | ------------\                                             |
+      |-| end event |                                             |
+      | |-----------|                                             |
+      |                                                           |
+      |                                                    200 OK |
+      |&lt;----------------------------------------------------------|
+      |                                                           |
+</pre>
+<p></p>
+<p id="rfc.section.9.p.4">The first stage is for Webex to set up their service to be able to work as an OAuth Client, working with Comcast as the Authorization Server, and to obtain the baseURI that Comcast uses for RIPP authorization. Assume that this is "https://comcast.net/.well-known/ripp-oauth". The next stage is the admin from ACME logs on to their Webex account and selects Comcast as the RIPP provider.  This will cause the OAUTH dance and the admin will end up having approved Webex to use Acme's account at Comcast for RIPP. Webex will have received an OAuth access and refresh token from Comcast and be passed the new Provider Trunk URI. At this point, provisioning is complete and calls can start. Webex will query the well-known RIPP root URI - "GET https://comcast.net/.well-known/ripp" which returns the list of valid TGs. In this case, there is only one - trunk URI returned is "https://ripp.comcast.com/trunks/123".  </p>
+<p id="rfc.section.9.p.5">Webex will start by setting up for incoming calls at "https://ripp.webex/trunks/abc" with an opaque security token of "secret1234". This is done by making a HTTP PUT to https://ripp.comcast.com/trunks/123/consumerTG with a JSON body of: </p>
+<pre>
+{
+"consumerTG":"https://ripp.webex/trunks/abc" ,
+"consumerToken":"secret1234"
+}
+</pre>
+<p id="rfc.section.9.p.6">The Comcast server will then find out the advertised capability of the Webex trunk by doing a GET to https://ripp.webex/trunks/abc/advertisement and using the secret1234 as an authorization token. Webex supports the default values but also support G.729 as an additional codec. It returns a JSON body of: </p>
+<pre>
+{
+  "mic": {
+    "id" : 0,
+    "param-sets" : {
+      "PCMU" : 1,
+      "PCMA" : 1,
+      "G729" : 1
+    }
+  }
+  "spk" : {
+    "id" : 1,
+    "param-sets" : {
+      "PCMU" : 1,
+      "PCMA" : 1,
+      "G729" : 1      
+    }
+  }
+}
+</pre>
+<p id="rfc.section.9.p.7">Similarly, the Webex server will find out the advertised capability of the trunk by doing a GET to https://ripp.comcast.com/trunks/123/advertisement, using its OAuth token. In this case, the response is empty, indicating that the advertisement are all defaults.  </p>
+<p id="rfc.section.9.p.8">At this point we are ready for inbound or outbound calls.  </p>
+<h1 id="rfc.section.9.1">
+<a href="#rfc.section.9.1">9.1.</a> <a href="#inbound-call" id="inbound-call">Inbound Call</a>
+</h1>
+<p id="rfc.section.9.1.p.1">A PSTN calls arrives at Comcast that is routed to the this trunk via a Comcast SBC that will convert it from SIP to RIPP. The SBC knows which codecs the trunk supports (G.729 and G.711) and can immediately send the SIP answer in a 183. It can then can make an HTTP post to the consumer TG URI to set up the incoming call. This is done by doing a POST to "https://ripp.webex/trunks/abc/calls?target=14085551212@e164.arpa &amp;passport=PASSPORT_DATA" using the authorization token "secret1234". This will return a new call URI for this call of "https://ripp.webex/call/xyz".  </p>
+<p id="rfc.section.9.1.p.2">At this point the SBC can make a long poll GET and PUT to "https://ripp.webex/call/xyz/events" to receive and send signaling events for this call. The SBC will also open a number of media byways by performing PUT and GET requests to "https://ripp.webex/call/xyz/media".  </p>
+<p id="rfc.section.9.1.p.3">The data from the "https://ripp.webex/call/xyz/events" request will be an infinite JSON array of Events. When the Webex server answers the call, the event returned would look like: </p>
+<pre>
+{ "name":"accepted" }
+</pre>
+<h1 id="rfc.section.9.2">
+<a href="#rfc.section.9.2">9.2.</a> <a href="#outbound-call" id="outbound-call">Outbound Call</a>
+</h1>
+<p id="rfc.section.9.2.p.1">For Webex to make it outbound call, it is the same as the inbound call other than the provider trunk URI is used. The Webex server would act as a client and do a HTTP POST to "https://ripp.comcast.com/trunks/123/calls?target=14085551212@e164.arpa &amp; passport=PASSPORT_DATA" to create a call URI of "https://ripp.comcast.com/call/c789". From that point the flow is roughly the same as inbound with the client and server roles reversed.  </p>
+<h1 id="rfc.section.9.3">
+<a href="#rfc.section.9.3">9.3.</a> <a href="#end-of-call" id="end-of-call">End of call</a>
+</h1>
+<p id="rfc.section.9.3.p.1">If the call is ended on the server side, server sends a terminated event with the ended flag set to true then waits a small time for client to close the connection then closes the connection.  </p>
+<p id="rfc.section.9.3.p.2">If the call is ended on the client side, the client sends a terminated event with the ended flag set to true and then closes the connection. In either case the event looks like: </p>
+<pre>
+{ "name":"terminated", "ended": true }
+</pre>
+<h1 id="rfc.section.10">
+<a href="#rfc.section.10">10.</a> <a href="#normative-protocol-specification" id="normative-protocol-specification">Normative Protocol Specification</a>
+</h1>
+<p id="rfc.section.10.p.1">This section contains the normative specification of RIPP.  </p>
+<h1 id="rfc.section.10.1">
+<a href="#rfc.section.10.1">10.1.</a> <a href="#discovery-1" id="discovery-1">Discovery</a>
+</h1>
+<p id="rfc.section.10.1.p.1">A RIPP client that wishes to obtain an OAuth token to a specified authority through a web interface MUST construct a well known RIPP Oauth URI using <a href="#I-D.nottingham-rfc5785bis" class="xref">[I-D.nottingham-rfc5785bis]</a> with ripp-oauth as the well-known service, and use this to trigger the Oauth process.  </p>
+<p id="rfc.section.10.1.p.2">Similarly, a RIPP client wishing to access the resources defined in this specification, against an authority (such as example.com) MUST use <a href="#I-D.nottingham-rfc5785bis" class="xref">[I-D.nottingham-rfc5785bis]</a> with ripp as the well-known service, and use this to trigger the Oauth process. The result is the RIPP root URI for that authority.  </p>
+<h1 id="rfc.section.10.2">
+<a href="#rfc.section.10.2">10.2.</a> <a href="#tg-retrieval-1" id="tg-retrieval-1">TG Retrieval</a>
+</h1>
+<p id="rfc.section.10.2.p.1">All clients MUST perform a GET query to the RIPP root API for an authority they wish to connect to. Origin servers MUST provide a resource at this URI. It MUST be constructed using the JSON syntax described in <a href="#syntax" class="xref">Section 12</a>, and MUST have one or more provider TG URI in the list. It is RECOMMENDED that the origin server specify that this document can be cached.  </p>
+<p id="rfc.section.10.2.p.2">If the client receives a document and there is only one provider TG URI, it uses this for subsequent outound calls to the provider. If there is more than one, the client SHOULD request user input if it has such a facility. If not, it SHOULD select the first.  </p>
+<p id="rfc.section.10.2.p.3">At the end of this process, the client will have a provider TG URI.  </p>
+<h1 id="rfc.section.10.3">
+<a href="#rfc.section.10.3">10.3.</a> <a href="#consumer-tg-registration-1" id="consumer-tg-registration-1">Consumer TG Registration</a>
+</h1>
+<p id="rfc.section.10.3.p.1">If a consumer also needs to receive inbound calls, it MUST register a consumer TG. To do that, it MUST initiate an HTTPS PUT request towards /consumertg on the provider TG URI. This request MUST be authenticated by the origin server. The request MUST include a RIPP provisioning object in the body. This object is specified in Section <a href="#syntax" class="xref">Section 12</a>.  </p>
+<p id="rfc.section.10.3.p.2">The RIPP provisioning object MUST contain a consumer TG URI and a bearer token. The consumer TG URI MUST be unique for each distinct provider TG URI to which it is registered. This URI MUST support HTTP/3, and MUST implement the /advertisements, /calls, /events and /media resources and their associated behaviors. This URI MUST be reachable by the provider. The URI MUST utilize HTTPS, and SHOULD utilize a domain name for the authority component. It MAY utilize an IP address, in which case the TLS certificate presented MUST be self-signed.  </p>
+<p id="rfc.section.10.3.p.3">In addition, the RIPP consumer MUST mint a bearer token to be used by the RIPP provider when performing operations against the RIPP Trunk Client URI. The bearer token MAY be constructed in any way desired by the RIPP consumer. The token and URI SHOULD remain valid for at least one day, however, a security problem MAY cause them to be invalidated.  The RIPP consumer MUST refresh the provisioning against the RIPP trunk at least one hour in advance of the expiration, in order to ensure no calls are delayed. The token MUST be unique for each unique provider TG.  </p>
+<p id="rfc.section.10.3.p.4">At this point, the RIPP trunk is provisioned. Both the RIPP provider and RIPP consumer have a RIPP trunk URI and an Authorization token to be used for placing calls in each direction.  </p>
+<h1 id="rfc.section.10.4">
+<a href="#rfc.section.10.4">10.4.</a> <a href="#advertisement-exchange-1" id="advertisement-exchange-1">Advertisement Exchange</a>
+</h1>
+<p id="rfc.section.10.4.p.1">Prior to placing a call towards a TG, a client MUST have a valid advertisement for it. If it has none, it MUST perform a GET on the /advertisement resource on the provider TG URI. The origin server MUST return a RIPP advertisement object as defined in Section <a href="#syntax" class="xref">Section 12</a>.  </p>
+<p id="rfc.section.10.4.p.2">It is RECOMMENDED that the advertisement utilize HTTP caching. It is RECOMMENDED that it be valid for one month.  </p>
+<p id="rfc.section.10.4.p.3">Once established, either side MAY update the advertisement by sending an HTTP push to trigger its peer to fetch a fresh capability document. Due to race conditions, it is possible that the client may receive calls compliant to the old advertisement document for a brief interval. It MUST be prepared for this.  </p>
+<p id="rfc.section.10.4.p.4">Advertisements are bound to the TG, and are destroyed when the TG is destroyed.  </p>
+<p id="rfc.section.10.4.p.5">In general, an entity MUST declare a capability for any characteristic of a call which may result in the call being rejected. This requirement facilitates prevention of call failures, along with clear indications of why calls have failed when they do. For example, if a provider provisions a TG without support for G.729, but the consumer configures theirs to utilize this codec, this will be known as a misconfiguration immediately. This enables validation of TG misconfigurations in an automated fashion, without placing test calls or calling customer support.  </p>
+<h1 id="rfc.section.10.5">
+<a href="#rfc.section.10.5">10.5.</a> <a href="#advertisement-format" id="advertisement-format">Advertisement Format</a>
+</h1>
+<p id="rfc.section.10.5.p.1">An advertisement is a set of parameters, each of which is a name-value pair. This specification defines several well-known names and establishes an IANA registry for future extensions. Every capability has a default, so that if no document is posted, or it is posted but a specific capability is not included, the capability for the peer is understood.  </p>
+<p id="rfc.section.10.5.p.2">The following parameters are general purpose configuration: </p>
+<p></p>
+
+<ul>
+<li>retry-backoff: In the event of a closure of the HTTP connection, this parameter specifies the initial time value to use before retrying the connection. If a retry fails again, the client will try again but this time wait twice the value of this timer, then four times, eight times, etc. The value of this parameter is an integer, in units of milliseconds. Its default is 2000.</li>
+<li>media-timeout: If a client fails to receive media ack packets after the timeout specified in this parameter, it considers the call dead and initiates migration. The value of this parameter is an integer, in units of milliseconds. Its default is 1000.</li>
+<li>server-ip: When present, this parameter indicates that the client should not utilize DNS to resolve the authority component of the associated TG URI, and rather, utilize the IP addresses which are the value of this parameter. The value is a JSON array with one or more elements. Each element contains an IP address and an load value. The load value MUST be between 0 and 100. The sum of the load values across all of the elements in the array MUST be 100. This parameter is optional. When omitted, the client MUST utilize normal DNS resolution for HTTP.</li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.10.5.p.4">These parameters specify support for telephony features: </p>
+<p></p>
+
+<ul>
+<li>hold: When present, indicates that the server supports clients performing a hold operation on calls. Its value is a boolean, with a default of FALSE.</li>
+<li>transfer: When present, indicates that the server supports clients performing transfer operations on calls. Its value is a boolean, with a default of FALSE.</li>
+<li>park: When present, indicates that the server supports clients performing park and retrieve operation on calls. Its value is a boolean, with a default of FALSE.</li>
+<li>mute: When present, indicates that the server supports clients performing park and retrieve operation on calls. Its value is a boolean, with a default of FALSE.</li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.10.5.p.6">Four parameters are defined for media capabilites - mic, spk, cam, screen, corresponding to the ability to generate audio, receive audio, generate video, and receive video. There MUST be one instance of these parameters for each corresponding source and sink which can simultaneously send or receive its media in a single call. Each instance MUST have a unique id within the advertisement. Each instance MUST include one or more param-sets. Each param-set is a set of parameters. Each parameter MUST specify the maximum that the sink can receive, or source can send, for that parameter. The server MUST include a parameter and its value when it differs from the default, and SHOULD NOT include it when it matches the default.  </p>
+<p id="rfc.section.10.5.p.7">This specification defines the following parameters for mic and spk: </p>
+<p></p>
+
+<ul>
+<li>sr: The maximum sample rate for audio. This is specified in Hz. The default is 48000.</li>
+<li>ss: The maximum sample size for audio. This is specified in bits. It MUST be greater than or equal to 8. The default is 16.</li>
+<li>cbr: If present, indicates whether the entity requires constant bitrate (CBR) media only. It has value of 1 (indicating CBR only) or zero (no constraint on rate). Zero is default.</li>
+<li>ch: Indicates whether the entity supports  multiple audio channels.  The default is 1 for support.</li>
+<li>ptime: max duration of media encoded in single packet in ms. Default is 30.</li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.10.5.p.9">This specification defines the following parameters for cam and screen: </p>
+<p></p>
+
+<ul>
+<li>fps: The maximum frame rate for video. This is specified in frames per second. The default is 30.</li>
+<li>max-res: the max width in pixels. Default is TBD.</li>
+<li>pr: the max pixel rate ( pixels / second ). Default is 2^64-1.</li>
+<li>depth: the max pixel depth in bits. Default is 8.</li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.10.5.p.11">This specification defines the following capability set for scalable video codecs: </p>
+<p></p>
+
+<ul>
+<li>tlay: max number of temporal layers. Each sub layer runs at twice the rate of the later it depends on. Default is 1.</li>
+<li>slay: max numer of spacial layers. Each sub layer has 2 times the number of pixel of layer it depended on. Default is 1. [[ Open issue 2 times or 4 times ]]</li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.10.5.p.13">This specification defines the following capability set for both audio and video codecs.  </p>
+<p></p>
+
+<ul>
+<li>br: The maximum bitrate in kilo bits per second for receiving audio or video. This is specified in bits per second. This is the rate of encoded media from the codec and not the rate transmitted over the network. Default is 2^64-1.</li>
+<li>codec names - The codec names are defined in the IANA registry "Media Types" at <span>&lt;</span><a href="https://www.iana.org/assignments/media-types/media-types.xhtml">https://www.iana.org/assignments/media-types/media-types.xhtml</a><span>&gt;</span>. For each one, the value of the parameter is either 1 or 0, 1 indicating support, and 0 indicating no support.</li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.10.5.p.15">All RIPP implementations MUST support G.711 and Opus audio codecs. All implementations MUST support <a href="#RFC2833" class="xref">[RFC2833]</a> for DTMF, and MUST support <a href="#RFC3389" class="xref">[RFC3389]</a> for comfort noise, for both sending and receiving.  </p>
+<h1 id="rfc.section.10.6">
+<a href="#rfc.section.10.6">10.6.</a> <a href="#call-establishment" id="call-establishment">Call Establishment</a>
+</h1>
+<p id="rfc.section.10.6.p.1">To initiate a call, a client MUST have a valid advertisement for the TG against which it will place the call, and MUST know its own advertisement for the TG which will initiate the call. The proposal MUST be a valid advertisement JSON document, as specified in <a href="#syntax" class="xref">Section 12</a>.  </p>
+<p id="rfc.section.10.6.p.2">The client MUST construct a proposal, which tells the server what media to send. This proposal MUST include zero or more mic parameters, and zero or more cam parameters, corresponding to the sources and that the client wishes the server to send. These MUST be a subset of those present in the advertisement from the peer. The client MUST specify the values for any codec which are not the default. The value for each parameter MUST be less than the value specified in the advertisement from the peer, and also MUST be less than its own maximum value from its own advertisement. If a selected value differs from the default, it MUST be included in the proposal. The proposal MUST include the "id" attribute for the source. This is crucial to inform the peer which of its sources to send.  </p>
+<p id="rfc.section.10.6.p.3">Similarly, the client chooses which of its sources will send, and to which sinks on its peer it will send. It MUST NOT send media for which there is not a corresponding sink on its peer which is a match for the media type. It MUST send utilizing media parameters which are less than the values specified in the advertisement in the peer for that sink.  </p>
+<p id="rfc.section.10.6.p.4">To place a call, the client performs a POST request to the peer TG URI, using the /calls resource. This request MUST include the target and passport URI parameters. The target parameter MUST be of the form user@domain. If the target is a phone number on the PSTN, this must take the form @e164.arpa, where  is a valid E.164 number. RIPP also supports private trunks, in which case the it MUST take the form @, where the number is a non-E164 number scoped to be valid within the domain. This form MUST NOT be used for E.164 numbers. Finally, RIPP can be used to place call to application services - such as a recorder - in which case the parameter would take the form of an RFC822 email address.  </p>
+<p id="rfc.section.10.6.p.5">The passport URI parameter MUST be a valid passport as defined by <a href="#RFC8224" class="xref">[RFC8224]</a>. It identifies the calling party and includes signature information which can be used to verify it. If the client has no official certificate proving ownership of the identity in the passport, it MUST generate a self-signed certificate and use that.  </p>
+<p id="rfc.section.10.6.p.6">The server MAY authorize creation of the call using any criteria it so desires. If it decides to create the call, the server MUST return a 201 Created response, and MUST include a Location header field containing an HTTPS URI which identifies the call that has been created. The call URI MUST be globally unique in time and space, with randomness properties identical to a type 4 UUID.  </p>
+<p id="rfc.section.10.6.p.7">The server MAY include HTTP session cookies in the 201 response. The client MUST support receipt of cookies <a href="#RFC6265" class="xref">[RFC6265]</a>. It MUST be prepared to receive up to 10 cookies per call. The client MUST destroy all cookies associated with a call, when the call has ended. Cookies MUST NOT be larger the 5K. The 201 response MUST NOT contain a body.  </p>
+<p id="rfc.section.10.6.p.8">If the server cannot setup the call because the proposal is invalid or the passport is invalid, it MUST generate a 400 response. If the request is otherwise valid, but the target of the call cannot be reached through the TG URI, it MUST generate a 404 response. If the request is valid and the target can be reached, but the client is not allowed to do so for policy reasons it MUST generate a 403 response.  </p>
+<h1 id="rfc.section.10.7">
+<a href="#rfc.section.10.7">10.7.</a> <a href="#signaling-and-media-byway-establishment" id="signaling-and-media-byway-establishment">Signaling and Media Byway Establishment</a>
+</h1>
+<p id="rfc.section.10.7.p.1">If the server returns a 200 OK to the client, the client MUST establish the forward and reverse signaling byways by sending a PUT request and GET request, respectively, to the /events resource on the call URI obtained from the Location header field in the 201 response. The GET request MUST NOT contain a body. The PUT request and GET response MUST contain an infinitely long JSON document. The client MUST hold both transactions open until the call has ended.  </p>
+<p id="rfc.section.10.7.p.2">The body begins with an open square bracket to indicate the start of an JSON array, and after that is a series of JSON objects, each starting with a curly bracket, and ending with a curly bracket. Consequently, each side MUST immediately send their respective open square brackets after the HTTP header fields. We utilize streaming JSON in order to facilitate usage of tools like CURL for signalling operations.  </p>
+<p id="rfc.section.10.7.p.3">The server MUST immediately send the current state of the call as far as it is concerned, by generating an event in the response which indicates this state. For a brand new call, this MUST be the proceeding event. For any call, a server MUST support multiple reverse signaling byways, in which case it MUST send all call events on all open reverse signaling byways. A server MUST NOT terminate the call if there are no signaling byways established; rather it utilizes timeouts as described below.  </p>
+<p id="rfc.section.10.7.p.4">Each event is a JSON object embedded in the signalling stream, which conveys the event as perceived by the client or server.  The event MUST contain a direction field, which indicates whether the event was sent from client to server, or server to client. It also MUST contains a timestamp field, representing universal time, which indicates the time of the event as perceived by the sender. The event MUST contain a call field, which contains the URI of the call in question. The event MUST contain an event type field, which conveys the type of event. This is followed by additional fields which are specific to the event type.  </p>
+<p id="rfc.section.10.7.p.5">Events are also defined so that the resulting state is uniquely defined by the event itself. This ensures that knowing the most recent event is sufficient to determine the state of the call.  </p>
+<p id="rfc.section.10.7.p.6">In addition, the client MUST immediately establish 20 reverse media byways by initiating 20 GET requests to the /media resource on the call URI. These requests MUST NOT contain a body. The media byways are required before call answer to support early media. For any call, a server MUST support up to 30 reverse media byways open.  </p>
+<h1 id="rfc.section.10.8">
+<a href="#rfc.section.10.8">10.8.</a> <a href="#basic-call-state-management" id="basic-call-state-management">Basic Call State Management</a>
+</h1>
+<p id="rfc.section.10.8.p.1">The server always maintains definitive state for the call. The basic state of the call is manipulated through events passed from one side to another.  </p>
+<p id="rfc.section.10.8.p.2">This specification defines the following events which MUST be implemented by all RIPP client and servers: These events are asymmetric, in that the direction of call establishment impacts who can send which events, and when.  </p>
+<p id="rfc.section.10.8.p.3">proceeding: Passed from server to client, indicating that call setup is in progress but has not reached the recipient.  </p>
+<p id="rfc.section.10.8.p.4">alerting: Passed from server to client, indicating that the recipient is alerting.  </p>
+<p id="rfc.section.10.8.p.5">accepted: Passed from server to client, indicating that the call was accepted by the recipient. At this point, the call is considered established.  </p>
+<p id="rfc.section.10.8.p.6">rejected: Passed from server to client, indicating that the call was rejected by the user.  </p>
+<p id="rfc.section.10.8.p.7">failed: Passed from server to client, indicating that the call was rejected by server or downstream servers, not by the user, but due to some kind of error condition.  </p>
+<p id="rfc.section.10.8.p.8">noanswer: Passed from server to client, indicating that the call was delivered to the receiving user but was not answered, and the server or a downstream server timed out the call.  </p>
+<p id="rfc.section.10.8.p.9">end: initiated by either client or server, it indicates that the call is to be terminated. Note that this does NOT delete the HTTP resource, it merely changes its state to call end. Furthermore, a call cannot be ended with a DELETE against the call URI; DELETE is not permitted and MUST be rejected by the server.  </p>
+<p id="rfc.section.10.8.p.10">migrate: sent from server to client, it instructs the client to terminate the media and signaling byways, and re-establish them. The event MAY contain an IP address to which the media and signaling byways will be established.  </p>
+<p id="rfc.section.10.8.p.11">keepalive: This event is always initiated by the client. When received by a server, the server MUST generate a keepalive response. The keepalive MAY contain a nonce, and if so, the server MUST echo it in the response.  </p>
+<h1 id="rfc.section.10.9">
+<a href="#rfc.section.10.9">10.9.</a> <a href="#telephony-features" id="telephony-features">Telephony Features</a>
+</h1>
+<p id="rfc.section.10.9.p.1">The following events are optional. They can be sent by either side of a call, an generally apply only once a call is established. Each feature has one side that invokes the feature, and another side which handles it. The specification does not define how the handler handles the feature, it only specifies behavior on the interface between them.  </p>
+<p id="rfc.section.10.9.p.2">An originator MUST NOT invoke a feature unless the corresponding feature support has been indicated in the advertisement on the TG.  </p>
+<h1 id="rfc.section.10.9.1">
+<a href="#rfc.section.10.9.1">10.9.1.</a> <a href="#blind-transfer" id="blind-transfer">Blind Transfer</a>
+</h1>
+<p id="rfc.section.10.9.1.p.1">Performs a blind transfer of the call. The event contains a string which MUST be a valid value for the target URI parameter used when setting up a new call. Once the transfer has initiated, the server MUST generate a transfer-reject event if it is unwilling to perform the transfer. If it attempts the transfer, it MUST send a transfer-pending event indicating that the transfer is in progress. If the transfer target answers the call, the server MUST generate a transfer-success event, followed by an end event, indicating the call is over for this user. If the transfer fails, the server MUST generate a transfer-failed event, in which case the call continues. Once the transfer target answers, it MUST be sent a transferred-from event, containing the URI of the call from which the transfer happened.  </p>
+<h1 id="rfc.section.10.9.2">
+<a href="#rfc.section.10.9.2">10.9.2.</a> <a href="#warm-transfer" id="warm-transfer">Warm Transfer</a>
+</h1>
+<p id="rfc.section.10.9.2.p.1">transfer-warm: performs a warm transfer. For this to work, the endpoint sending the event must be in two calls. It sends this event on the one to be transferred to the other. The event has a single parameter which specifies the URI of the call to which the transfer is taking place. This two calls MUST have the same authority component of their call URI. Once the peer receives this event, it MUST perform the transfer. The transfer will either complete almost immediately else fail. If it succeeds, the peer MUST respond with a transfer-success event; if it fails, respond with a transfer-failed event, in which case the call continues. Furthermore, if the transfer succeeds, the transfer target MUST be sent a transferred-from event, containing the URI of the call from which the transfer happened.  </p>
+<h1 id="rfc.section.10.9.3">
+<a href="#rfc.section.10.9.3">10.9.3.</a> <a href="#hold-and-resume" id="hold-and-resume">Hold and Resume</a>
+</h1>
+<p id="rfc.section.10.9.3.p.1">hold: performs a call hold on the call. Either side can initiate this, but only if its peer indicates support. Similarly, to inform its peer that it has been placed on hold, either side may send an on-hold event to its peer, but only if hold has been indicated as a capability. When an endpoint has been told it is on-hold, it MUST send silence for audio and black screen for video. The peer MAY generate music-on-hold or any other suitable content to render while the endpoint is on hold.  </p>
+<h1 id="rfc.section.10.9.4">
+<a href="#rfc.section.10.9.4">10.9.4.</a> <a href="#mute-indication" id="mute-indication">Mute Indication</a>
+</h1>
+<p id="rfc.section.10.9.4.p.1">mute: informs the peer that it has muted. This is informative for UI purposes, useful in conference calls for example. When an endpoint mutes, in addition to sending the mute event, it MUST send silence for audio and black screen for video. Similarly, if an endpoint wishes to inform its peer that it is muting its media, it sends a mute event.  </p>
+<h1 id="rfc.section.10.9.5">
+<a href="#rfc.section.10.9.5">10.9.5.</a> <a href="#park-and-retrieve" id="park-and-retrieve">Park and Retrieve</a>
+</h1>
+<p id="rfc.section.10.9.5.p.1">TBD </p>
+<h1 id="rfc.section.10.10">
+<a href="#rfc.section.10.10">10.10.</a> <a href="#sending-and-receiving-media" id="sending-and-receiving-media">Sending and Receiving Media</a>
+</h1>
+<p id="rfc.section.10.10.p.1">Media is always associated with a call. Within a call, media has a direction (c2s or s2c) relative to call establishment. Within a direction, media belongs to a stream, where a stream is transmitted between a source and a sink. As such there can be many streams in each direction. A stream is an ordered sequence of media chunks. There is a sequence number space and timestamp space associated with each stream. A stream is uniquely identified by the call URI, the direction, the source ID and sink ID.  </p>
+<p id="rfc.section.10.10.p.2">The forward and reverse byways each contain an unordered sequence of media chunks and control chunks. The only control chunk defined by this specification is the acknowledgement chunk. Any media or control chunk, for any stream, MAY be sent in any forward or reverse byway for c2s and s2c streams respectively.  </p>
+<h1 id="rfc.section.10.10.1">
+<a href="#rfc.section.10.10.1">10.10.1.</a> <a href="#the-media-chunk-format" id="the-media-chunk-format">The Media Chunk Format</a>
+</h1>
+<p id="rfc.section.10.10.1.p.1">Each ripp media chunk has an outer envelope that is not encrypted, except by the transport the chunk is sent over, and an inner package that is encrypted. Inside both the envelope and package are a set of tag length values (TLV) tuples.  </p>
+<p id="rfc.section.10.10.1.p.2">Each media chunk has the following properties in the envelope part: </p>
+<p></p>
+
+<ul>
+<li>Media or Control: a boolean which indicates whether this is a media or control packet. The remaining parameters apply when it is media.</li>
+<li>The truncated sequence number, which provides the absolute ordering of the packets for the codec. (tag = 1). The sequence number is actually 64 bits long, but the encoding is of variable length. This allows for any number of bits to be sent on the wire. If N bits are sent, where N is less than 64, the value is treated as the truncated version of the actual sequence number, and the recipient computes it from prior packets. Clients MUST send full values until such time as they receive an acknowledgement of the media packet containing a full value, and after that, SHOULD send truncated values. For video, if the media is an intra-frame, the full value MUST be present.</li>
+<li>The truncated timestamp, which provides the wall clock time in ms of when the first sample of media in the chunk was recorded. Like sequence number, this value is represented with 64 bits, but truncated values can be sent. The client MUST send full values until the first packet containing a full value has been acknowleded, and after that, SHOULD send truncated values. For video, if the media is an intra-frame, the full value MUST be present. (tag = 2)</li>
+<li>The truncated payload type, which is a 32 bit integer specifying the codec in use. The integral values are maintained an in IANA registry and directly map to the media type names. It is encoded as a variable length field, enabling a small number of bits for frequent codecs. (tag = 3)</li>
+<li>The media source, which is an 8 bit integer specifying the ID of the media source for this chunk.</li>
+<li>The media sink, which is an 8 bit integer specifying the ID of the media sync for this chunk.</li>
+<li>Optional Reference frame flag. Indicates other chunks are encoded based on this frame. Typically used with video codecs and only set true on chunks that are part of an I Frame. Default value is false.</li>
+<li>Optional Spacial Layer scale: TBD - indicates which spacial layer this packet is part of when using a scalable codec</li>
+<li>Optional Temporal Layer scale: TBD - indicates which temporal layer this packet is part of when using a scalable codec</li>
+<li>Active  Level: Provides indication of audio energy in media chunk and can be used by conferring bridges to do speaker selection.</li>
+<li>Optional extension parameters in the envelope</li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.10.10.1.p.4">Each media chunk has the following properties in the package part: </p>
+<p></p>
+
+<ul>
+<li>Media. Then output from the codec (tag=4)</li>
+<li>optional extension parameters in the package</li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.10.10.1.p.6">The chunk is encoded by passing the envelope as authenticated data, and the package to an AEAD cipher. The chunk is created by taking the truncated auth tags of the cipher followed by output of the AEAD cipher.  The keys for the cipher to use, the keys for the cipher, and the authentication tag truncation are set by mechanisms outside this section. It not specified, they default to the NULL cipher with no keys.  </p>
+<h1 id="rfc.section.10.10.2">
+<a href="#rfc.section.10.10.2">10.10.2.</a> <a href="#the-control-chunk" id="the-control-chunk">The Control Chunk</a>
+</h1>
+<p id="rfc.section.10.10.2.p.1">The control chunk also has an envelope and payload, and is structured identically to media chunks. Its envelope has the following parameters: </p>
+<p></p>
+
+<ul>
+<li>Media or Control: a boolean which indicates whether this is a media or control packet. The remaining parameters apply when it is control.</li>
+<li>Control Type: a 16 bit integer which indicates the type. Only one type is defined by this specification - acknowledgement.</li>
+</ul>
+
+<p> </p>
+<p id="rfc.section.10.10.2.p.3">The payload then depends on the control type. For an acknowledgement, the payload contains the direction, media sourceID and media sink ID of the chunk being acknowledged. The final component needed to identify a chunk - the callID - is inferred from that of the media byway in which the acknowledgement is sent.  </p>
+<h1 id="rfc.section.10.10.3">
+<a href="#rfc.section.10.10.3">10.10.3.</a> <a href="#client-media-handling" id="client-media-handling">Client Media handling</a>
+</h1>
+<p id="rfc.section.10.10.3.p.1">If the HTTP connection supports webtransport, media chunks MUST be sent (and received) as datagrams over the webtrasport session.  </p>
+<p id="rfc.section.10.10.3.p.2">If not, to send media, the client MUST create a new HTTP PUT request to the /media resource on call URI for each media chunk to send. The body of the request MUST include the media chunk. If the client has received any chunks from the peer for this call since the last time it has sent a media packet for this call, it MUST include an acknowledgement control packet in the body as well, one for each unacknowledged media chunk. Once the one media chunk and zero or more acknowledgement packets have been sent, the client MUST end the transaction.  </p>
+<p id="rfc.section.10.10.3.p.3">To receive media, the client will have a large number of reverse media byways open (as GET requests to the /media resource for the call). If a response is received, the client extracts the contents, which will always be one media chunk and zero or more control chunks.  </p>
+<h1 id="rfc.section.10.10.4">
+<a href="#rfc.section.10.10.4">10.10.4.</a> <a href="#server-media-handling" id="server-media-handling">Server Media Handling</a>
+</h1>
+<p id="rfc.section.10.10.4.p.1">If the HTTP connection supports webtransport, media chunks MUST be sent (and received) as datagrams over the webtrasport session.  </p>
+<p id="rfc.section.10.10.4.p.2">If not, to send media, the server MUST select an open GET request to /media. It is RECOMMENDED that the server select the oldest one. The server MUST place its media chunk in the body of the response. If the server has received any media chunks from the peer for this call since the last time it has sent a media packet for this call, it MUST include an acknowledgement control packet in the body as well, one for each unacknowledged media chunk. Once the one media chunk and zero or more acknowledgement packets have been sent, the server MUST end the transaction. If the server is unable to send media for the call because there are no open requests, it MUST generate the "media-panic" event on the event stream towards the client, which indicates this problem. The server MUST drop the media chunk. The call will eventually trigger migration as the client will timeout on acknowledgements.  </p>
+<p id="rfc.section.10.10.4.p.3">The server will receive one media and zero or more control chunks as the body of the PUT requests.  </p>
+<h1 id="rfc.section.10.11">
+<a href="#rfc.section.10.11">10.11.</a> <a href="#connection-and-byway-lifecycle-management" id="connection-and-byway-lifecycle-management">Connection and Byway Lifecycle Management</a>
+</h1>
+<p id="rfc.section.10.11.p.1">The state of the connection, the QUIC streams, and byways, is separate from the state of the call. The client MAY terminate an HTTP connection or byway at any time, and re-establish it. Similarly, the server or client may end the a byway at any time, neither affects call state directly.  </p>
+<p id="rfc.section.10.11.p.2">If a byway ends or the connection breaks or is migrated, the client MUST re-initiate the byways immediately, or risk loss of media and signalling events. However, to deal with the fact that re-establishment takes time, both client and server MUST buffer their signalling and media streams for at least 5 seconds, and then once the connections and byways are re-established, it sends all buffered data immediately.  </p>
+<p id="rfc.section.10.11.p.3">A server MUST maintain a timer, with a value equal to one second, for which it will hold the call in its current state without any active signalling byway. If the server does not receive a signalling byway before the expiration of this timer, it MUST consider the call as ended. Once the call has ended, the call resource SHOULD be destroyed.  </p>
+<p id="rfc.section.10.11.p.4">If the server receives a signalling or media byway for a call that is TERMINATED, it MUST reject the transaction with an 404 response code, since the resource no longer exists.  </p>
+<p id="rfc.section.10.11.p.5">Note that it is the sole responsibility of the client to make sure byways are re-established if they fail unexpectedly.  </p>
+<h1 id="rfc.section.10.12">
+<a href="#rfc.section.10.12">10.12.</a> <a href="#retrieving-call-list" id="retrieving-call-list">Retrieving Call List</a>
+</h1>
+<p id="rfc.section.10.12.p.1">A client MAY initiate a GET request against the /calls resource in the TG. The server MUST return a body with the list of all calls which currently exist on the server. This is just a list of call URI. This is useful for a client which restarts and wishes to rebuild its view of call state.  </p>
+<h1 id="rfc.section.10.13">
+<a href="#rfc.section.10.13">10.13.</a> <a href="#graceful-call-migration" id="graceful-call-migration">Graceful Call Migration</a>
+</h1>
+<p id="rfc.section.10.13.p.1">A server MAY initiate a call migration at any time for a specific call. To do so, it MUST send a migration event to the client over the signaling byway. The client MUST honor this request for migration. The client MAY choose to migrate the call to a different server at any time.  </p>
+<p id="rfc.section.10.13.p.2">If, and only if, the server has included the "server-ip" parameter in its advertisement - meaning it is not utilzing an HTTP load balancer, it MAY request the client to migrate the call to a named instance. The named instance is specified by IP address as an optional parameter in the migrate event. The client MUST verify that this IP is one of the ones present list of server-ip.  </p>
+<p id="rfc.section.10.13.p.3">To perform the migration, the client MUST end all outstanding HTTP transactions for the call (signaling and media byways). It MUST initiate a new signaling byway for the call, targeting the IP if it has been specified by the server. This may require the client to open a new HTTP connection, if it does not already have one open to the target. The client MUST NOT include a session cookie in the POST to /events. This is essential to cause the request to route to a different instance behind the load balancer, which will typically be configured with sticky routing. The server MAY respond to this request with a new session cookie. The client MUST NOT initiate forward or reverse media byways  until the client receives response headers to the signaling byway creation. This is to enable session cookies to be included in these requests for sticky routing.  </p>
+<p id="rfc.section.10.13.p.4">The client SHOULD cache all media that the client wishes to transmit, but was unable to do so during the migration. The media MUST then be sent in a burst once the media byways are re-established. This ensures there is no packet loss (though there will be jitter) during the migration period.  </p>
+<h1 id="rfc.section.10.14">
+<a href="#rfc.section.10.14">10.14.</a> <a href="#ungraceful-call-migration" id="ungraceful-call-migration">Ungraceful Call Migration</a>
+</h1>
+<p id="rfc.section.10.14.p.1">If the origin server or HTTP load balancer fails unexpectedly, this is handled by the client. If the client (1) receives a reset on the signaling byway, or (2) receives no media packets for 5s, or (3) receives no acknowledgements for media packets it has sent for 1s, or (4) receives a ungraceful closure of the HTTP connection, it MUST initiate a migration as defined in the prior section.  </p>
+<h1 id="rfc.section.11">
+<a href="#rfc.section.11">11.</a> <a href="#sip-gateway" id="sip-gateway">SIP Gateway</a>
+</h1>
+<p id="rfc.section.11.p.1">RIPP is designed to be easy to gateway from SIP. The expectation is that RIPP will be implemented in SBCs and softswitches. A SIP to RIPP gateway has to be call-stateful, acting as a B2BUA, in order to gateway to RIPP. Furthermore, a SIP to RIPP gateway has to act as a media termination point in SIP. It has to perform any SRTP decryption and encryption, and it must de-packetize RTP packets to extract their timestamps, sequence numbers, and codec types.  </p>
+<p id="rfc.section.11.p.2">SIP to RIPP gateways are not transparent. SIP header fields which are unknown or do not map to RIPP functionality as described here, gets discarded.  </p>
+<p id="rfc.section.11.p.3">Any configuration and provisioning for RIPP happens ahead of receipt or transmission of SIP calls. Consequently, the logic described here applies at the point that a gateway receives a SIP INVITE on the SIP side, or receives a POST to the RIPP trunk URI on the RIPP side.  </p>
+<p id="rfc.section.11.p.4">This specification does define some normative procedures for the gateway function in order to maximize interoperability.  </p>
+<h1 id="rfc.section.11.1">
+<a href="#rfc.section.11.1">11.1.</a> <a href="#ripp-to-sip" id="ripp-to-sip">RIPP to SIP</a>
+</h1>
+<h1 id="rfc.section.11.2">
+<a href="#rfc.section.11.2">11.2.</a> <a href="#sip-to-ripp" id="sip-to-ripp">SIP to RIPP</a>
+</h1>
+<h1 id="rfc.section.12">
+<a href="#rfc.section.12">12.</a> <a href="#syntax" id="syntax">RAML API</a>
+</h1>
+<pre>
+#%RAML 1.0
+---
+title: RIPP
+baseUri: http://ripp.example.net/{version}
+version: v1
+protocols: [ HTTPS ]
+securedBy: [ oauth_2_0 ]
+securitySchemes:
+  oauth_2_0: !include securitySchemes/oauth_2_0.raml
+
+types:
+    InboundEndpoint:
+        type: object
+        properties:
+            consumerTrunkURI: string
+            consumerToken: string 
+    Event:
+        type: object
+        properties:
+            name:
+                enum: [ alerting, accepted, rejected, failed, tnt, migrate, end,open-reverse ]
+	    direction:
+	        enum: [c2s, s2c]
+	    sequence number:
+	        type: number
+	    timestamp:
+	        type: number
+            ended:
+                type: boolean
+            timeStamp:
+                type: datetime
+            tntDestination:
+                type: string
+                note: only in events with name tnt
+            migrateToURl:
+                type: string 
+                note: only in events with name migrate
+     Advertisement:
+        type object
+        properties:
+            max-bitrate: number
+            max-samplerate: number
+            max-channels: number
+            non-e164: boolean
+            force-cbr: boolean
+            tnt: boolean
+    Frame:
+        seqNumOffset: number
+        dataLen: number
+        data: string
+    FrameAck:
+        seqNum: number 
+    BywayPreamble:
+        baseSeqNum: number
+        baseTime: number
+        frameTime: number
+        codec:
+            enum: [ opus, g711, dtmf, cn, ack ]
+     BywayMedia:
+        mediaFrames: array
+ 
+
+/trunks:
+   /{trunkID}:
+      /consumerTrunk:
+        put:
+            description: Set the URI and security token for consumer trunk URI 
+            securedBy: [oauth_2_0]
+      /capAdv:
+        get:
+            description: Get the Capability Advertisement for this trunk
+            securedBy: [oauth_2_0]
+            responses:
+                200:
+                    body:
+                         application/json:
+                            type: Advertisement
+      /calls:
+        post:
+	    queryParameters:
+	      target:
+            securedBy: [oauth_2_0]
+            description: Create a new call. Returns a Call URI 
+            responses:
+                202:
+                  
+
+
+/call:
+    /{callID}:
+        /prevEvent:
+            get:
+                description: Retreive the previous event from server
+                responses:
+                    200:
+                        body:
+                            application/json:
+                                type: Event
+        /event:
+            get:
+                description: Wait for next event then retreive the most recent event from server
+                responses:
+                    200:
+                        body:
+                            application/json:
+                                type: Event
+            put:
+                description: Tell server about recent event
+                body:
+                    application/json:
+                        type: Event
+                responses:
+                    200:
+        /media-forward:
+            post:
+                 description: Starts an infinite flow of media frames from client to server 
+                 body:
+                    application/octet-stream:
+                        type: BywayFlow
+                 responses:
+                    200:
+                        application/octet-stream:
+                            type: BywayFlow
+        /media-reverse:
+            post:
+                 description: Starts an infinite flow of media frames from server to client 
+                 body:
+                    application/octet-stream:
+                        type: BywayFlow
+                 responses:
+                    200:
+                        application/octet-stream:
+                            type: BywayFlow
+            
+</pre>
+<p></p>
+<h1 id="rfc.section.13">
+<a href="#rfc.section.13">13.</a> <a href="#iana" id="iana">IANA Considerations</a>
+</h1>
+<h1 id="rfc.section.13.1">
+<a href="#rfc.section.13.1">13.1.</a> <a href="#registration-of-wellknown-web-services" id="registration-of-wellknown-web-services">Registration of Well-Known Web Services</a>
+</h1>
+<p id="rfc.section.13.1.p.1">This specification defines two new well-known web services as defined in <a href="#I-D.nottingham-rfc5785bis" class="xref">[I-D.nottingham-rfc5785bis]</a> - ripp and ripp-oauth.  </p>
+<h1 id="rfc.section.13.2">
+<a href="#rfc.section.13.2">13.2.</a> <a href="#ripp" id="ripp">RIPP</a>
+</h1>
+<p id="rfc.section.13.2.p.1">URI suffix: ripp </p>
+<p id="rfc.section.13.2.p.2">Change controller:  IETF </p>
+<p id="rfc.section.13.2.p.3">Specification document(s): This specification.  </p>
+<p id="rfc.section.13.2.p.4">Status:  Permanent.  </p>
+<h1 id="rfc.section.13.3">
+<a href="#rfc.section.13.3">13.3.</a> <a href="#rippoauth" id="rippoauth">RIPP-Oauth</a>
+</h1>
+<p id="rfc.section.13.3.p.1">URI suffix: ripp-oauth </p>
+<p id="rfc.section.13.3.p.2">Change controller:  IETF </p>
+<p id="rfc.section.13.3.p.3">Specification document(s): This specification.  </p>
+<p id="rfc.section.13.3.p.4">Status:  Permanent.  </p>
+<h1 id="rfc.section.14">
+<a href="#rfc.section.14">14.</a> <a href="#security-considerations" id="security-considerations">Security Considerations</a>
+</h1>
+<h1 id="rfc.section.15">
+<a href="#rfc.section.15">15.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a>
+</h1>
+<p id="rfc.section.15.p.1">Thanks you for review and edits to: Giacomo Vacca. Thank you to Mo Zanaty for greatly simplifying the advertisement proposal for video.  </p>
+<h1 id="rfc.references">
+<a href="#rfc.references">16.</a> Informative References</h1>
+<table><tbody>
+<tr>
+<td class="reference"><b id="I-D.ietf-mls-protocol">[I-D.ietf-mls-protocol]</b></td>
+<td class="top">
+<a>Barnes, R.</a>, <a>Beurdouche, B.</a>, <a>Millican, J.</a>, <a>Omara, E.</a>, <a>Cohn-Gordon, K.</a> and <a>R. Robert</a>, "<a href="https://tools.ietf.org/html/draft-ietf-mls-protocol-08">The Messaging Layer Security (MLS) Protocol</a>", Internet-Draft draft-ietf-mls-protocol-08, November 2019.</td>
+</tr>
+<tr>
+<td class="reference"><b id="I-D.ietf-quic-http">[I-D.ietf-quic-http]</b></td>
+<td class="top">
+<a>Bishop, M.</a>, "<a href="https://tools.ietf.org/html/draft-ietf-quic-http-24">Hypertext Transfer Protocol Version 3 (HTTP/3)</a>", Internet-Draft draft-ietf-quic-http-24, November 2019.</td>
+</tr>
+<tr>
+<td class="reference"><b id="I-D.ietf-quic-transport">[I-D.ietf-quic-transport]</b></td>
+<td class="top">
+<a>Iyengar, J.</a> and <a>M. Thomson</a>, "<a href="https://tools.ietf.org/html/draft-ietf-quic-transport-24">QUIC: A UDP-Based Multiplexed and Secure Transport</a>", Internet-Draft draft-ietf-quic-transport-24, November 2019.</td>
+</tr>
+<tr>
+<td class="reference"><b id="I-D.nottingham-rfc5785bis">[I-D.nottingham-rfc5785bis]</b></td>
+<td class="top">
+<a>Nottingham, M.</a>, "<a href="https://tools.ietf.org/html/draft-nottingham-rfc5785bis-11">Well-Known Uniform Resource Identifiers (URIs)</a>", Internet-Draft draft-nottingham-rfc5785bis-11, April 2019.</td>
+</tr>
+<tr>
+<td class="reference"><b id="I-D.vvv-webtransport-http3">[I-D.vvv-webtransport-http3]</b></td>
+<td class="top">
+<a>Vasiliev, V.</a>, "<a href="https://tools.ietf.org/html/draft-vvv-webtransport-http3-01">WebTransport over HTTP/3</a>", Internet-Draft draft-vvv-webtransport-http3-01, November 2019.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC2119">[RFC2119]</b></td>
+<td class="top">
+<a>Bradner, S.</a>, "<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC2833">[RFC2833]</b></td>
+<td class="top">
+<a>Schulzrinne, H.</a> and <a>S. Petrack</a>, "<a href="https://tools.ietf.org/html/rfc2833">RTP Payload for DTMF Digits, Telephony Tones and Telephony Signals</a>", RFC 2833, DOI 10.17487/RFC2833, May 2000.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC3261">[RFC3261]</b></td>
+<td class="top">
+<a>Rosenberg, J.</a>, <a>Schulzrinne, H.</a>, <a>Camarillo, G.</a>, <a>Johnston, A.</a>, <a>Peterson, J.</a>, <a>Sparks, R.</a>, <a>Handley, M.</a> and <a>E. Schooler</a>, "<a href="https://tools.ietf.org/html/rfc3261">SIP: Session Initiation Protocol</a>", RFC 3261, DOI 10.17487/RFC3261, June 2002.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC3263">[RFC3263]</b></td>
+<td class="top">
+<a>Rosenberg, J.</a> and <a>H. Schulzrinne</a>, "<a href="https://tools.ietf.org/html/rfc3263">Session Initiation Protocol (SIP): Locating SIP Servers</a>", RFC 3263, DOI 10.17487/RFC3263, June 2002.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC3389">[RFC3389]</b></td>
+<td class="top">
+<a>Zopf, R.</a>, "<a href="https://tools.ietf.org/html/rfc3389">Real-time Transport Protocol (RTP) Payload for Comfort Noise (CN)</a>", RFC 3389, DOI 10.17487/RFC3389, September 2002.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC4855">[RFC4855]</b></td>
+<td class="top">
+<a>Casner, S.</a>, "<a href="https://tools.ietf.org/html/rfc4855">Media Type Registration of RTP Payload Formats</a>", RFC 4855, DOI 10.17487/RFC4855, February 2007.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC5766">[RFC5766]</b></td>
+<td class="top">
+<a>Mahy, R.</a>, <a>Matthews, P.</a> and <a>J. Rosenberg</a>, "<a href="https://tools.ietf.org/html/rfc5766">Traversal Using Relays around NAT (TURN): Relay Extensions to Session Traversal Utilities for NAT (STUN)</a>", RFC 5766, DOI 10.17487/RFC5766, April 2010.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC6265">[RFC6265]</b></td>
+<td class="top">
+<a>Barth, A.</a>, "<a href="https://tools.ietf.org/html/rfc6265">HTTP State Management Mechanism</a>", RFC 6265, DOI 10.17487/RFC6265, April 2011.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC7540">[RFC7540]</b></td>
+<td class="top">
+<a>Belshe, M.</a>, <a>Peon, R.</a> and <a>M. Thomson</a>, "<a href="https://tools.ietf.org/html/rfc7540">Hypertext Transfer Protocol Version 2 (HTTP/2)</a>", RFC 7540, DOI 10.17487/RFC7540, May 2015.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8224">[RFC8224]</b></td>
+<td class="top">
+<a>Peterson, J.</a>, <a>Jennings, C.</a>, <a>Rescorla, E.</a> and <a>C. Wendt</a>, "<a href="https://tools.ietf.org/html/rfc8224">Authenticated Identity Management in the Session Initiation Protocol (SIP)</a>", RFC 8224, DOI 10.17487/RFC8224, February 2018.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8225">[RFC8225]</b></td>
+<td class="top">
+<a>Wendt, C.</a> and <a>J. Peterson</a>, "<a href="https://tools.ietf.org/html/rfc8225">PASSporT: Personal Assertion Token</a>", RFC 8225, DOI 10.17487/RFC8225, February 2018.</td>
+</tr>
+</tbody></table>
+<h1 id="rfc.authors"><a href="#rfc.authors">Authors' Addresses</a></h1>
+<div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Jonathan Rosenberg</span> 
+	  <span class="n hidden">
+		<span class="family-name">Rosenberg</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Five9</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:jdrosen@jdrosen.net">jdrosen@jdrosen.net</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Cullen Jennings</span> 
+	  <span class="n hidden">
+		<span class="family-name">Jennings</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Cisco Systems</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:fluffy@iii.ca">fluffy@iii.ca</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Anthony Minessale</span> 
+	  <span class="n hidden">
+		<span class="family-name">Minessale</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Signalwire/Freeswitch</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:anthm@signalwire.com">anthm@signalwire.com</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Jason Livingood</span> 
+	  <span class="n hidden">
+		<span class="family-name">Livingood</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Comcast</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:jason_livingood@comcast.com">jason_livingood@comcast.com</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Justin Uberti</span> 
+	  <span class="n hidden">
+		<span class="family-name">Uberti</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Google</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:justin@uberti.name">justin@uberti.name</a></span>
+
+  </address>
+</div>
+
+</body>
+</html>

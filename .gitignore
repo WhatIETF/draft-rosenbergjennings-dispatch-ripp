@@ -1,6 +1,6 @@
-draft*.html
+#draft*.html
+#draft*.txt
 draft*.xml
-draft*.txt
 draft*.diff.html
 *~
 ripp-api.html
