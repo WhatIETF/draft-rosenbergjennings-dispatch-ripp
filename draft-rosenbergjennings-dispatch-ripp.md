@@ -785,7 +785,7 @@ In this model, the UCaaS provider (say, provider.com) is the
 provider. It will have a TG URI for each end user, since the TG URI is
 bound to the phone numbers and other policies and permissions. The IP
 phone starts with just the domain name of the provider and an OAuth
-token. Using [@draft-nottingham-rfc5785bis] it will learn the RIPP
+token. Using [@I-D.nottingham-rfc5785bis] it will learn the RIPP
 root URI. From there, the IP phone queries the list of provider TGs it
 can access, and finds only one. With the provider TG URI in hand, it
 can use it to register its own consumer TG (and a bearer token for
@@ -793,7 +793,7 @@ authentication), and can then place and receive calls.
 
 In the case of a softphone, the OAuth token can be easily obtained by
 login. The end user would only enter the provider name (e.g.,
-provider.com). Once again using [@draft-nottingham-rfc5785bis] it will
+provider.com). Once again using [@I-D.nottingham-rfc5785bis] it will
 construct the RIPP root URI and a URI for triggering an OAuth flow for
 RIPP. The URI for the OAuth flow will allow the user to log in and
 grant permission to the IP phone, thus giving it the needed OAuth
@@ -849,7 +849,7 @@ also be configuration which specifies the desire for e2e encryption of
 the media.
 
 Using out-of-band techniques, such as those described in
-[@draft-ietf-mls-protocol], the Javascript app would obtain the
+[@I-D.ietf-mls-protocol], the Javascript app would obtain the
 necessary encryption keys and ciphersuite, and tell the browser to
 utilize them when sending media to the server via the call API, which
 initates a RIPP call.
@@ -890,8 +890,8 @@ to bootstrap everything else.
 One of these URI is a URI which can be used to kickoff a web-based
 OAuth flow for generating an OAuth token. The other is the RIPP root
 URI. Both of these are well-known URI as defined by
-[@draft-nottingham-rfc5785bis]. Consequently, they are constructed
-using the syntax defined in [@draft-nottingham-rfc5785bis].
+[@I-D.nottingham-rfc5785bis]. Consequently, they are constructed
+using the syntax defined in [@I-D.nottingham-rfc5785bis].
 
 Their IANA registrations can be found in (#iana).
 
@@ -1163,7 +1163,7 @@ retrieve.
 ## Media Exchange
 
 Media exchange makes use of webtransport over HTTP3
-[@draft-vvv-webtransport-http3] when it is available, falling back to
+[@I-D.vvv-webtransport-http3] when it is available, falling back to
 media byways when it is not.
 
 Once the call signaling is complete, the caller attempts to open a
@@ -1513,12 +1513,12 @@ This section contains the normative specification of RIPP.
 
 A RIPP client that wishes to obtain an OAuth token to a specified
 authority through a web interface MUST construct a well known RIPP
-Oauth URI using [@draft-nottingham-rfc5785bis] with ripp-oauth as the
+Oauth URI using [@I-D.nottingham-rfc5785bis] with ripp-oauth as the
 well-known service, and use this to trigger the Oauth process.
 
 Similarly, a RIPP client wishing to access the resources defined in
 this specification, against an authority (such as example.com) MUST
-use [@draft-nottingham-rfc5785bis] with ripp as the well-known
+use [@I-D.nottingham-rfc5785bis] with ripp as the well-known
 service, and use this to trigger the Oauth process. The result is the
 RIPP root URI for that authority.
 
@@ -2228,7 +2228,7 @@ gateway function in order to maximize interoperability.
 ## Registration of Well-Known Web Services
 
 This specification defines two new well-known web services as defined
-in [@draft-nottingham-rfc5785bis] - ripp and ripp-oauth.
+in [@I-D.nottingham-rfc5785bis] - ripp and ripp-oauth.
 
 ## RIPP
 
