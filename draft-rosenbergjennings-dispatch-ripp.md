@@ -261,7 +261,7 @@ contains no [@RFC2119] language. Much of this text is meant to help
 readers familiar with SIP, understand how SIP concepts translate (or
 don't) into RIPP. These sections include Requirements (#req), Design
 Approaches (#design), Terminology (#terminology), Reference
-Architecture (#reference), Deployment Examples (#deployments)
+Architecture (#refarch), Deployment Examples (#deployments)
 
 The normative content is split into four components - creating a
 reverse tg, tg, call, and media, each of which represents a web
@@ -1125,7 +1125,7 @@ facilitate adoption of RIPP into classic telco networks which utilize
 farms of SBCs - identified by IP - as the outermost network ingress
 point. 
 
-## Call Establishment
+## Call Establishment {#proposal}
 
 Either the consumer or provider can initiate calls by posting
 to /calls on TG URI of its peer.  The request contains the target
