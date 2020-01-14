@@ -268,9 +268,9 @@ reverse tg, tg, call, and media, each of which represents a web
 service. These are sections TODO.
 
 
-# Solution Requirements (#req)
+# Solution Requirements {#req}
 
-The protocol defined here is based on the following requirements:
+The protocol defined here is based on the following requirements: 
 
 REQ1: The solution shall not require extensions or modifications to
 HTTP/3.
@@ -320,7 +320,7 @@ REQ14: The solution shall include mandatory-to-implement provisioning
 operations for cases where there is a customer-provider relationship 
 
 
-# Design Approaches (#design)
+# Design Approaches {#design}
 
 To meet the requirements stated above, RIPP makes several fundamental
 changes compared to SIP. These changes, and their motivations, are
@@ -525,7 +525,7 @@ HTTP approaches for these problems. Consequently, RIPP does not
 utilize ICE and has no specific considerations for NAT traversal, as
 these are handled by HTTP/3 itself.
 
-# Terminology (#terminology)
+# Terminology {#terminology}
 
 This specification follows the terminology of HTTP/3 - specifically:
 
@@ -586,7 +586,7 @@ and a long-running HTTP response. Byways are used for signalling and
 media.
 
 
-# Reference Architecture (#refarch)
+# Reference Architecture {#refarch}
 
 The RIPP reference architecture is shown in Figure 1.
 
@@ -684,7 +684,7 @@ to applications - opening connections, closing connections, sending
 requests and responses, receiving requests and responses, and setting
 header fields and bodies. That's it.
 
-# Deployment Examples (#deployments)
+# Deployment Examples {#deployments}
 
 RIPP enables communications between a pair of administrative
 domains. This enables its usage in many use cases where there are
@@ -773,7 +773,7 @@ then need to subsequently log into the other side and perform the
 OAuth flow to obtain an OAuth token for the other.
 
 
-## IP Phone to UCaaS Provider (#ipphone)
+## IP Phone to UCaaS Provider {#ipphone}
 
 In this case, an enterprise has purchased telephony services from a
 UCaaS provider. The enterprise has deployed both hard and soft phones
