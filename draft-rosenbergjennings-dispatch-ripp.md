@@ -261,11 +261,9 @@ contains no [@RFC2119] language. Much of this text is meant to help
 readers familiar with SIP, understand how SIP concepts translate (or
 don't) into RIPP. These sections include Requirements (#req), Design
 Approaches (#design), Terminology (#terminology), Reference
-Architecture (#refarch), Deployment Examples (#deployments)
+Architecture (#refarch), Deployment Examples (#deployments). The
+remainder of the document specifies normative procedures.
 
-The normative content is split into four components - creating a
-reverse tg, tg, call, and media, each of which represents a web
-service. These are sections TODO.
 
 
 # Solution Requirements {#req}
@@ -326,14 +324,14 @@ To meet the requirements stated above, RIPP makes several fundamental
 changes compared to SIP. These changes, and their motivations, are
 described in the sections below.
 
-## HBH, not E2E
+## Client-Server, not Multi-Element
 
-SIP was designed as an end-to-end protocol. As such, it explicitly
+SIP was designed as a complete system architecture. As such, it explicitly
 incorporates features which presume the existence of a network of
 elements - proxies and registrars in particular. SIP provides many
 features to facilitate this - Via headers, record-routing, and so on.
 
-HTTP on the other hand - is strictly a hop-by-hop technology. Though
+HTTP on the other hand - is strictly a client-to-server technology. Though
 it does support the notion of proxies (ala the CONNECT method for
 reverse proxies), the protocol is fundamentally designed to be between
 a client and an authoritative server. What happens beyond that
@@ -341,10 +339,10 @@ authoritative server is beyond the scope of HTTP, and can (and often
 does) include additional HTTP transactions.
 
 Consequently, in order to reside within HTTP, RIPP follows the same
-pattern and only concerns itself with HBH behaviours. Like HTTP, a RIPP
-server can of course act as a RIPP client and further connect calls to
-downstream elements. However, such behavior requires no additional
-specification and is therefore not discussed by RIPP.
+pattern and only concerns itself with client-server behaviours. Like
+HTTP, a RIPP server can of course act as a RIPP client and further
+connect calls to downstream elements. However, such behavior requires
+no additional specification and is therefore not discussed by RIPP.
 
 ## Client-Server, not Agent-to-Agent
 
@@ -988,7 +986,7 @@ opposite end of the spectrum in terms of complexity.
 
 For each source or sink, there are one or more parameter sets that can
 be specified. Each parameter in the parameter set has a name and a
-value. The value is always an integer from 0 to 65535. Parameters are
+value. The value is always an integer from 0 to 2**31 - 1. Parameters are
 typically standardized and registered with IANA. The registration
 indicates the meaning of the values - their units and allowed
 values. Most importantly, the parameter is always expressed in a way
@@ -1055,11 +1053,13 @@ might have a advertisement that looked like, in part:
    "param-sets": [
         {
 	 "H264" : 1,
-	 "max-res" : 3840
+	 "max-width" : 3840
+	 "max-height" : 2160	 
         },
         {
 	 "AV1" : 1,
-	 "max-res" : 1920
+	 "max-width" : 1920
+	 "max-height" : 1080
         }
    ]
 }   
@@ -1088,7 +1088,8 @@ like:
     "id" : 2,
     "param-sets" : {
       "H264" : 1,
-      "max-res" : 1280,
+      "max-width" : 1280,
+      "max-height" : 720
       "max-fps" : 30
     }
   }
@@ -1096,8 +1097,9 @@ like:
     "id" : 3,
     "param-sets" : {
       "H264" : 1,
-      "max-res" : 3920,
-      "max-fps" : 60
+      "max-width" : 3840,
+      "max-height" : 2160,
+      "max-height" : 60
     }
   }
   
@@ -1621,35 +1623,14 @@ The following parameters are general purpose configuration:
 * media-timeout: If a client fails to receive media ack packets after
   the timeout specified in this parameter, it considers the call dead
   and initiates migration. The value of this parameter is an integer,
-  in units of milliseconds. Its default is 1000.
+  in units of milliseconds. Its default is 5000.
 
-* server-ip: When present, this parameter indicates that the client
-  should not utilize DNS to resolve the authority component of the
-  associated TG URI, and rather, utilize the IP addresses which are
-  the value of this parameter. The value is a JSON array with one or
-  more elements. Each element contains an IP address and an load
-  value. The load value MUST be between 0 and 100. The sum of the load
-  values across all of the elements in the array MUST be 100. This
-  parameter is optional. When omitted, the client MUST utilize normal
-  DNS resolution for HTTP.
 
-These parameters specify support for telephony features:
-
-* hold: When present, indicates that the server supports clients
-  performing a hold operation on calls. Its value is a boolean, with a
-  default of FALSE. 
-
-* transfer: When present, indicates that the server supports clients
-  performing transfer operations on calls. Its value is a boolean, with a
-  default of FALSE.
-
-* park: When present, indicates that the server supports clients
-  performing park and retrieve operation on calls. Its value is a
-  boolean, with a default of FALSE.
-
-* mute: When present, indicates that the server supports clients
-  performing park and retrieve operation on calls. Its value is a
-  boolean, with a default of FALSE.
+OPEN ISSUE: Do we want to support cases where RIPP is implemented by
+SBCs which are not fronted by a web load balancer? In such a case,
+we'll want something similar to RFC3263, wherein the advertisement
+contains the set of IP addresses for the cluster and we define load
+balancing behavior. 
 
 Four parameters are defined for media capabilites - mic, spk, cam,
 screen, corresponding to the ability to generate audio, receive audio,
@@ -1884,71 +1865,6 @@ keepalive: This event is always initiated by the client. When received
 by a server, the server MUST generate a keepalive response. The
 keepalive MAY contain a nonce, and if so, the server MUST echo it in
 the response. 
-
-## Telephony Features
-
-The following events are optional. They can be sent by either side of
-a call, an generally apply only once a call is established. Each
-feature has one side that invokes the feature, and another side which
-handles it. The specification does not define how the handler handles
-the feature, it only specifies behavior on the interface between
-them. 
-
-An originator MUST NOT invoke a feature unless the corresponding
-feature support has been indicated in the advertisement on the TG.
-
-### Blind Transfer
-
-Performs a blind transfer of the call. The event contains a string
-which MUST be a valid value for the target URI parameter used when
-setting up a new call. Once the transfer has initiated, the server
-MUST generate a transfer-reject event if it is unwilling to perform
-the transfer. If it attempts the transfer, it MUST send a
-transfer-pending event indicating that the transfer is in
-progress. If the transfer target answers the call, the server MUST
-generate a transfer-success event, followed by an end event,
-indicating the call is over for this user. If the transfer fails, the
-server MUST generate a transfer-failed event, in which case the call
-continues. Once the transfer target answers, it MUST be sent a
-transferred-from event, containing the URI of the call from which the
-transfer happened.
-
-### Warm Transfer
-
-transfer-warm: performs a warm transfer. For this to work, the
-endpoint sending the event must be in two calls. It sends this event
-on the one to be transferred to the other. The event has a single
-parameter which specifies the URI of the call to which the transfer is
-taking place. This two calls MUST have the same authority component of
-their call URI. Once the peer receives this event, it MUST perform the
-transfer. The transfer will either complete almost immediately else
-fail. If it succeeds, the peer MUST respond with a transfer-success
-event; if it fails, respond with a transfer-failed event, in which
-case the call continues. Furthermore, if the transfer succeeds, the
-transfer target MUST be sent a transferred-from event, containing the
-URI of the call from which the transfer happened.
-
-### Hold and Resume
-
-hold: performs a call hold on the call. Either side can initiate this,
-but only if its peer indicates support. Similarly, to inform its peer
-that it has been placed on hold, either side may send an on-hold event
-to its peer, but only if hold has been indicated as a capability. When
-an endpoint has been told it is on-hold, it MUST send silence for
-audio and black screen for video. The peer MAY generate music-on-hold
-or any other suitable content to render while the endpoint is on hold.
-
-### Mute Indication
-
-mute: informs the peer that it has muted. This is informative for UI
-purposes, useful in conference calls for example. When an endpoint
-mutes, in addition to sending the mute event, it MUST send silence for
-audio and black screen for video. Similarly, if an endpoint wishes to
-inform its peer that it is muting its media, it sends a mute event.
-
-### Park and Retrieve
-
-TBD
 
 ## Sending and Receiving Media
 
