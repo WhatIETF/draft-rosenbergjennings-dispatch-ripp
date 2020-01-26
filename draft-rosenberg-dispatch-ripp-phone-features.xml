@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+
+<rfc category="std" submissionType="IETF" ipr="trust200902" docName="draft-rosenberg-dispatch-ripp-phone-features-00">
+
+  <front>
+    <title abbrev="RIPP Phone Features">Enterprise Telephony Features in RIPP</title>
+
+    <author fullname="Jonathan Rosenberg" initials="J.R." role="editor"
+            surname="Rosenberg">
+      <organization abbrev="Five9">Five9</organization>
+
+      <address>
+        <postal>
+          <street>4000 Executive Parkway #400</street>
+          <city>San Ramon</city>
+          <region>CA</region>
+          <code>94583</code>
+          <country>US</country>
+        </postal>
+        <email>jdrosen@jdrosen.net</email>
+      </address>
+    </author>
+
+    <date month="January" year="2020" day="25"/>
+
+    <area>Applications</area>
+
+    <abstract>
+      <t>The Real-Time Internet Peering Protocol (RIPP) defines a
+      technique for establishing, terminating and otherwise managing
+      calls between entities in differing administrative domains. This
+      document extends RIPP by considering the specific case of an IP
+      hardphone or softphone which connects to an IP PBX or similar
+      piece of software. In this use case, additional signaling is
+      needed for traditional telephony features, like hold, transfer,
+      and park. This document extends RIPP to provide these
+      capabilities.</t>
+    </abstract>
+  </front>
+
+  <middle>
+
+        <section title="Terminology">
+   <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
+   NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
+   "MAY", and "OPTIONAL" in this document are to be interpreted as
+   described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/>
+   when, and only when, they appear in all capitals, as shown here.
+   </t>
+
+    </section>
+
+    <section title="Introduction">
+      
+      <t> blah </t>
+
+    </section>
+
+<section title="Blind Transfer">
+
+<t>Performs a blind transfer of the call. The event contains a string
+which MUST be a valid value for the target URI parameter used when
+setting up a new call. Once the transfer has initiated, the server
+MUST generate a transfer-reject event if it is unwilling to perform
+the transfer. If it attempts the transfer, it MUST send a
+transfer-pending event indicating that the transfer is in
+progress. If the transfer target answers the call, the server MUST
+generate a transfer-success event, followed by an end event,
+indicating the call is over for this user. If the transfer fails, the
+server MUST generate a transfer-failed event, in which case the call
+continues. Once the transfer target answers, it MUST be sent a
+transferred-from event, containing the URI of the call from which the
+transfer happened. </t>
+
+</section>
+
+<section title="Warm Transfer">
+
+<t>transfer-warm: performs a warm transfer. For this to work, the
+endpoint sending the event must be in two calls. It sends this event
+on the one to be transferred to the other. The event has a single
+parameter which specifies the URI of the call to which the transfer is
+taking place. This two calls MUST have the same authority component of
+their call URI. Once the peer receives this event, it MUST perform the
+transfer. The transfer will either complete almost immediately else
+fail. If it succeeds, the peer MUST respond with a transfer-success
+event; if it fails, respond with a transfer-failed event, in which
+case the call continues. Furthermore, if the transfer succeeds, the
+transfer target MUST be sent a transferred-from event, containing the
+URI of the call from which the transfer happened.</t>
+
+</section>
+
+<section title="Hold and Resume">
+
+<t>hold: performs a call hold on the call. Either side can initiate this,
+but only if its peer indicates support. Similarly, to inform its peer
+that it has been placed on hold, either side may send an on-hold event
+to its peer, but only if hold has been indicated as a capability. When
+an endpoint has been told it is on-hold, it MUST send silence for
+audio and black screen for video. The peer MAY generate music-on-hold
+or any other suitable content to render while the endpoint is on hold.</t>
+
+</section>
+
+<section title="Mute">
+
+<t>mute: informs the peer that it has muted. This is informative for UI
+purposes, useful in conference calls for example. When an endpoint
+mutes, in addition to sending the mute event, it MUST send silence for
+audio and black screen for video. Similarly, if an endpoint wishes to
+inform its peer that it is muting its media, it sends a mute event.</t>
+
+</section>
+
+
+    <section title="IANA Considerations">
+      <t>No values are assigned in this document, no registries are created,
+      and there is no action assigned to the IANA by this document. </t>
+    </section>
+
+    <section title="Security Considerations">
+      <t>This document introduces no new security considerations. It is a
+      process document about changes to the rules for certain corner
+      cases in publishing IETF stream RFCs.</t>
+    </section>
+  </middle>
+
+  <back>
+<references title="Informative References">
+<?rfc include="reference.RFC.2119"?>
+<?rfc include="reference.RFC.8174"?>
+</references>
+
+  </back>
+</rfc>
+
+
