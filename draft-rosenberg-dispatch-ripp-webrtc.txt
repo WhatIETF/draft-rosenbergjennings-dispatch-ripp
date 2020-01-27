@@ -1,0 +1,168 @@
+
+
+
+
+Network Working Group                                  J. Rosenberg, Ed.
+Internet-Draft                                                     Five9
+Intended status: Standards Track                        January 27, 2020
+Expires: July 30, 2020
+
+
+                            RIPP WebRTC Mode
+                draft-rosenberg-dispatch-ripp-inbound-00
+
+Abstract
+
+   The Real-Time Internet Peering Protocol (RIPP) defines a technique
+   for establishing, terminating and otherwise managing calls between
+   entities in differing administrative domains.  The RIPP Inbound
+   extension brings this to end clients, such as a browser.  However, it
+   defines a different technique for media that cannot directly use the
+   webRTC APIs, and require a change to them.  This specification
+   provides an extension to RIPP for webRTC compatibility, enabling
+   media to flow from browser to server as is done with RIPP, or from
+   browser to browser.  It also discusses techniques for sending e2e
+   encrypted media.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on July 30, 2020.
+
+Copyright Notice
+
+   Copyright (c) 2020 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+
+
+
+Rosenberg                 Expires July 30, 2020                 [Page 1]
+
+Internet-Draft                 RIPP WebRTC                  January 2020
+
+
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+1.  Terminology
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+2.  Introduction
+
+3.  Overview of Operation
+
+   Basic idea: The TG indicates that this compatibility mode is
+   supported on the TG.  The handler is also indicates that this mode is
+   supported.  The handler includes its own ICE candidates.  This means
+   we provide the ICE candidates at "registration" time and not before
+   the call.  This is necessary to facilitate the many call move and
+   other operations in RIPP-inbound.  This also means the browser needs
+   to keep them fresh all of the time, rather than just before the call
+   [[is this posible with current API??]].
+
+   Since the media is sent by DTLS-SRTP and not embedded as media chunks
+   in a client-to-server HTTPS connection, the browser includes its
+   fingerprint in the handler as well.
+
+   To initiate this compatibility mode for media, the server indicates
+   as such in the directive.  It can only put it in a directive if the
+   handler that is selected, supports the mode.  The directive includes
+   the ICE candidates from the peer.  This will trigger the client to
+   perform ICE and send media (which will be DTLS-SRTP).
+
+   RIPP itself doesnt convey the ICE candidates in the server to server
+   link, since its only through handler whih is static for a device and
+   not per-call.  So we'd either need to move them, develop a separate
+   way to convey them, or assume SIP or some other technique is used for
+   server to server calls.
+
+   Suggest we also require a well-known port for media, and we'll need
+   an RTP headr extension to convey the callID since its included inband
+   in RIPP.
+
+
+
+
+
+Rosenberg                 Expires July 30, 2020                 [Page 2]
+
+Internet-Draft                 RIPP WebRTC                  January 2020
+
+
+4.  IANA Considerations
+
+   No values are assigned in this document, no registries are created,
+   and there is no action assigned to the IANA by this document.
+
+5.  Security Considerations
+
+   This document introduces no new security considerations.  It is a
+   process document about changes to the rules for certain corner cases
+   in publishing IETF stream RFCs.
+
+6.  Informative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC3261]  Rosenberg, J., Schulzrinne, H., Camarillo, G., Johnston,
+              A., Peterson, J., Sparks, R., Handley, M., and E.
+              Schooler, "SIP: Session Initiation Protocol", RFC 3261,
+              DOI 10.17487/RFC3261, June 2002,
+              <https://www.rfc-editor.org/info/rfc3261>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+Author's Address
+
+   Jonathan Rosenberg (editor)
+   Five9
+   4000 Executive Parkway #400
+   San Ramon, CA  94583
+   US
+
+   Email: jdrosen@jdrosen.net
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Rosenberg                 Expires July 30, 2020                 [Page 3]
