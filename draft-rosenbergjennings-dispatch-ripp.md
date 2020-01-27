@@ -1660,8 +1660,10 @@ any time. The client can discover this by performing a GET against the
 URI and seeing a 404, however it is RECOMMENDED that the client
 instead perform a long lived GET to the /events resource on the TG
 URI. This returns a long running stream json containing events. The
-"handlerdestroyed" event MUST be sent by the server when the handler
-is destroyed. 
+"handler" event MUST be sent by the server when the handler
+is destroyed. This event indicates what happened to the handler
+("created", "modified" or "destroyed" along with the URI for the
+handler. 
 
 
 ## Handler Description Format
