@@ -1,0 +1,52 @@
+Real-Time Internet Peering Protocol (RIPP) BoF Proposal
+
+Suggested Chairs:
+?Cullen Jennings
+
+Agenda:
+1. Problem Statement [Jonathan R.] - 15mins
+2. High Level Protocol summary [ Jonathan R.] - 15mins
+3. Implementation Experiences at Google [Justin U.] - 15mins
+4. Freeswitch use cases and needs [Anthony M.] - 10mins
+5. Agenda review and decision [Cullen J.] - 30mins
+
+
+Description:
+Though extremely successful and deployed on massive scales, the
+Session Initiation Protocol (SIP) - as a 20 year old protocol - is
+showing its age. It is difficult to deploy SIP technologies into
+modern public cloud platforms. Its usage of raw IPs and ports, its
+load balancing techniques, and its state model, make it incompatible
+with services like global load balancers, autoscaling, service meshes,
+and so on.
+
+In addition, SIP envisioned call state only at endpoints
+and not in servers. However, in practice, there is widespread
+deployment of highly stateful servers. However, SIP did not properly
+specify the procedures needed to enable high reliability in the face
+of server failures, network disconnects, and so on. The state of the
+art in handling these problems has advanced significantly in the years
+since the publication of SIP, and this is making telecommunications
+systems less reliable than web applications.
+
+Finally, SIP has suffered from abuse for robocalling. STIR is working
+to address this, but more can be done. A new peering protocol is
+needed which is designed, out of the box, to ensure secure and
+authorized caller ID.
+
+Because of these limitations, SIP was not used in webRTC, and many
+products have built proprietary implementations ontop of HTTP. While
+this is fine for browser to server communications, it doesnt enable
+interoperable call establishment on server-to-server links (known
+today as SIP trunking or SIP peering), or from non-browser based
+phones and softclients to servers.
+
+To remedy this, a design team put together a draft specification
+called RIPP, which takes advantage of HTTP3 and QUIC to enable
+real-time communicatins over those protocols, without extending or
+changing them.
+
+The purpose of the BoF is to gain consensus on the formation of a
+working group to take the RIPP specifications as a starting point, and
+move forwards with standardization.
+
