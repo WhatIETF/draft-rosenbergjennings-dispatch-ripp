@@ -1919,6 +1919,13 @@ by a server, the server MUST generate a keepalive response. The
 keepalive MAY contain a nonce, and if so, the server MUST echo it in
 the response. 
 
+The client can obtain the current state of the call at any time by
+querying the call URI. The server MUST return a call description which
+includes the directive, call direction, calling and called parties,
+and the handler which is being used. This aspect of RIPP is essential
+for allowing clients to fail, recover, and re-obtain the state of the
+call. 
+
 ## Sending and Receiving Media
 
 Media is always associated with a call. Within a call, media has a
