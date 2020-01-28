@@ -262,7 +262,7 @@ across streams. This change has made it possible for HTTP to support
 real-time applications.
 
 This specification makes an assumption that
-[@I-D.ietf-quick-transport] will be widely implemented and deployed as
+[@I-D.ietf-quic-transport] will be widely implemented and deployed as
 a mainstream part of web-based software systems, but any extensions
 unique to the needs of VoIP will struggle to see widespread deployment.
 As a result, RIPP uses HTTP/3 [@I-D.ietf-quic-http], but is not an
