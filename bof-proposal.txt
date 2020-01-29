@@ -1,7 +1,9 @@
 Real-Time Internet Peering Protocol (RIPP) BoF Proposal
+v3@ietf.org
 
 Suggested Chairs:
-?Cullen Jennings
+Cullen Jennings
+Harald Alvestrand (?)
 
 Agenda:
 1. Problem Statement [Jonathan R.] - 15mins
@@ -18,28 +20,38 @@ showing its age. It is difficult to deploy SIP technologies into
 modern public cloud platforms. Its usage of raw IPs and ports, its
 load balancing techniques, and its state model, make it incompatible
 with services like global load balancers, autoscaling, service meshes,
-and so on.
+and so on. 
 
-In addition, SIP envisioned call state only at endpoints
-and not in servers. However, in practice, there is widespread
-deployment of highly stateful servers. However, SIP did not properly
-specify the procedures needed to enable high reliability in the face
-of server failures, network disconnects, and so on. The state of the
-art in handling these problems has advanced significantly in the years
-since the publication of SIP, and this is making telecommunications
-systems less reliable than web applications.
+As such, the goal of this BoF is to create a new protocol that 
+enables signaling and real-time interactive voice and video to operate natively
+ontop of modern web platforms. This means that:
 
-Finally, SIP has suffered from abuse for robocalling. STIR is working
-to address this, but more can be done. A new peering protocol is
-needed which is designed, out of the box, to ensure secure and
-authorized caller ID.
+1. It needs to use HTTP URLs for addressing, and media and signaling
+can be sent in this way. 
 
-Because of these limitations, SIP was not used in webRTC, and many
-products have built proprietary implementations ontop of HTTP. While
-this is fine for browser to server communications, it doesnt enable
-interoperable call establishment on server-to-server links (known
-today as SIP trunking or SIP peering), or from non-browser based
-phones and softclients to servers.
+2. It follows the HTTP connectionless model, in that, clients can refresh
+their state and manipulate the state, and can do so from any different
+number of clients.
+
+3. It aligns signaling and media state into a single piece of state,
+allowing clients to manipulate it with HTTP rpc operations
+
+4. It utilizes modern http cloud security techniques, including OAuth,
+server-side TLS, and so on.
+
+5. It utilizes modern techniques for load balancing and high availability
+used in scaled web cloud environments
+
+6. It makes use of modern http rpc techniques and data formatting
+
+7. It follows modern web practice and makes security features mandatory,
+not optional (including e2e media encryption, though the media flows HbH)
+
+
+The recent efforts to standardize HTTP3 using QUIC, make it possible to 
+achieve the above without unacceptable latency and HOL blocking, inherent
+in TCP-based protocols.
+
 
 To remedy this, a design team put together a draft specification
 called RIPP, which takes advantage of HTTP3 and QUIC to enable
@@ -47,6 +59,8 @@ real-time communicatins over those protocols, without extending or
 changing them.
 
 The purpose of the BoF is to gain consensus on the formation of a
-working group to take the RIPP specifications as a starting point, and
-move forwards with standardization.
+working group to work on this problem. A strong goal is to 
+build code and specifications simultaneously. 
+
+
 
