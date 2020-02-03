@@ -1,70 +1,58 @@
-%%%
+---
+title: Real Time Internet Peering Protocol
+# abbrev: CoAP-Block
+docname: draft-dispatch-rosenbergjennings-ripp-05
+date: 2020-02-07
+# date: 2012-01
+# date: 2012
 
-#
-# RIPP - real time internet peering protocol
-#
-# Generation tool chain:
-#   mmark (https://github.com/miekg/mmark)
-#   xml2rfc (http://xml2rfc.ietf.org/)
-#
+# stand_alone: true
+
+ipr: trust200902
+area: Applications
+wg: dispatch
+kw: Internet-Draft
+cat: std
+
+coding: us-ascii
+pi:    # can use array (if all yes) or hash here
+#  - toc
+#  - sortrefs
+#  - symrefs
+  toc: yes
+  sortrefs:   # defaults to yes
+  symrefs: yes
+
+author:
+    -
+      ins: J. Rosenberg
+      name: Jonathan Rosenberg
+      org: Five9
+      email: jdrosen@jdrosen.net
+    -
+      ins: C. Jennings
+      name: Cullen Jennings
+      org: Cisco Systems
+      email: fluffy@iii.ca
+    -
+      ins: A. Minessale
+      name: Anthony Minessale
+      org: Signalwire/Freeswitch
+      email: anthm@signalwire.com
+    -
+      ins: J. Livingood 
+      name: Jason Livingood 
+      org: Comcast
+      email: jason_livingood@comcast.com
+    -
+      ins: J. Uberti 
+      name: Justin Uberti 
+      org: Google
+      email: justin@uberti.name
 
 
-Title = "Real Time Internet Peering Protocol"
-abbrev = "RIPP"
-category = "std"
-docName = "draft-rosenbergjennings-dispatch-ripp-04"
-ipr= "trust200902"
-area = "Internet"
-keyword = ["RTP"]
+--- abstract
 
-[pi]
-symrefs = "yes"
-sortrefs = "yes"
-
-[[author]]
-initials = "J."
-surname = "Rosenberg"
-fullname = "Jonathan Rosenberg"
-organization = "Five9"
-  [author.address]
-  email = "jdrosen@jdrosen.net"
-
-[[author]]
-initials = "C."
-surname = "Jennings"
-fullname = "Cullen Jennings"
-organization = "Cisco Systems"
-  [author.address]
-  email = "fluffy@iii.ca"
-
-[[author]] 
-initials = "A." 
-surname = "Minessale" 
-fullname = "Anthony Minessale" 
-organization = "Signalwire/Freeswitch"
-  [author.address]
-  email = "anthm@signalwire.com"
-
-[[author]] 
-initials = "J." 
-surname = "Livingood" 
-fullname = "Jason Livingood" 
-organization = "Comcast"
-  [author.address]
-  email = "jason_livingood@comcast.com"
-
-[[author]] 
-initials = "J." 
-surname = "Uberti" 
-fullname = "Justin Uberti" 
-organization = "Google"
-  [author.address]
-  email = "justin@uberti.name"
- 
-
-%%%
-
-.# Abstract
 
 This document specifies the Realtime Internet Peering Protocol
 (RIPP). RIPP is used to provide peering of voice and video
@@ -85,9 +73,17 @@ challenges with traditional SIP peering and voice trunking. Since it
 runs over HTTP/3, it works through NATs and firewalls with the same
 ease as HTTP does.
 
-{mainmatter}
 
-# Introduction
+--- middle
+
+#Introduction    
+
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+"SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+document are to be interpreted as described in RFC 2119, BCP 14
+{{RFC2119}} and indicate requirement levels for compliant CoAP
+implementations.
 
 ## Background
 
@@ -149,7 +145,7 @@ to call into the telephone network for customer support.
 
 In order for these applications to connect to the PSTN, or to connect
 voice and video services in other domains, they typically
-deploy Session Initiation Protocol (SIP) [@RFC3261] based servers -
+deploy Session Initiation Protocol (SIP) {{!RFC3261}} based servers -
 SBCs, SIP proxies, and softswitches, to provide this
 interconnection. Unfortunately, SIP based applications cannot make use
 of the many capabilities these cloud platforms afford to HTTP based
@@ -251,10 +247,10 @@ receive a response. There as no way for a server to asynchronously
 send information to the client in an easy fashion.
 
 
-HTTP2 [@RFC7540] addressed the second of these with the introduction of pushes
+HTTP2 {{?RFC7540}} addressed the second of these with the introduction of pushes
 and long running requests. However, its usage of TCP was still a
 problem. This has finally been addressed with the arrival of QUIC
-[@I-D.ietf-quic-transport] and
+{{!I-D.ietf-quic-transport}} and
 HTTP/3. QUIC is based on UDP, and it introduces the concept of a stream
 that can be set up with zero RTT. These streams are carried over UDP,
 and though are still reliable, there is no head of line blocking
@@ -262,10 +258,10 @@ across streams. This change has made it possible for HTTP to support
 real-time applications.
 
 This specification makes an assumption that
-[@I-D.ietf-quic-transport] will be widely implemented and deployed as
+{{!I-D.ietf-quic-transport}} will be widely implemented and deployed as
 a mainstream part of web-based software systems, but any extensions
 unique to the needs of VoIP will struggle to see widespread deployment.
-As a result, RIPP uses HTTP/3 [@I-D.ietf-quic-http], but is not an
+As a result, RIPP uses HTTP/3 {{!I-D.ietf-quic-http}}, but is not an
 extension to it. This means that RIPP inherits the benefits of
 classic HTTP deployments - easy load balancing, easy expansion and
 contraction of clusters (including auto-scaling), standard techniques
@@ -276,7 +272,7 @@ so on.
 
 The document is broadly split into two parts - explanatory and
 normative materials. The explanatory text is non-normative, and
-contains no [@RFC2119] language. Much of this text is meant to help
+contains no {{!RFC2119}} language. Much of this text is meant to help
 readers familiar with SIP, understand how SIP concepts translate (or
 don't) into RIPP. These sections include Requirements (#req), Design
 Approaches (#design), Terminology (#terminology), Reference
@@ -518,7 +514,7 @@ verifying parties and reject any calls that omit a passport. In cases
 where the RIPP client is an end device, it still inserts a passport -
 but uses a self-signed certificate. 
 
-[TODO: Need to check we have all the things needed in an Passport.]
+TODO: Need to check we have all the things needed in an Passport.
 
 ## Calls Separate from Connections
 
@@ -851,7 +847,7 @@ OAuth flow to obtain an OAuth token for the other.
 
 In this use case, there is a video conferencing device. The end user
 wishes to join a meeting hosted on a meeting provider. The meeting
-would be modeled as a call to number@domain, where the number is the meeting
+would be modeled as a call to number at domain, where the number is the meeting
 number used for the meeting. Using the domain, the video endpoint
 would construct the RIPP root URI and then query to discover the
 available provider TGs. This request will not be authenticated,
@@ -886,8 +882,8 @@ to do everything else.
 One of these URI is a URI which can be used to kickoff a web-based
 OAuth flow for generating an OAuth token. The other is the RIPP root
 URI. Both of these are well-known URI as defined by
-[@I-D.nottingham-rfc5785bis]. Consequently, they are constructed
-using the syntax defined in [@I-D.nottingham-rfc5785bis].
+{{!I-D.nottingham-rfc5785bis}}. Consequently, they are constructed
+using the syntax defined in {{!I-D.nottingham-rfc5785bis}}.
 
 Their IANA registrations can be found in (#iana).
 
@@ -1078,7 +1074,7 @@ present, the default can be assumed for all parameters.
 
 Codec support is signaled using boolean parameters, with names that
 match the media subtypes defined in the IANA protocol registry for
-media types [@RFC4855].
+media types {{!RFC4855}}.
 
 The handler also contains meta-data which aids in handler
 selection and identification. These include device nicknames, image
@@ -1163,14 +1159,14 @@ just on the capability components):
    "id" : "1",
    "param-sets": [
         {
-	 "H264" : 1,
-	 "max-width" : 3840
-	 "max-height" : 2160	 
+     "H264" : 1,
+     "max-width" : 3840
+     "max-height" : 2160     
         },
         {
-	 "AV1" : 1,
-	 "max-width" : 1920
-	 "max-height" : 1080
+     "AV1" : 1,
+     "max-width" : 1920
+     "max-height" : 1080
         }
    ]
 }   
@@ -1235,7 +1231,7 @@ The client can initiate calls by POSTing
 to /calls on the TG URI.  The request contains:
 
 1. the target phone number or email address,
-2. A passport [@RFC8225] identifying the calling identity,
+2. A passport {{!RFC8225}} identifying the calling identity,
 3. The handler ID from which the call is being placed,
 
 in the body.
@@ -1338,7 +1334,7 @@ peering. These include transfer-and-takeback.
 ## Media Exchange
 
 Media exchange makes use of webtransport over HTTP3
-[@I-D.vvv-webtransport-http3] when it is available, falling back to
+{{!I-D.vvv-webtransport-http3}} when it is available, falling back to
 media byways when it is not.
 
 Once the call signaling is complete, the client attempts to open a
@@ -1376,7 +1372,7 @@ chunk, chooses an existing GET transaction and sends the chunk as a
 response body. The client, upon receiving this, immediately opens a
 new GET transaction to replace the one it just received a response
 on. Consequently, a client always maintains 20 open GET
-transactions. [TODO: need to tune this and justify its value]. In
+transactions. TODO: need to tune this and justify its value. In
 addition, the client will include an acknowledgement media chunk along
 with its next media chunk in a PUT request. 
 
@@ -1535,14 +1531,13 @@ This section contains the normative specification of RIPP.
 
 A RIPP client that wishes to obtain an OAuth token to a specified
 authority through a web interface MUST construct a well known RIPP
-Oauth URI using [@I-D.nottingham-rfc5785bis] with ripp-oauth as the
+Oauth URI using {{!I-D.nottingham-rfc5785bis}} with ripp-oauth as the
 well-known service, and use this to trigger the Oauth process.
 
 Similarly, a RIPP client wishing to access the resources defined in
 this specification, against an authority (such as example.com) MUST
-use [@I-D.nottingham-rfc5785bis] with ripp as the well-known
-service. The result is the
-RIPP root URI for that authority.
+use {{!I-D.nottingham-rfc5785bis} with ripp as the well-known
+service. The result is the RIPP root URI for that authority.
 
 ## TG Discovery
 
@@ -1724,7 +1719,7 @@ rate of the later it depends on. Default is 1.
 
 * slay: max numer of spacial layers. Each sub layer has 2 times the number
   of pixel of layer it depended on. Default
-  is 1. [[ Open issue 2 times or 4 times ]] 
+  is 1. (Open issue 2 times or 4 times)
 
 This specification defines the following capability set for both audio
 and video codecs.
@@ -1741,8 +1736,8 @@ each one, the value of the parameter is either 1 or 0, 1 indicating
 support, and 0 indicating no support.
 
 All RIPP implementations MUST support G.711 and Opus audio codecs. All
-implementations MUST support [@RFC2833] for DTMF, and MUST support
-[@RFC3389] for comfort noise, for both sending and receiving.
+implementations MUST support {{!RFC2833}} for DTMF, and MUST support
+{{!RFC3389}} for comfort noise, for both sending and receiving.
 
 In general, an entity MUST declare a capability for any characteristic
 of a call which may result in a proposal being unacceptable to the
@@ -1769,11 +1764,11 @@ an E164 address, it SHOULD be a subset of the addresses defined in the
 "destinations" parameter of the TG description. A server MUST reject a
 request whose target does not so match.  RIPP also supports private
 trunks, in which case the destination MUST take the form
-<number>@<domain>, where the number is a non-E164 number scoped to be
+`<number>@<domain>`, where the number is a non-E164 number scoped to be
 valid within the domain. This form MUST NOT be used for E.164 numbers.
 
 The passport URI parameter MUST be a valid passport as defined by
-[@RFC8224]. It identifies the calling party and includes signature
+{{!RFC8224}}. It identifies the calling party and includes signature
 information which can be used to verify it. If the client has no
 official certificate proving ownership of the identity in the
 passport, it MUST generate a self-signed certificate and use that. The
@@ -1813,7 +1808,7 @@ MUST include the URI for the handler that was used, MUST include the
 call direction, and MUST include the from and to participants. 
 
 The server MAY include HTTP session cookies in the 201 response. The
-client MUST support receipt of cookies [@RFC6265]. It MUST be prepared
+client MUST support receipt of cookies {{!RFC6265}}. It MUST be prepared
 to receive up to 10 cookies per call. The client MUST destroy all
 cookies associated with a call, when the call has ended. Cookies MUST
 NOT be larger the 5K. 
@@ -2195,15 +2190,13 @@ gateway function in order to maximize interoperability.
 
 # RAML API {#syntax}
 
-<{{ripp-api.raml}}
-
 
 # IANA Considerations {#iana}
 
 ## Registration of Well-Known Web Services
 
 This specification defines two new well-known web services as defined
-in [@I-D.nottingham-rfc5785bis] - ripp and ripp-oauth.
+in {{!I-D.nottingham-rfc5785bis}} - ripp and ripp-oauth.
 
 ## RIPP
 
@@ -2226,12 +2219,18 @@ Specification document(s): This specification.
 Status:  Permanent.
 
 
+# IANA Considerations
+
+
 # Security Considerations
+
 
 # Acknowledgements
 
 Thanks you for review and edits to: Giacomo Vacca. Thank you to Mo
 Zanaty for greatly simplifying the advertisement  proposal for video. 
 
-{backmatter}
+
+
+
 
