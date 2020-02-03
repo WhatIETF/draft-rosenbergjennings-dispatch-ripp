@@ -1913,7 +1913,8 @@ MUST be rejected by the server.
 
 migrate: sent from server to client, it instructs the client to
 terminate the media and signaling byways, and re-establish them. The
-event MAY contain an IP address to which the media and signaling
+event MAY contain an URI which replaces the current call URI, thus
+indicating the destination to which the media and signaling
 byways will be established.
 
 hello: This event is always initiated by the client. When received
@@ -2136,12 +2137,13 @@ client MAY choose to migrate the call to a different server at any
 time.
 
 To perform the migration, the client MUST end all outstanding HTTP
-transactions for the call (signaling and media byways). It MUST
-initiate a new signaling byway for the call, 
-targeting the IP if it has been specified by the server. This may
+transactions for the call (signaling and media byways). If the server
+provided a URI in the migrate event, the client MUST treat this as a
+new URI for the call, replacing the prior one. Then, It MUST
+initiate a new signaling byway towards the call URI. This may
 require the client to open a new HTTP connection, if it does not
 already have one open to the target. The client MUST NOT include a
-session cookie in the POST to /events. This is essential to cause the
+session cookie in the PUT to /events. This is essential to cause the
 request to route to a different instance behind the load balancer,
 which will typically be configured with sticky routing. The server MAY
 respond to this request with a new session cookie. The client MUST NOT
