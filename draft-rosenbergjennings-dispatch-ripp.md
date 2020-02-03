@@ -1,6 +1,6 @@
 ---
 title: Real Time Internet Peering Protocol
-# abbrev: CoAP-Block
+# abbrev: RIPP
 docname: draft-dispatch-rosenbergjennings-ripp-05
 date: 2020-02-07
 # date: 2012-01
@@ -1391,38 +1391,42 @@ client always performs the migration action. It can be instructed by
 the server to do so via a migrate event. Or, it can decide to do so
 on its own. 
 
-The migration process is meant to support two key use cases - one is
-when a traditional HTTP load balancer is used, and the other is when
-there is none. 
-
-In the first case, there is a traditional HTTP load balancer fronting a
-farm of HTTP origin servers. The migration operation is meant to move
-the call from one origin server to another. A server can request this
-in order to shed load. Or, it can request this because it has been
-instructed to shut down and restart, perhaps to perform a software
-upgrade, or to migrate its docker container to another node. It is
-assumed that some kind of shared database is used to store any state
-that needs to be passed between origin servers. RIPP is designed such
-that the only state which needs to be stored is call state, and not
-media state.
+In the first case, there is a traditional HTTP load balancer fronting
+a farm of HTTP origin servers, and the goal is to move the call to any
+one of the available instances behind the load balancer. A server can
+request this in order to shed load. Or, it can request this because it
+has been instructed to shut down and restart, perhaps to perform a
+software upgrade, or to migrate its docker container to another
+node. It is assumed that some kind of shared database is used to store
+any state that needs to be passed between origin servers. RIPP is
+designed such that the only state which needs to be stored is call
+state, and not media state.
 
 In this use case, if the origin server handling the call does not
 desire to receive new calls (including the one it is about to
 migrate), it would be removed from the pool of available servers in
 the load balancer. The means for this is outside the scope of this
 specification. Then, the origin server sends a migration event to the
-client. 
+client. No additional attributes are provided in the event. 
 
-This event can contain an IP to which the transaction should be
-directed. When an HTTP load balancer is used, this is not needed. This
-will cause the client to end its current signaling and media
-transactions. It then re-opens them, reusing the existing connection it has
-to the HTTP load balancer. Crucially, these new requests do NOT
-contain any session cookies. This means that the HTTP load balancer
-will send the new request to one of the available origin servers,
-which will no longer include the one which is being brought down for
-maintenance. The responses will contain session cookies in order to
-enable sticky session routing for subsequent requests for this call.
+Alternatively, the server may wish to migrate the call to a specific
+instance amongst those in the cluster. One exampe of that is to move
+calls from specific users or domains to specific hosts for reason of
+isolation. There are many other reasons. In this case, the event from
+the server will contain a URI which replaces the existing call URI,
+since it has a different authority component. 
+
+Either way, the receipt of this event will cause the client to end its
+current signaling and media transactions. It then initiates new
+transactions for signaling (the GET and PUT to /events), and media
+(the GET and PUTs to /media), targeting the URI for the call or the
+replacement URI for the call if the server provided one in the migrate
+event. Crucially, these new requests do NOT contain any session
+cookies. This means that the HTTP load balancer will send the new
+request to one of the available origin servers, which will no longer
+include the one which is being brought down for maintenance. The
+responses will contain session cookies in order to enable sticky
+session routing for subsequent requests for this call.
 
 Whether client or server initiated, when a migration occurs, both
 sides buffer their media packets and signaling events until the byways
@@ -1435,7 +1439,8 @@ Note that the call state persists independently of the state of the HTTP
 connection or the byways embedded in HTTP transactions, so that a
 reconnect can continue where things left off. This is why, when a call
 migrates, the client does NOT initiate a new call, it opens signaling
-and media byways to the existing call URI it already has.
+and media byways to the existing call URI it already has, or the new
+one that replaces it.
 
 ## Non-Graceful Migration
 
