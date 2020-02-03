@@ -1313,6 +1313,53 @@ between the applications.
 
   </section>
 
+  <section title="Intra-Company Migration">
+
+    <t>In this use case, a company has deployed a chat product from
+    a first vendor, and wishes to switch to a second one. The goal
+    is to enable a transition period in which there is no disruption
+    to the experiences of users.</t>
+
+    <t>To accomplish this, the admin would perform a POST to the
+    instance URI which is to be replaced (call this the old
+    instance). This POST would indicate that a migration is to occur,
+    and specify the URI of the instance to which users should move
+    (call this the new instance).</t>
+
+    <t>All clients will - either immediately through the event stream,
+    or later upon login, see that a migration is desired. Each client
+    then proceeds to retrieve its own profile from the new instance,
+    and set any fields which can be set, mirroring those from the old
+    instance. </t>
+
+    <t>The client continues to access the old instance, for any chats
+    that are there Each chat object supports a feature wherein, like
+    the instance itself, it can be migrated. The first client to
+    perform a GET against this chat for any reason, would create a new
+    "matching" chat on the new instance, add the participants from the
+    old chat to the new chat (which may trigger profile creations or
+    new invitations), sets the name and policies to match the old
+    one. Once the new chat is created, the cient would POST to the old
+    chat, indicating that this chat has migrated and passing the URI
+    for the new one. </t>
+
+    <t>Any other clients which later access the old chat, will see
+    that it has been migrated. They learn the new chat URI, and
+    perform any desired operations on the new one. Should a client try
+    and perform an operation on the old one the server would reject it
+    In essence, the old one is closed for write operatios but open for
+    read. This allows the clients to render the chat as a single UI
+    element, even though its ocntent is - under the hood - split
+    between two sources. This enables the migration to be completely
+    transparent to users, minus any feature losses or gains that come
+    from the migration. </t>
+
+    <t>After a suitable period of time has elapsed (say, six months),
+    the old instance can be shut down for reads. </t>
+
+
+  </section>
+
   <section title="Inter-Company Chat">
 
     <t>ANother use case is when company A has deployed a team chat
