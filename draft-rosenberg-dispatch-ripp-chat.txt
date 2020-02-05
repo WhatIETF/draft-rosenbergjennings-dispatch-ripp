@@ -90,11 +90,12 @@ Table of Contents
    9.  Interoperability Use Cases  . . . . . . . . . . . . . . . . .  24
      9.1.  Consumer to Consumer Interop  . . . . . . . . . . . . . .  24
      9.2.  Intra-Domain Enterprise Chat Federation . . . . . . . . .  25
-     9.3.  Inter-Company Chat  . . . . . . . . . . . . . . . . . . .  26
-   10. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  26
-   11. Security Considerations . . . . . . . . . . . . . . . . . . .  26
-   12. Informative References  . . . . . . . . . . . . . . . . . . .  26
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  27
+     9.3.  Intra-Company Migration . . . . . . . . . . . . . . . . .  26
+     9.4.  Inter-Company Chat  . . . . . . . . . . . . . . . . . . .  26
+   10. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  27
+   11. Security Considerations . . . . . . . . . . . . . . . . . . .  27
+   12. Informative References  . . . . . . . . . . . . . . . . . . .  27
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  28
 
 1.  Terminology
 
@@ -103,7 +104,6 @@ Table of Contents
    "OPTIONAL" in this document are to be interpreted as described in BCP
    14 [RFC2119] [RFC8174] when, and only when, they appear in all
    capitals, as shown here.
-
 
 
 
@@ -1402,12 +1402,61 @@ Rosenberg                Expires August 10, 2020               [Page 25]
 Internet-Draft                  RIPP Chat                  February 2020
 
 
-9.3.  Inter-Company Chat
+9.3.  Intra-Company Migration
+
+   In this use case, a company has deployed a chat product from a first
+   vendor, and wishes to switch to a second one.  The goal is to enable
+   a transition period in which there is no disruption to the
+   experiences of users.
+
+   To accomplish this, the admin would perform a POST to the instance
+   URI which is to be replaced (call this the old instance).  This POST
+   would indicate that a migration is to occur, and specify the URI of
+   the instance to which users should move (call this the new instance).
+
+   All clients will - either immediately through the event stream, or
+   later upon login, see that a migration is desired.  Each client then
+   proceeds to retrieve its own profile from the new instance, and set
+   any fields which can be set, mirroring those from the old instance.
+
+   The client continues to access the old instance, for any chats that
+   are there Each chat object supports a feature wherein, like the
+   instance itself, it can be migrated.  The first client to perform a
+   GET against this chat for any reason, would create a new "matching"
+   chat on the new instance, add the participants from the old chat to
+   the new chat (which may trigger profile creations or new
+   invitations), sets the name and policies to match the old one.  Once
+   the new chat is created, the cient would POST to the old chat,
+   indicating that this chat has migrated and passing the URI for the
+   new one.
+
+   Any other clients which later access the old chat, will see that it
+   has been migrated.  They learn the new chat URI, and perform any
+   desired operations on the new one.  Should a client try and perform
+   an operation on the old one the server would reject it In essence,
+   the old one is closed for write operatios but open for read.  This
+   allows the clients to render the chat as a single UI element, even
+   though its ocntent is - under the hood - split between two sources.
+   This enables the migration to be completely transparent to users,
+   minus any feature losses or gains that come from the migration.
+
+   After a suitable period of time has elapsed (say, six months), the
+   old instance can be shut down for reads.
+
+9.4.  Inter-Company Chat
 
    ANother use case is when company A has deployed a team chat app, and
    company B has also deployed an app.  Consider the case where they are
    both actually using the same service (though the solution works even
    if they arent)
+
+
+
+
+Rosenberg                Expires August 10, 2020               [Page 26]
+
+Internet-Draft                  RIPP Chat                  February 2020
+
 
    The interop starts when a user from company A adds a user in company
    B, by adding their email address to a group chat.  This causes an
@@ -1451,16 +1500,19 @@ Internet-Draft                  RIPP Chat                  February 2020
               DOI 10.17487/RFC6914, April 2013,
               <https://www.rfc-editor.org/info/rfc6914>.
 
-
-
-Rosenberg                Expires August 10, 2020               [Page 26]
-
-Internet-Draft                  RIPP Chat                  February 2020
-
-
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+
+
+
+
+
+Rosenberg                Expires August 10, 2020               [Page 27]
+
+Internet-Draft                  RIPP Chat                  February 2020
+
 
 Author's Address
 
@@ -1509,4 +1561,8 @@ Author's Address
 
 
 
-Rosenberg                Expires August 10, 2020               [Page 27]
+
+
+
+
+Rosenberg                Expires August 10, 2020               [Page 28]

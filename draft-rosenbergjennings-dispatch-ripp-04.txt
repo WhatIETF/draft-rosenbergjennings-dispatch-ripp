@@ -5,14 +5,14 @@
 Network Working Group                                       J. Rosenberg
 Internet-Draft                                                     Five9
 Intended status: Standards Track                             C. Jennings
-Expires: July 30, 2020                                     Cisco Systems
+Expires: August 7, 2020                                    Cisco Systems
                                                             A. Minessale
                                                    Signalwire/Freeswitch
                                                             J. Livingood
                                                                  Comcast
                                                                J. Uberti
                                                                   Google
-                                                        January 27, 2020
+                                                        February 4, 2020
 
 
                   Real Time Internet Peering Protocol
@@ -53,9 +53,9 @@ Status of This Memo
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                 [Page 1]
+Rosenberg, et al.        Expires August 7, 2020                 [Page 1]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
    Internet-Drafts are draft documents valid for a maximum of six months
@@ -63,7 +63,7 @@ Internet-Draft                    RIPP                      January 2020
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on July 30, 2020.
+   This Internet-Draft will expire on August 7, 2020.
 
 Copyright Notice
 
@@ -82,22 +82,23 @@ Copyright Notice
 
 Table of Contents
 
-   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   4
      1.1.  Background  . . . . . . . . . . . . . . . . . . . . . . .   4
      1.2.  Problem Statement . . . . . . . . . . . . . . . . . . . .   5
      1.3.  Core Concept  . . . . . . . . . . . . . . . . . . . . . .   6
-   2.  Structure of this Document  . . . . . . . . . . . . . . . . .   7
+   2.  Structure of this Document  . . . . . . . . . . . . . . . . .   8
    3.  Solution Requirements . . . . . . . . . . . . . . . . . . . .   8
    4.  Design Approaches . . . . . . . . . . . . . . . . . . . . . .   9
      4.1.  Client-Server, not Multi-Element  . . . . . . . . . . . .   9
-     4.2.  Client-Server, not Agent-to-Agent . . . . . . . . . . . .   9
+     4.2.  Client-Server, not Agent-to-Agent . . . . . . . . . . . .  10
      4.3.  Signaling and Media Together  . . . . . . . . . . . . . .  10
-     4.4.  URIs not IPs  . . . . . . . . . . . . . . . . . . . . . .  10
+     4.4.  URIs not IPs  . . . . . . . . . . . . . . . . . . . . . .  11
      4.5.  OAuth not MTLS or private IP  . . . . . . . . . . . . . .  11
-     4.6.  TLS not SRTP or SIPS  . . . . . . . . . . . . . . . . . .  11
+     4.6.  TLS not SRTP or SIPS  . . . . . . . . . . . . . . . . . .  12
      4.7.  Authenticated CallerID  . . . . . . . . . . . . . . . . .  12
-     4.8.  Calls Separate from Connections . . . . . . . . . . . . .  12
+     4.8.  Calls Separate from Connections . . . . . . . . . . . . .  13
      4.9.  Path Validation, not ICE  . . . . . . . . . . . . . . . .  13
+     4.10. HTTP Load Balancing, not Proxies  . . . . . . . . . . . .  13
    5.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .  13
    6.  Reference Architecture  . . . . . . . . . . . . . . . . . . .  14
    7.  Domain Model  . . . . . . . . . . . . . . . . . . . . . . . .  16
@@ -105,15 +106,15 @@ Table of Contents
      8.1.  Enterprise Voice Trunking . . . . . . . . . . . . . . . .  17
      8.2.  BYO Voice for CCaaS . . . . . . . . . . . . . . . . . . .  19
      8.3.  Inter-Carrier Voice Peering . . . . . . . . . . . . . . .  19
-     8.4.  Video Endpoint to Meetings Provider . . . . . . . . . . .  20
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                 [Page 2]
+Rosenberg, et al.        Expires August 7, 2020                 [Page 2]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
+     8.4.  Video Endpoint to Meetings Provider . . . . . . . . . . .  20
    9.  Overview of Operation . . . . . . . . . . . . . . . . . . . .  20
      9.1.  Bootstrap . . . . . . . . . . . . . . . . . . . . . . . .  20
      9.2.  Login . . . . . . . . . . . . . . . . . . . . . . . . . .  21
@@ -128,7 +129,7 @@ Internet-Draft                    RIPP                      January 2020
      10.1.  Bootstrapping  . . . . . . . . . . . . . . . . . . . . .  35
      10.2.  TG Discovery . . . . . . . . . . . . . . . . . . . . . .  35
      10.3.  TG Construction  . . . . . . . . . . . . . . . . . . . .  36
-     10.4.  Consumer TG Registration . . . . . . . . . . . . . . . .  36
+     10.4.  Consumer TG Registration . . . . . . . . . . . . . . . .  37
      10.5.  Handler Registration and Lifecycle Management. . . . . .  37
      10.6.  Handler Description Format . . . . . . . . . . . . . . .  38
      10.7.  Call Establishment . . . . . . . . . . . . . . . . . . .  40
@@ -140,35 +141,40 @@ Internet-Draft                    RIPP                      January 2020
        10.10.3.  Client Media handling . . . . . . . . . . . . . . .  46
        10.10.4.  Server Media Handling . . . . . . . . . . . . . . .  46
      10.11. Connection and Byway Lifecycle Management  . . . . . . .  47
-     10.12. Retrieving Call List . . . . . . . . . . . . . . . . . .  47
-     10.13. Graceful Call Migration  . . . . . . . . . . . . . . . .  47
-     10.14. Ungraceful Call Migration  . . . . . . . . . . . . . . .  48
+     10.12. Graceful Call Migration  . . . . . . . . . . . . . . . .  47
+     10.13. Ungraceful Call Migration  . . . . . . . . . . . . . . .  48
    11. SIP Gateway . . . . . . . . . . . . . . . . . . . . . . . . .  48
      11.1.  RIPP to SIP  . . . . . . . . . . . . . . . . . . . . . .  49
      11.2.  SIP to RIPP  . . . . . . . . . . . . . . . . . . . . . .  49
    12. RAML API  . . . . . . . . . . . . . . . . . . . . . . . . . .  49
-   13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  52
-     13.1.  Registration of Well-Known Web Services  . . . . . . . .  52
-     13.2.  RIPP . . . . . . . . . . . . . . . . . . . . . . . . . .  52
-     13.3.  RIPP-Oauth . . . . . . . . . . . . . . . . . . . . . . .  52
-   14. Security Considerations . . . . . . . . . . . . . . . . . . .  52
-   15. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  52
-   16. Informative References  . . . . . . . . . . . . . . . . . . .  52
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  54
+   13. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  49
+     13.1.  Registration of Well-Known Web Services  . . . . . . . .  49
+     13.2.  RIPP . . . . . . . . . . . . . . . . . . . . . . . . . .  49
+     13.3.  RIPP-Oauth . . . . . . . . . . . . . . . . . . . . . . .  49
+   14. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  49
+   15. Security Considerations . . . . . . . . . . . . . . . . . . .  49
+   16. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .  49
+   17. References  . . . . . . . . . . . . . . . . . . . . . . . . .  50
+     17.1.  Normative References . . . . . . . . . . . . . . . . . .  50
+     17.2.  Informative References . . . . . . . . . . . . . . . . .  51
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  51
+
+
+
+
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                 [Page 3]
+
+Internet-Draft                    RIPP                     February 2020
+
 
 1.  Introduction
 
-
-
-
-
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                 [Page 3]
-
-Internet-Draft                    RIPP                      January 2020
-
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in [RFC2119].
 
 1.1.  Background
 
@@ -211,20 +217,20 @@ Internet-Draft                    RIPP                      January 2020
    providers offer do not extend to applications which merely use these
    platforms for virtual machines.
 
+
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                 [Page 4]
+
+Internet-Draft                    RIPP                     February 2020
+
+
    A more recent technology are service meshes, such as Istio, which
    utilize sidecar HTTP proxies to facilitate inter-service
    communications.  These systems come with robust control planes which
    enable additional routing features, such as canary deploys,
    percentage based routing, and so on.
-
-
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                 [Page 4]
-
-Internet-Draft                    RIPP                      January 2020
-
 
 1.2.  Problem Statement
 
@@ -268,19 +274,20 @@ Internet-Draft                    RIPP                      January 2020
    implementations have waited for calls to drain, and then performed
    automated restarts.  This almost always requires a timeout (typically
    an hour or more) at which point calls longer than that get dropped.
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                 [Page 5]
+
+Internet-Draft                    RIPP                     February 2020
+
+
    The result is that rolling software upgrades have caused some amount
    of call drops, and can take an extremely long time to propagate
    through a cluster.  This was acceptable perhaps in the era of
    traditional client-server applications where software upgrades were
    infrequent.  Modern software systems perform updates many times a
    day, which is incompatible with SIP-based systems.
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                 [Page 5]
-
-Internet-Draft                    RIPP                      January 2020
-
 
    All of this has created a barrier to entry, particularly for
    applications such as websites which are not expert in VoIP
@@ -323,6 +330,14 @@ Internet-Draft                    RIPP                      January 2020
    are peers - application protocols running ontop of the Internet.  In
    the intervening years, HTTP evolved to become a general purpose
    substrate for delivering Internet applications.  It is fair to say
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                 [Page 6]
+
+Internet-Draft                    RIPP                     February 2020
+
+
    that today, almost all applications users consume over the Internet
    run over HTTP (with obvious exception of inter-server email - much
    client to server email is also now run over HTTP).
@@ -330,13 +345,6 @@ Internet-Draft                    RIPP                      January 2020
    This resulted - in essence - a rift between telecommunications
    technologies and web technologies.  Both had their own protocol
    stacks, their own sets of products and services, and so on.
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                 [Page 6]
-
-Internet-Draft                    RIPP                      January 2020
-
 
    RIPP is an attempt to seal this rift by reunifying web and
    telecommunications technologies, with web as the "winner".
@@ -375,6 +383,17 @@ Internet-Draft                    RIPP                      January 2020
    encryption, authentication, and denial-of-service prevention, and so
    on.
 
+
+
+
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                 [Page 7]
+
+Internet-Draft                    RIPP                     February 2020
+
+
 2.  Structure of this Document
 
    The document is broadly split into two parts - explanatory and
@@ -385,14 +404,6 @@ Internet-Draft                    RIPP                      January 2020
    Design Approaches Section 4, Terminology Section 5, Reference
    Architecture Section 6, Deployment Examples Section 8.  The remainder
    of the document specifies normative procedures.
-
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                 [Page 7]
-
-Internet-Draft                    RIPP                      January 2020
-
 
 3.  Solution Requirements
 
@@ -431,6 +442,14 @@ Internet-Draft                    RIPP                      January 2020
    deployment by PSTN termination and origination providers who do not
    utilize cloud platforms
 
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                 [Page 8]
+
+Internet-Draft                    RIPP                     February 2020
+
+
    REQ10: The solution shall require authentication and encryption, with
    no opportunity to disable them.  Furthermore, it will require secure
    callerID, with no provision for insecure callerID
@@ -441,14 +460,6 @@ Internet-Draft                    RIPP                      January 2020
 
    REQ13: The solution must support secure caller ID out of the gate and
    not inherit any of the insecure techniques used with SIP
-
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                 [Page 8]
-
-Internet-Draft                    RIPP                      January 2020
-
 
    REQ14: The solution shall include mandatory-to-implement provisioning
    operations for cases where there is a customer-provider relationship
@@ -484,6 +495,17 @@ Internet-Draft                    RIPP                      January 2020
    requires no additional specification and is therefore not discussed
    by RIPP.
 
+
+
+
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                 [Page 9]
+
+Internet-Draft                    RIPP                     February 2020
+
+
 4.2.  Client-Server, not Agent-to-Agent
 
    SIP is based fundamentally on the User Agent, and describes the
@@ -498,13 +520,6 @@ Internet-Draft                    RIPP                      January 2020
    client.  But to use them, RIPP must abide by HTTP/3 rules, and that
    means distinct roles for clients and servers.  Clients must always
    initiate connections and send requests, not servers.
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                 [Page 9]
-
-Internet-Draft                    RIPP                      January 2020
-
 
    To handle this, RIPP specifies that the domain associated with the
    caller implements the RIPP client, and the domain receiving the calls
@@ -538,6 +553,15 @@ Internet-Draft                    RIPP                      January 2020
    over unique HTTP transactions (and thus unique QUIC streams) - to
    transmit media.
 
+
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 10]
+
+Internet-Draft                    RIPP                     February 2020
+
+
 4.4.  URIs not IPs
 
    SIP is full of IP addresses and ports.  They are contained in Via
@@ -554,14 +578,6 @@ Internet-Draft                    RIPP                      January 2020
 
    HTTP of course does not suffer from this.  In general, "addressing",
    to the degree it exists at all, is done with HTTP URIs.  RIPP follows
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 10]
-
-Internet-Draft                    RIPP                      January 2020
-
-
    this pattern.  RIPP - as a web application that uses HTTP/3 - does
    not use or convey any IP addresses or ports.  Furthermore, the client
    never provides addressing to the server - all traffic is sent in the
@@ -594,6 +610,14 @@ Internet-Draft                    RIPP                      January 2020
    the server and client roles.  For any one call, the entity placing
    the call acts as the client, and the one receiving it, as the server.
    To handle the common case where there is an asymmetric business
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 11]
+
+Internet-Draft                    RIPP                     February 2020
+
+
    relationship (one entity being a customer of the other), RIPP
    facilitates a simple provisioning process by which the customer can
    use an OAuth token to provision credentials for usage in the reverse
@@ -610,14 +634,6 @@ Internet-Draft                    RIPP                      January 2020
    Unfortunately, these have not been widely deployed.  The E2E nature
    of SRTP has made keying an ongoing challenge, with multiple
    technologies developed over the years.  SIP itself has seen greater
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 11]
-
-Internet-Draft                    RIPP                      January 2020
-
-
    uptake of TLS transport, but this remains uncommon largely due to the
    commonality of private IP peering as an alternative.
 
@@ -651,6 +667,13 @@ Internet-Draft                    RIPP                      January 2020
    which SIP enables one domain to initiate calls to another domain
    without authenticated caller ID.
 
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 12]
+
+Internet-Draft                    RIPP                     February 2020
+
+
    With RIPP, we remedy this by requiring the client and servers to
    implement STIR.  RIPP clients must either insert a signed passport,
    or pass one through.  Similarly, RIPP servers must act as verifying
@@ -658,21 +681,13 @@ Internet-Draft                    RIPP                      January 2020
    the RIPP client is an end device, it still inserts a passport - but
    uses a self-signed certificate.
 
-   [TODO: Need to check we have all the things needed in an Passport.]
+   TODO: Need to check we have all the things needed in an Passport.
 
 4.8.  Calls Separate from Connections
 
    In SIP, there is a fuzzy relationship between calls and connections.
    In some cases, connection failures cause call terminations, and vice
    a versa.
-
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 12]
-
-Internet-Draft                    RIPP                      January 2020
-
 
    HTTP, on the other hand, very clearly separates the state of the
    resource being manipulated, with the state of the HTTP connection
@@ -696,6 +711,10 @@ Internet-Draft                    RIPP                      January 2020
    utilize ICE and has no specific considerations for NAT traversal, as
    these are handled by HTTP/3 itself.
 
+4.10.  HTTP Load Balancing, not Proxies
+
+   (enter text here)
+
 5.  Terminology
 
    This specification follows the terminology of HTTP/3, but adds the
@@ -703,6 +722,14 @@ Internet-Draft                    RIPP                      January 2020
 
    Terminal Group (TG): A container for calls between a client and
    server.  A TG is identified by a URI, hosted on the server.  A TG
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 13]
+
+Internet-Draft                    RIPP                     February 2020
+
+
    acts as a unit of policy and capabilities, including rules such as
    rate limits, allowed phone numbers, and so on.  The acronym is a nod
    to its circuit switched predecessor, the Trunk Group.
@@ -722,13 +749,6 @@ Internet-Draft                    RIPP                      January 2020
    to configure its provider with credentials and URI needed to enable
    the provider, acting as a client, to connect to its server.
    Consequently, RIPP provides a facility for this.
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 13]
-
-Internet-Draft                    RIPP                      January 2020
-
 
    Provider: The administrative entity that provides communications
    services to the customer.
@@ -761,29 +781,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 14]
+Rosenberg, et al.        Expires August 7, 2020                [Page 14]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
                                                     +------------+
@@ -837,9 +837,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 15]
+Rosenberg, et al.        Expires August 7, 2020                [Page 15]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
    It is anticipated that an entity implementing the server role will
@@ -893,9 +893,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 16]
+Rosenberg, et al.        Expires August 7, 2020                [Page 16]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
    A handler is a representation of a physical hardware device, such as
@@ -949,9 +949,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 17]
+Rosenberg, et al.        Expires August 7, 2020                [Page 17]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
                    Customer A                Provider B
@@ -1005,9 +1005,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 18]
+Rosenberg, et al.        Expires August 7, 2020                [Page 18]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
    No further configuration or setup is required.  Using RIPP, the IP
@@ -1061,17 +1061,17 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 19]
+Rosenberg, et al.        Expires August 7, 2020                [Page 19]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
 8.4.  Video Endpoint to Meetings Provider
 
    In this use case, there is a video conferencing device.  The end user
    wishes to join a meeting hosted on a meeting provider.  The meeting
-   would be modeled as a call to number@domain, where the number is the
-   meeting number used for the meeting.  Using the domain, the video
+   would be modeled as a call to number at domain, where the number is
+   the meeting number used for the meeting.  Using the domain, the video
    endpoint would construct the RIPP root URI and then query to discover
    the available provider TGs.  This request will not be authenticated,
    because the video endpoint has no relationship with the meeting
@@ -1117,9 +1117,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 20]
+Rosenberg, et al.        Expires August 7, 2020                [Page 20]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
 9.2.  Login
@@ -1173,9 +1173,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 21]
+Rosenberg, et al.        Expires August 7, 2020                [Page 21]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
    An enterprise trunk allowing outbound calls to any number worldwide,
@@ -1229,9 +1229,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 22]
+Rosenberg, et al.        Expires August 7, 2020                [Page 22]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
    Notice how the directionality is "outbound" - this is because a TG
@@ -1261,7 +1261,8 @@ Internet-Draft                    RIPP                      January 2020
    The client can use the /consumertgs to modify this later (with a PUT
    to the URI in the "uri" parameter), DELETE it, or create another.
 
-   Once created the consumer TG will persist indefinitely.
+   The server holds onto the consumer TG URI, until such time as the
+   consumer is no longer receiving service from the provider.
 
 9.5.  Handler Registration
 
@@ -1284,10 +1285,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 23]
+Rosenberg, et al.        Expires August 7, 2020                [Page 23]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
    can discover this by subscribing to handler events, as described
@@ -1310,7 +1310,7 @@ Internet-Draft                    RIPP                      January 2020
 
    For each source or sink, there are one or more parameter sets that
    can be specified.  Each parameter in the parameter set has a name and
-   a value.  The value is always an integer from 0 to 2**31 - 1.
+   a value.  The value is always an integer from - 2*63 +1 to 2*63 - 1.
    Parameters are typically standardized and registered with IANA.  The
    registration indicates the meaning of the values - their units and
    allowed values.  Most importantly, the parameter is always expressed
@@ -1341,9 +1341,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 24]
+Rosenberg, et al.        Expires August 7, 2020                [Page 24]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
     POST https://comcast.net/.well-known/ripp/providertgs/123/handlers
@@ -1397,9 +1397,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 25]
+Rosenberg, et al.        Expires August 7, 2020                [Page 25]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
 201 Created
@@ -1453,26 +1453,26 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 26]
+Rosenberg, et al.        Expires August 7, 2020                [Page 26]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
-                       "cam": {
-                          "id" : "1",
-                          "param-sets": [
-                               {
-                                "H264" : 1,
-                                "max-width" : 3840
-                                "max-height" : 2160
-                               },
-                               {
-                                "AV1" : 1,
-                                "max-width" : 1920
-                                "max-height" : 1080
-                               }
-                          ]
-                       }
+                         "cam": {
+                            "id" : "1",
+                            "param-sets": [
+                                 {
+                              "H264" : 1,
+                              "max-width" : 3840
+                              "max-height" : 2160
+                                 },
+                                 {
+                              "AV1" : 1,
+                              "max-width" : 1920
+                              "max-height" : 1080
+                                 }
+                            ]
+                         }
 
    A video phone that could support opus and H.264 at 720p @ 30 fps
    might look like:
@@ -1509,9 +1509,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 27]
+Rosenberg, et al.        Expires August 7, 2020                [Page 27]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
                         {
@@ -1565,9 +1565,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 28]
+Rosenberg, et al.        Expires August 7, 2020                [Page 28]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
 9.6.  Call Establishment
@@ -1575,7 +1575,8 @@ Internet-Draft                    RIPP                      January 2020
    The client can initiate calls by POSTing to /calls on the TG URI.
    The request contains:
 
-   1.  the target phone number or email address,
+   1.  the target phone number or email address (TODO: need to define
+       normalization procedures),
 
    2.  A passport [RFC8225] identifying the calling identity,
 
@@ -1620,10 +1621,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 29]
+Rosenberg, et al.        Expires August 7, 2020                [Page 29]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
     201 Created
@@ -1660,6 +1660,14 @@ Internet-Draft                    RIPP                      January 2020
 
    Note how the audio directive has selected Opus.
 
+   In the (unlikely) case that this directive cannot be followed (due,
+   perhaps to a unexpected change in capabilities as a result of a GPU
+   or CPU spike), the client updates its handler with updated
+   capabilities.  To tell the server to create a new proposal for the
+   call, it performs a POST against the existing call URI, this time
+   without parameters, and the server will respond with an updated call
+   description, including the new directive.
+
    Another important consequence of this design is that media packets
    must be self-describing, without any kind of reference to a specific
    call.  This is because the directive is constructed from the handler
@@ -1667,36 +1675,30 @@ Internet-Draft                    RIPP                      January 2020
    This means RIPP does not use dynamic payload types to identify
    codecs.
 
-   Typically the response will also include a session cookie, bound to
-   the call, to facilitate sticky session routing in HTTP proxies.  This
-   allows all further signalling and media to reach the same RIPP server
-   that handled the initial request, while facilitating failover should
-   that server go down.
 
 
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 30]
+Rosenberg, et al.        Expires August 7, 2020                [Page 30]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
    Once a call has been created, a pair of long-lived HTTP transactions
-   is initiated from the client to the server for purposes of
-   signalling.  One is a GET to the /events resource on the call URI,
-   retrieving call events from the server.  The other is a PUT to the
-   same /events URI, used by the cient to send call events to its peer.
-   The combination of these two is called the signalling byway.  HTTP/3
-   ensures zero RTT for setup of these transactions.
+   is initiated from the client to the server for purposes of signalling
+   (this only happens if the call was created successfully and the
+   directive could be followed).  One is a GET to the /events resource
+   on the call URI, retrieving call events from the server.  The other
+   is a PUT to the same /events URI, used by the cient to send call
+   events to its peer.  The combination of these two is called the
+   signalling byway.  HTTP/3 ensures zero RTT for setup of these
+   transactions.
 
    Signaling commands are encoded into the signalling byway using
    streaming JSON in both directions.  Each JSON object encodes an event
    and its parameters.  A set of events common to all deployments of
    RIPP are defined for proceeding, alerting, answered, declined, ended,
-   migrate, moved, and hello.  An additional set are defined targeted at
-   server to server cases, such as SIP trunking and inter-server
-   peering.  These include transfer-and-takeback.
+   migrate, moved, ping, and pong.  An additional set are defined
+   targeted at server to server cases, such as SIP trunking and inter-
+   server peering.  These include transfer-and-takeback.
 
 9.7.  Media Exchange
 
@@ -1728,16 +1730,15 @@ Internet-Draft                    RIPP                      January 2020
    zero-RTT.  When the server receives the request and associated media
    chunk, it immediately sends a 200 OK response, includes a payload
    containing an acknowledgement media chunk, thus completing the
-   transaction.  Since HTTP3 will use a different QUIC stream for each
 
 
 
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 31]
+Rosenberg, et al.        Expires August 7, 2020                [Page 31]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
+   transaction.  Since HTTP3 will use a different QUIC stream for each
    HTTP transaction, each of these transactions occurs on a different
    stream, and therefore there is no HOL blocking between media packets.
 
@@ -1749,9 +1750,9 @@ Internet-Draft                    RIPP                      January 2020
    chunk as a response body.  The client, upon receiving this,
    immediately opens a new GET transaction to replace the one it just
    received a response on.  Consequently, a client always maintains 20
-   open GET transactions.  [TODO: need to tune this and justify its
-   value].  In addition, the client will include an acknowledgement
-   media chunk along with its next media chunk in a PUT request.
+   open GET transactions.  TODO: need to tune this and justify its
+   value.  In addition, the client will include an acknowledgement media
+   chunk along with its next media chunk in a PUT request.
 
    The use of acknowledgements provides the ability for clients and
    servers to elect to retransmit media as well as to generate detailed
@@ -1768,47 +1769,49 @@ Internet-Draft                    RIPP                      January 2020
    server to do so via a migrate event.  Or, it can decide to do so on
    its own.
 
-   The migration process is meant to support two key use cases - one is
-   when a traditional HTTP load balancer is used, and the other is when
-   there is none.
-
    In the first case, there is a traditional HTTP load balancer fronting
-   a farm of HTTP origin servers.  The migration operation is meant to
-   move the call from one origin server to another.  A server can
-   request this in order to shed load.  Or, it can request this because
-   it has been instructed to shut down and restart, perhaps to perform a
-   software upgrade, or to migrate its docker container to another node.
-   It is assumed that some kind of shared database is used to store any
-   state that needs to be passed between origin servers.  RIPP is
-   designed such that the only state which needs to be stored is call
-   state, and not media state.
+   a farm of HTTP origin servers, and the goal is to move the call to
+   any one of the available instances behind the load balancer.  A
+   server can request this in order to shed load.  Or, it can request
+   this because it has been instructed to shut down and restart, perhaps
+   to perform a software upgrade, or to migrate its docker container to
+   another node.  It is assumed that some kind of shared database is
+   used to store any state that needs to be passed between origin
+   servers.  RIPP is designed such that the only state which needs to be
+   stored is call state, and not media state.
 
    In this use case, if the origin server handling the call does not
    desire to receive new calls (including the one it is about to
    migrate), it would be removed from the pool of available servers in
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 32]
-
-Internet-Draft                    RIPP                      January 2020
-
-
    the load balancer.  The means for this is outside the scope of this
    specification.  Then, the origin server sends a migration event to
-   the client.
+   the client.  No additional attributes are provided in the event.
 
-   This event can contain an IP to which the transaction should be
-   directed.  When an HTTP load balancer is used, this is not needed.
-   This will cause the client to end its current signaling and media
-   transactions.  It then re-opens them, reusing the existing connection
-   it has to the HTTP load balancer.  Crucially, these new requests do
-   NOT contain any session cookies.  This means that the HTTP load
-   balancer will send the new request to one of the available origin
-   servers, which will no longer include the one which is being brought
-   down for maintenance.  The responses will contain session cookies in
-   order to enable sticky session routing for subsequent requests for
-   this call.
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 32]
+
+Internet-Draft                    RIPP                     February 2020
+
+
+   Alternatively, the server may wish to migrate the call to a specific
+   instance amongst those in the cluster.  One exampe of that is to move
+   calls from specific users or domains to specific hosts for reason of
+   isolation.  There are many other reasons.  In this case, the event
+   from the server will contain a URI which replaces the existing call
+   URI, since it has a different authority component.
+
+   Either way, the receipt of this event will cause the client to end
+   its current signaling and media transactions.  It then initiates new
+   transactions for signaling (the GET and PUT to /events), and media
+   (the GET and PUTs to /media), targeting the URI for the call or the
+   replacement URI for the call if the server provided one in the
+   migrate event.  Crucially, these new requests do NOT contain any
+   session cookies.  This means that the HTTP load balancer will send
+   the new request to one of the available origin servers, which will no
+   longer include the one which is being brought down for maintenance.
+   The responses will contain session cookies in order to enable sticky
+   session routing for subsequent requests for this call.
 
    Whether client or server initiated, when a migration occurs, both
    sides buffer their media packets and signaling events until the
@@ -1821,7 +1824,8 @@ Internet-Draft                    RIPP                      January 2020
    HTTP connection or the byways embedded in HTTP transactions, so that
    a reconnect can continue where things left off.  This is why, when a
    call migrates, the client does NOT initiate a new call, it opens
-   signaling and media byways to the existing call URI it already has.
+   signaling and media byways to the existing call URI it already has,
+   or the new one that replaces it.
 
 9.9.  Non-Graceful Migration
 
@@ -1838,17 +1842,18 @@ Internet-Draft                    RIPP                      January 2020
    The first failure case is that of a closure of the actual HTTP
    connection, either gracefully or non-gracefully.  In this case, the
    client retries the connection with an exponential backoff, the
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 33]
+
+Internet-Draft                    RIPP                     February 2020
+
+
    backoff timer being another parameter which can be specified in the
    TG.  Once the connection is re-established, it initiates the
    signaling and media byways, and will reuse any session cookies it had
    previously received.
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 33]
-
-Internet-Draft                    RIPP                      January 2020
-
 
    RIPP also requires clients to send keepalive signaling events
    periodically for each call, and the server responds to these events.
@@ -1893,19 +1898,19 @@ Internet-Draft                    RIPP                      January 2020
    would mean that the roles were reversed - a particular agent was
    acting as a server to receive a call, and then as a client to send it
    downstream.  If that agent fails, the upstream client would detect
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 34]
+
+Internet-Draft                    RIPP                     February 2020
+
+
    this, and migrate to a different agent.  This new agent - which has
    no in-memory state for the call - would look up the state of the call
    in some shared database, see where it was routed (in this case, to
    the TG), and retrieve the session cookie which had also been stored
    after the call was established.  This new agent then re-establishes
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 34]
-
-Internet-Draft                    RIPP                      January 2020
-
-
    the media and signaling byways, perhaps even opening a fresh HTTP
    connection to do so.  The use of the session cookie enables the
    byways to be re-established to the server's origin server that has
@@ -1937,8 +1942,8 @@ Internet-Draft                    RIPP                      January 2020
 
    Similarly, a RIPP client wishing to access the resources defined in
    this specification, against an authority (such as example.com) MUST
-   use [I-D.nottingham-rfc5785bis] with ripp as the well-known service.
-   The result is the RIPP root URI for that authority.
+   use [@!I-D.nottingham-rfc5785bis} with ripp as the well-known
+   service.  The result is the RIPP root URI for that authority.
 
 10.2.  TG Discovery
 
@@ -1949,18 +1954,18 @@ Internet-Draft                    RIPP                      January 2020
    in the list.  It is RECOMMENDED that the origin server specify that
    this document can be cached.
 
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 35]
+
+Internet-Draft                    RIPP                     February 2020
+
+
    If the client receives a document and there is only one TG URI, it
    uses this for subsequent outound calls to the server.  If there is
    more than one, the client SHOULD request user input if it has such a
    facility.  If not, it SHOULD select the first.
-
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 35]
-
-Internet-Draft                    RIPP                      January 2020
-
 
    At the end of this process, the client will have a TG URI.  It MUST
    retrieve the value of this URI, and use it to process calls.
@@ -1991,18 +1996,27 @@ Internet-Draft                    RIPP                      January 2020
       retrying the connection.  If a retry fails again, the client will
       try again but this time wait twice the value of this timer, then
       four times, eight times, etc.  The value of this parameter is an
-      integer, in units of milliseconds.  Its default is 2000.
+      integer, in units of milliseconds.  Its default is 2000, and the
+      client MUST NOT honor values less than 2000, rounding up to 2000
+      instead.
 
    o  media-timeout: If a client fails to receive media ack packets
       after the timeout specified in this parameter, it considers the
       call dead and initiates migration.  The value of this parameter is
       an integer, in units of milliseconds.  Its default is 5000.
 
-   OPEN ISSUE: Do we want to support cases where RIPP is implemented by
-   SBCs which are not fronted by a web load balancer?  In such a case,
-   we'll want something similar to RFC3263, wherein the handler
-   description contains the set of IP addresses for the cluster and we
-   define load balancing behavior.
+   OPEN ISSUE: Need to consider realistic ways to incrementally
+   introduce this into carrier networks without requiring massive
+   forklifts of new load balancers, anycast and so on.
+
+
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 36]
+
+Internet-Draft                    RIPP                     February 2020
+
 
 10.4.  Consumer TG Registration
 
@@ -2010,14 +2024,6 @@ Internet-Draft                    RIPP                      January 2020
    MUST register a consumer TG.  To do that, it MUST initiate an HTTPS
    PUT request towards /consumertgs on the TG URI.  This request MUST be
    authenticated by the origin server.  The request MUST include a TG
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 36]
-
-Internet-Draft                    RIPP                      January 2020
-
-
    description object in the body.  This object is specified in
    Section Section 12.
 
@@ -2028,15 +2034,6 @@ Internet-Draft                    RIPP                      January 2020
    associated behaviors.  This URI MUST be reachable by the provider.
    The URI MUST utilize HTTPS, and MUST utilize a domain name for the
    authority component.
-
-   In addition, the client MUST mint a bearer token to be used by the
-   provider when performing operations against the consumer TG.  The
-   bearer token MAY be constructed in any way desired by the client.
-   The token and URI SHOULD remain valid for at least one day, however,
-   a security problem MAY cause them to be invalidated.  The client MUST
-   refresh the registration at least one hour in advance of the
-   expiration, in order to ensure no calls are delayed.  The token MUST
-   be unique for each unique provider TG.
 
    The destinations and origins elements in the consumer TG description
    MAY be included.  If they are included, the destinations MUST be a
@@ -2066,17 +2063,17 @@ Internet-Draft                    RIPP                      January 2020
 
    The server MAY time out or otherwise destroy the handler resource at
    any time.  The client can discover this by performing a GET against
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 37]
-
-Internet-Draft                    RIPP                      January 2020
-
-
    the URI and seeing a 404, however it is RECOMMENDED that the client
    instead perform a long lived GET to the /events resource on the TG
    URI.  This returns a long running stream json containing events.  The
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 37]
+
+Internet-Draft                    RIPP                     February 2020
+
+
    "handler" event MUST be sent by the server when the handler is
    destroyed.  This event indicates what happened to the handler
    ("created", "modified" or "destroyed" along with the URI for the
@@ -2121,17 +2118,17 @@ Internet-Draft                    RIPP                      January 2020
    o  ptime: max duration of media encoded in single packet in ms.
       Default is 30.
 
-
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 38]
-
-Internet-Draft                    RIPP                      January 2020
-
-
    This specification defines the following parameters for cam and
    screen:
+
+
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 38]
+
+Internet-Draft                    RIPP                     February 2020
+
 
    o  fps: The maximum frame rate for video.  This is specified in
       frames per second.  The default is 30.
@@ -2149,8 +2146,8 @@ Internet-Draft                    RIPP                      January 2020
       the rate of the later it depends on.  Default is 1.
 
    o  slay: max numer of spacial layers.  Each sub layer has 2 times the
-      number of pixel of layer it depended on.  Default is 1. [[ Open
-      issue 2 times or 4 times ]]
+      number of pixel of layer it depended on.  Default is 1.  (Open
+      issue 2 times or 4 times)
 
    This specification defines the following capability set for both
    audio and video codecs.
@@ -2176,14 +2173,17 @@ Internet-Draft                    RIPP                      January 2020
 
    It is RECOMMENDED that the handler description include a nickname,
    img, vendor and device-id elements.  The device-id element, when
-   present, MUST be globally unique in space and time.
+   present, MUST be a UUID.
 
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 39]
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 39]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
 10.7.  Call Establishment
@@ -2202,9 +2202,10 @@ Internet-Draft                    RIPP                      January 2020
    If an E164 address, it SHOULD be a subset of the addresses defined in
    the "destinations" parameter of the TG description.  A server MUST
    reject a request whose target does not so match.  RIPP also supports
-   private trunks, in which case the destination MUST take the form @,
-   where the number is a non-E164 number scoped to be valid within the
-   domain.  This form MUST NOT be used for E.164 numbers.
+   private trunks, in which case the destination MUST take the form
+   "<number>@<domain>", where the number is a non-E164 number scoped to
+   be valid within the domain.  This form MUST NOT be used for E.164
+   numbers.
 
    The passport URI parameter MUST be a valid passport as defined by
    [RFC8224].  It identifies the calling party and includes signature
@@ -2219,8 +2220,7 @@ Internet-Draft                    RIPP                      January 2020
    so desires.  If it decides to create the call, the server MUST return
    a 201 Created response, and MUST include a Location header field
    containing an HTTPS URI which identifies the call that has been
-   created.  The call URI MUST be globally unique in time and space,
-   with randomness properties identical to a type 4 UUID.
+   created.  The call URI MUST contain a UUID.
 
    The server MUST construct a directive, which tells the client what
    media to send.  This directive MUST include zero or more mic
@@ -2237,9 +2237,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 40]
+Rosenberg, et al.        Expires August 7, 2020                [Page 40]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
    Similarly, the server chooses which of its sources will send, and to
@@ -2253,12 +2253,6 @@ Internet-Draft                    RIPP                      January 2020
    response, MUST include the URI for the handler that was used, MUST
    include the call direction, and MUST include the from and to
    participants.
-
-   The server MAY include HTTP session cookies in the 201 response.  The
-   client MUST support receipt of cookies [RFC6265].  It MUST be
-   prepared to receive up to 10 cookies per call.  The client MUST
-   destroy all cookies associated with a call, when the call has ended.
-   Cookies MUST NOT be larger the 5K.
 
    If the request is otherwise valid, but the target of the call cannot
    be reached through the TG URI, it MUST generate a 404 response.  If
@@ -2290,20 +2284,20 @@ Internet-Draft                    RIPP                      January 2020
    proceeding event.  For any call, a server MUST support multiple
    signaling byways, in which case it MUST send all call events on all
    open reverse signaling byways, and MUST accept commands from any
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 41]
-
-Internet-Draft                    RIPP                      January 2020
-
-
    forward one.  A server MUST NOT terminate the call if there are no
    signaling byways established; rather it utilizes timeouts as
    described below.
 
    Each event is a JSON object embedded in the signalling stream, which
    conveys the event as perceived by the client or server.  The event
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 41]
+
+Internet-Draft                    RIPP                     February 2020
+
+
    MUST contain a direction field, which indicates whether the event was
    sent from client to server, or server to client.  It also MUST
    contains a timestamp field, representing universal time, which
@@ -2319,9 +2313,9 @@ Internet-Draft                    RIPP                      January 2020
 
    In addition, the client MUST immediately establish 20 reverse media
    byways by initiating 20 GET requests to the /media resource on the
-   call URI.  These requests MUST NOT contain a body.  The media byways
-   are required before call answer to support early media.  For any
-   call, a server MUST support up to 30 reverse media byways open.
+   call URI.  The media byways are required before call answer to
+   support early media.  For any call, a server MUST support up to 30
+   reverse media byways open.
 
 10.9.  Basic Call State Management
 
@@ -2347,16 +2341,18 @@ Internet-Draft                    RIPP                      January 2020
    declined: Passed from server to client, indicating that the call was
    rejected by the user.
 
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 42]
-
-Internet-Draft                    RIPP                      January 2020
-
-
    failed: Passed from server to client, indicating that the call was
    rejected by server or downstream servers, not by the user, but due to
    some kind of error condition.
+
+
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 42]
+
+Internet-Draft                    RIPP                     February 2020
+
 
    noanswer: Passed from server to client, indicating that the call was
    delivered to the receiving user but was not answered, and the server
@@ -2370,13 +2366,13 @@ Internet-Draft                    RIPP                      January 2020
 
    migrate: sent from server to client, it instructs the client to
    terminate the media and signaling byways, and re-establish them.  The
-   event MAY contain an IP address to which the media and signaling
-   byways will be established.
+   event MAY contain an URI which replaces the current call URI, thus
+   indicating the destination to which the media and signaling byways
+   will be established.
 
-   hello: This event is always initiated by the client.  When received
-   by a server, the server MUST generate a keepalive response.  The
-   keepalive MAY contain a nonce, and if so, the server MUST echo it in
-   the response.
+   ping: This event is always initiated by the client.  When received by
+   a server, the server MUST generate a pong response.  The ping MAY
+   contain a nonce, and if so, the server MUST echo it in the pong
 
    The client can obtain the current state of the call at any time by
    querying the call URI.  The server MUST return a call description
@@ -2405,9 +2401,13 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 43]
+
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 43]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
 10.10.1.  The Media Chunk Format
@@ -2461,9 +2461,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 44]
+Rosenberg, et al.        Expires August 7, 2020                [Page 44]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
       set true on chunks that are part of an I Frame.  Default value is
@@ -2517,9 +2517,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 45]
+Rosenberg, et al.        Expires August 7, 2020                [Page 45]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
 10.10.3.  Client Media handling
@@ -2573,9 +2573,9 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 46]
+Rosenberg, et al.        Expires August 7, 2020                [Page 46]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
 10.11.  Connection and Byway Lifecycle Management
@@ -2608,15 +2608,7 @@ Internet-Draft                    RIPP                      January 2020
    Note that it is the sole responsibility of the client to make sure
    byways are re-established if they fail unexpectedly.
 
-10.12.  Retrieving Call List
-
-   A client MAY initiate a GET request against the /calls resource in
-   the TG.  The server MUST return a body with the list of all calls
-   which currently exist on the server.  This is just a list of call
-   URI.  This is useful for a client which restarts and wishes to
-   rebuild its view of call state.
-
-10.13.  Graceful Call Migration
+10.12.  Graceful Call Migration
 
    A server MAY initiate a call migration at any time for a specific
    call.  To do so, it MUST send a migration event to the client over
@@ -2625,26 +2617,28 @@ Internet-Draft                    RIPP                      January 2020
    server at any time.
 
    To perform the migration, the client MUST end all outstanding HTTP
-   transactions for the call (signaling and media byways).  It MUST
+   transactions for the call (signaling and media byways).  If the
+   server provided a URI in the migrate event, the client MUST treat
+   this as a new URI for the call, replacing the prior one.  Then, It
+   MUST initiate a new signaling byway towards the call URI.  This may
+   require the client to open a new HTTP connection, if it does not
+   already have one open to the target.  The client MUST NOT include a
+   session cookie in the PUT to /events.  This is essential to cause the
+   request to route to a different instance behind the load balancer,
+   which will typically be configured with sticky routing.  The server
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 47]
+Rosenberg, et al.        Expires August 7, 2020                [Page 47]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
-   initiate a new signaling byway for the call, targeting the IP if it
-   has been specified by the server.  This may require the client to
-   open a new HTTP connection, if it does not already have one open to
-   the target.  The client MUST NOT include a session cookie in the POST
-   to /events.  This is essential to cause the request to route to a
-   different instance behind the load balancer, which will typically be
-   configured with sticky routing.  The server MAY respond to this
-   request with a new session cookie.  The client MUST NOT initiate
-   forward or reverse media byways until the client receives response
-   headers to the signaling byway creation.  This is to enable session
-   cookies to be included in these requests for sticky routing.
+   MAY respond to this request with a new session cookie.  The client
+   MUST NOT initiate forward or reverse media byways until the client
+   receives response headers to the signaling byway creation.  This is
+   to enable session cookies to be included in these requests for sticky
+   routing.
 
    The client SHOULD cache all media that the client wishes to transmit,
    but was unable to do so during the migration.  The media MUST then be
@@ -2652,7 +2646,7 @@ Internet-Draft                    RIPP                      January 2020
    ensures there is no packet loss (though there will be jitter) during
    the migration period.
 
-10.14.  Ungraceful Call Migration
+10.13.  Ungraceful Call Migration
 
    If the origin server or HTTP load balancer fails unexpectedly, this
    is handled by the client.  If the client (1) receives a reset on the
@@ -2662,6 +2656,8 @@ Internet-Draft                    RIPP                      January 2020
    initiate a migration as defined in the prior section.
 
 11.  SIP Gateway
+
+   (move to SIP document)
 
    RIPP is designed to be easy to gateway from SIP.  The expectation is
    that RIPP will be implemented in SBCs and softswitches.  A SIP to
@@ -2685,9 +2681,13 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 48]
+
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 48]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
 11.1.  RIPP to SIP
@@ -2696,167 +2696,7 @@ Internet-Draft                    RIPP                      January 2020
 
 12.  RAML API
 
-#%RAML 1.0
----
-title: RIPP
-baseUri: http://ripp.example.net/{version}
-version: v1
-protocols: [ HTTPS ]
-securedBy: [ oauth_2_0 ]
-securitySchemes:
-  oauth_2_0: !include securitySchemes/oauth_2_0.raml
-
-types:
-    InboundEndpoint:
-        type: object
-        properties:
-            consumerTrunkURI: string
-            consumerToken: string
-    Event:
-        type: object
-        properties:
-            name:
-                enum: [ alerting, accepted, rejected, failed, tnt, migrate, end,open-reverse ]
-            direction:
-                enum: [c2s, s2c]
-            sequence number:
-                type: number
-            timestamp:
-                type: number
-            ended:
-                type: boolean
-            timeStamp:
-                type: datetime
-            tntDestination:
-                type: string
-                note: only in events with name tnt
-            migrateToURl:
-                type: string
-                note: only in events with name migrate
-     Advertisement:
-        type object
-        properties:
-            max-bitrate: number
-            max-samplerate: number
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 49]
-
-Internet-Draft                    RIPP                      January 2020
-
-
-            max-channels: number
-            non-e164: boolean
-            force-cbr: boolean
-            tnt: boolean
-    Frame:
-        seqNumOffset: number
-        dataLen: number
-        data: string
-    FrameAck:
-        seqNum: number
-    BywayPreamble:
-        baseSeqNum: number
-        baseTime: number
-        frameTime: number
-        codec:
-            enum: [ opus, g711, dtmf, cn, ack ]
-     BywayMedia:
-        mediaFrames: array
-
-
-/trunks:
-   /{trunkID}:
-      /consumerTrunk:
-        put:
-            description: Set the URI and security token for consumer trunk URI
-            securedBy: [oauth_2_0]
-      /capAdv:
-        get:
-            description: Get the Capability Advertisement for this trunk
-            securedBy: [oauth_2_0]
-            responses:
-                200:
-                    body:
-                         application/json:
-                            type: Advertisement
-      /calls:
-        post:
-            queryParameters:
-              target:
-            securedBy: [oauth_2_0]
-            description: Create a new call. Returns a Call URI
-            responses:
-                202:
-
-
-
-/call:
-    /{callID}:
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 50]
-
-Internet-Draft                    RIPP                      January 2020
-
-
-        /prevEvent:
-            get:
-                description: Retreive the previous event from server
-                responses:
-                    200:
-                        body:
-                            application/json:
-                                type: Event
-        /event:
-            get:
-                description: Wait for next event then retreive the most recent event from server
-                responses:
-                    200:
-                        body:
-                            application/json:
-                                type: Event
-            put:
-                description: Tell server about recent event
-                body:
-                    application/json:
-                        type: Event
-                responses:
-                    200:
-        /media-forward:
-            post:
-                 description: Starts an infinite flow of media frames from client to server
-                 body:
-                    application/octet-stream:
-                        type: BywayFlow
-                 responses:
-                    200:
-                        application/octet-stream:
-                            type: BywayFlow
-        /media-reverse:
-            post:
-                 description: Starts an infinite flow of media frames from server to client
-                 body:
-                    application/octet-stream:
-                        type: BywayFlow
-                 responses:
-                    200:
-                        application/octet-stream:
-                            type: BywayFlow
-
-
-
-
-
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 51]
-
-Internet-Draft                    RIPP                      January 2020
-
+   TODO - add in RAML
 
 13.  IANA Considerations
 
@@ -2885,34 +2725,40 @@ Internet-Draft                    RIPP                      January 2020
 
    Status: Permanent.
 
-14.  Security Considerations
+14.  IANA Considerations
 
-15.  Acknowledgements
+15.  Security Considerations
+
+16.  Acknowledgements
 
    Thanks you for review and edits to: Giacomo Vacca.  Thank you to Mo
    Zanaty for greatly simplifying the advertisement proposal for video.
 
-16.  Informative References
+
+
+
+
+
+
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 49]
+
+Internet-Draft                    RIPP                     February 2020
+
+
+17.  References
+
+17.1.  Normative References
 
    [I-D.ietf-quic-http]
               Bishop, M., "Hypertext Transfer Protocol Version 3
-              (HTTP/3)", draft-ietf-quic-http-24 (work in progress),
-              November 2019.
+              (HTTP/3)", draft-ietf-quic-http-25 (work in progress),
+              January 2020.
 
    [I-D.ietf-quic-transport]
               Iyengar, J. and M. Thomson, "QUIC: A UDP-Based Multiplexed
-              and Secure Transport", draft-ietf-quic-transport-24 (work
-              in progress), November 2019.
-
-
-
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 52]
-
-Internet-Draft                    RIPP                      January 2020
-
+              and Secure Transport", draft-ietf-quic-transport-25 (work
+              in progress), January 2020.
 
    [I-D.nottingham-rfc5785bis]
               Nottingham, M., "Well-Known Uniform Resource Identifiers
@@ -2933,12 +2779,6 @@ Internet-Draft                    RIPP                      January 2020
               DOI 10.17487/RFC2833, May 2000,
               <https://www.rfc-editor.org/info/rfc2833>.
 
-   [RFC3261]  Rosenberg, J., Schulzrinne, H., Camarillo, G., Johnston,
-              A., Peterson, J., Sparks, R., Handley, M., and E.
-              Schooler, "SIP: Session Initiation Protocol", RFC 3261,
-              DOI 10.17487/RFC3261, June 2002,
-              <https://www.rfc-editor.org/info/rfc3261>.
-
    [RFC3389]  Zopf, R., "Real-time Transport Protocol (RTP) Payload for
               Comfort Noise (CN)", RFC 3389, DOI 10.17487/RFC3389,
               September 2002, <https://www.rfc-editor.org/info/rfc3389>.
@@ -2946,15 +2786,6 @@ Internet-Draft                    RIPP                      January 2020
    [RFC4855]  Casner, S., "Media Type Registration of RTP Payload
               Formats", RFC 4855, DOI 10.17487/RFC4855, February 2007,
               <https://www.rfc-editor.org/info/rfc4855>.
-
-   [RFC6265]  Barth, A., "HTTP State Management Mechanism", RFC 6265,
-              DOI 10.17487/RFC6265, April 2011,
-              <https://www.rfc-editor.org/info/rfc6265>.
-
-   [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
-              Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
-              DOI 10.17487/RFC7540, May 2015,
-              <https://www.rfc-editor.org/info/rfc7540>.
 
    [RFC8224]  Peterson, J., Jennings, C., Rescorla, E., and C. Wendt,
               "Authenticated Identity Management in the Session
@@ -2965,14 +2796,28 @@ Internet-Draft                    RIPP                      January 2020
 
 
 
-Rosenberg, et al.         Expires July 30, 2020                [Page 53]
+
+Rosenberg, et al.        Expires August 7, 2020                [Page 50]
 
-Internet-Draft                    RIPP                      January 2020
+Internet-Draft                    RIPP                     February 2020
 
 
    [RFC8225]  Wendt, C. and J. Peterson, "PASSporT: Personal Assertion
               Token", RFC 8225, DOI 10.17487/RFC8225, February 2018,
               <https://www.rfc-editor.org/info/rfc8225>.
+
+17.2.  Informative References
+
+   [RFC3261]  Rosenberg, J., Schulzrinne, H., Camarillo, G., Johnston,
+              A., Peterson, J., Sparks, R., Handley, M., and E.
+              Schooler, "SIP: Session Initiation Protocol", RFC 3261,
+              DOI 10.17487/RFC3261, June 2002,
+              <https://www.rfc-editor.org/info/rfc3261>.
+
+   [RFC7540]  Belshe, M., Peon, R., and M. Thomson, Ed., "Hypertext
+              Transfer Protocol Version 2 (HTTP/2)", RFC 7540,
+              DOI 10.17487/RFC7540, May 2015,
+              <https://www.rfc-editor.org/info/rfc7540>.
 
 Authors' Addresses
 
@@ -3008,17 +2853,4 @@ Authors' Addresses
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-Rosenberg, et al.         Expires July 30, 2020                [Page 54]
+Rosenberg, et al.        Expires August 7, 2020                [Page 51]

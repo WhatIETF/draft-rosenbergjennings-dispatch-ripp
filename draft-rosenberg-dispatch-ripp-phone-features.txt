@@ -1,0 +1,224 @@
+
+
+
+
+Network Working Group                                  J. Rosenberg, Ed.
+Internet-Draft                                                     Five9
+Intended status: Standards Track                        January 25, 2020
+Expires: July 28, 2020
+
+
+                 Enterprise Telephony Features in RIPP
+            draft-rosenberg-dispatch-ripp-phone-features-00
+
+Abstract
+
+   The Real-Time Internet Peering Protocol (RIPP) defines a technique
+   for establishing, terminating and otherwise managing calls between
+   entities in differing administrative domains.  This document extends
+   RIPP by considering the specific case of an IP hardphone or softphone
+   which connects to an IP PBX or similar piece of software.  In this
+   use case, additional signaling is needed for traditional telephony
+   features, like hold, transfer, and park.  This document extends RIPP
+   to provide these capabilities.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on July 28, 2020.
+
+Copyright Notice
+
+   Copyright (c) 2020 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (https://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+
+
+
+Rosenberg                 Expires July 28, 2020                 [Page 1]
+
+Internet-Draft             RIPP Phone Features              January 2020
+
+
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+1.  Terminology
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+2.  Introduction
+
+   blah
+
+3.  Blind Transfer
+
+   Performs a blind transfer of the call.  The event contains a string
+   which MUST be a valid value for the target URI parameter used when
+   setting up a new call.  Once the transfer has initiated, the server
+   MUST generate a transfer-reject event if it is unwilling to perform
+   the transfer.  If it attempts the transfer, it MUST send a transfer-
+   pending event indicating that the transfer is in progress.  If the
+   transfer target answers the call, the server MUST generate a
+   transfer-success event, followed by an end event, indicating the call
+   is over for this user.  If the transfer fails, the server MUST
+   generate a transfer-failed event, in which case the call continues.
+   Once the transfer target answers, it MUST be sent a transferred-from
+   event, containing the URI of the call from which the transfer
+   happened.
+
+4.  Warm Transfer
+
+   transfer-warm: performs a warm transfer.  For this to work, the
+   endpoint sending the event must be in two calls.  It sends this event
+   on the one to be transferred to the other.  The event has a single
+   parameter which specifies the URI of the call to which the transfer
+   is taking place.  This two calls MUST have the same authority
+   component of their call URI.  Once the peer receives this event, it
+   MUST perform the transfer.  The transfer will either complete almost
+   immediately else fail.  If it succeeds, the peer MUST respond with a
+   transfer-success event; if it fails, respond with a transfer-failed
+   event, in which case the call continues.  Furthermore, if the
+   transfer succeeds, the transfer target MUST be sent a transferred-
+   from event, containing the URI of the call from which the transfer
+   happened.
+
+
+
+
+Rosenberg                 Expires July 28, 2020                 [Page 2]
+
+Internet-Draft             RIPP Phone Features              January 2020
+
+
+5.  Hold and Resume
+
+   hold: performs a call hold on the call.  Either side can initiate
+   this, but only if its peer indicates support.  Similarly, to inform
+   its peer that it has been placed on hold, either side may send an on-
+   hold event to its peer, but only if hold has been indicated as a
+   capability.  When an endpoint has been told it is on-hold, it MUST
+   send silence for audio and black screen for video.  The peer MAY
+   generate music-on-hold or any other suitable content to render while
+   the endpoint is on hold.
+
+6.  Mute
+
+   mute: informs the peer that it has muted.  This is informative for UI
+   purposes, useful in conference calls for example.  When an endpoint
+   mutes, in addition to sending the mute event, it MUST send silence
+   for audio and black screen for video.  Similarly, if an endpoint
+   wishes to inform its peer that it is muting its media, it sends a
+   mute event.
+
+7.  IANA Considerations
+
+   No values are assigned in this document, no registries are created,
+   and there is no action assigned to the IANA by this document.
+
+8.  Security Considerations
+
+   This document introduces no new security considerations.  It is a
+   process document about changes to the rules for certain corner cases
+   in publishing IETF stream RFCs.
+
+9.  Informative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+Author's Address
+
+
+
+
+
+
+
+
+Rosenberg                 Expires July 28, 2020                 [Page 3]
+
+Internet-Draft             RIPP Phone Features              January 2020
+
+
+   Jonathan Rosenberg (editor)
+   Five9
+   4000 Executive Parkway #400
+   San Ramon, CA  94583
+   US
+
+   Email: jdrosen@jdrosen.net
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Rosenberg                 Expires July 28, 2020                 [Page 4]
