@@ -1,57 +1,70 @@
----
-title: Real Time Internet Peering Protocol
-# abbrev: RIPP
-docname: draft-dispatch-rosenbergjennings-ripp-05
-date: 2020-02-07
-# date: 2012-01
-# date: 2012
+%%%
 
-# stand_alone: true
-
-ipr: trust200902
-area: Applications
-wg: dispatch
-kw: Internet-Draft
-cat: std
-
-coding: us-ascii
-pi:    # can use array (if all yes) or hash here
-#  - toc
-#  - sortrefs
-#  - symrefs
-  toc: yes
-  sortrefs:   # defaults to yes
-  symrefs: yes
-
-author:
-    -
-      ins: J. Rosenberg
-      name: Jonathan Rosenberg
-      org: Five9
-      email: jdrosen@jdrosen.net
-    -
-      ins: C. Jennings
-      name: Cullen Jennings
-      org: Cisco Systems
-      email: fluffy@iii.ca
-    -
-      ins: A. Minessale
-      name: Anthony Minessale
-      org: Signalwire/Freeswitch
-      email: anthm@signalwire.com
-    -
-      ins: J. Livingood 
-      name: Jason Livingood 
-      org: Comcast
-      email: jason_livingood@comcast.com
-    -
-      ins: J. Uberti 
-      name: Justin Uberti 
-      org: Google
-      email: justin@uberti.name
+#
+# RIPP - real time internet peering protocol
+#
+# Generation tool chain:
+#   mmark (https://github.com/miekg/mmark)
+#   xml2rfc (http://xml2rfc.ietf.org/)
+#
 
 
---- abstract
+Title = "Real Time Internet Peering Protocol"
+abbrev = "RIPP"
+category = "std"
+docName = "draft-rosenbergjennings-dispatch-ripp-04"
+ipr= "trust200902"
+area = "Internet"
+keyword = ["RTP"]
+
+[pi]
+symrefs = "yes"
+sortrefs = "yes"
+
+[[author]]
+initials = "J."
+surname = "Rosenberg"
+fullname = "Jonathan Rosenberg"
+organization = "Five9"
+  [author.address]
+  email = "jdrosen@jdrosen.net"
+
+[[author]]
+initials = "C."
+surname = "Jennings"
+fullname = "Cullen Jennings"
+organization = "Cisco Systems"
+  [author.address]
+  email = "fluffy@iii.ca"
+
+[[author]] 
+initials = "A." 
+surname = "Minessale" 
+fullname = "Anthony Minessale" 
+organization = "Signalwire/Freeswitch"
+  [author.address]
+  email = "anthm@signalwire.com"
+
+[[author]] 
+initials = "J." 
+surname = "Livingood" 
+fullname = "Jason Livingood" 
+organization = "Comcast"
+  [author.address]
+  email = "jason_livingood@comcast.com"
+
+[[author]] 
+initials = "J." 
+surname = "Uberti" 
+fullname = "Justin Uberti" 
+organization = "Google"
+  [author.address]
+  email = "justin@uberti.name"
+ 
+
+%%%
+
+.# Abstract
 
 
 This document specifies the Realtime Internet Peering Protocol
@@ -74,16 +87,13 @@ runs over HTTP/3, it works through NATs and firewalls with the same
 ease as HTTP does.
 
 
---- middle
+{mainmatter}
 
-#Introduction    
-
+# Introduction 
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
-document are to be interpreted as described in RFC 2119, BCP 14
-{{RFC2119}} and indicate requirement levels for compliant CoAP
-implementations.
+document are to be interpreted as described in [@!RFC2119].
 
 ## Background
 
@@ -145,7 +155,7 @@ to call into the telephone network for customer support.
 
 In order for these applications to connect to the PSTN, or to connect
 voice and video services in other domains, they typically
-deploy Session Initiation Protocol (SIP) {{!RFC3261}} based servers -
+deploy Session Initiation Protocol (SIP) [@RFC3261] based servers -
 SBCs, SIP proxies, and softswitches, to provide this
 interconnection. Unfortunately, SIP based applications cannot make use
 of the many capabilities these cloud platforms afford to HTTP based
@@ -247,10 +257,10 @@ receive a response. There as no way for a server to asynchronously
 send information to the client in an easy fashion.
 
 
-HTTP2 {{?RFC7540}} addressed the second of these with the introduction of pushes
+HTTP2 [@RFC7540] addressed the second of these with the introduction of pushes
 and long running requests. However, its usage of TCP was still a
 problem. This has finally been addressed with the arrival of QUIC
-{{!I-D.ietf-quic-transport}} and
+[@!I-D.ietf-quic-transport] and
 HTTP/3. QUIC is based on UDP, and it introduces the concept of a stream
 that can be set up with zero RTT. These streams are carried over UDP,
 and though are still reliable, there is no head of line blocking
@@ -258,10 +268,10 @@ across streams. This change has made it possible for HTTP to support
 real-time applications.
 
 This specification makes an assumption that
-{{!I-D.ietf-quic-transport}} will be widely implemented and deployed as
+[@!I-D.ietf-quic-transport] will be widely implemented and deployed as
 a mainstream part of web-based software systems, but any extensions
 unique to the needs of VoIP will struggle to see widespread deployment.
-As a result, RIPP uses HTTP/3 {{!I-D.ietf-quic-http}}, but is not an
+As a result, RIPP uses HTTP/3 [@!I-D.ietf-quic-http], but is not an
 extension to it. This means that RIPP inherits the benefits of
 classic HTTP deployments - easy load balancing, easy expansion and
 contraction of clusters (including auto-scaling), standard techniques
@@ -272,7 +282,7 @@ so on.
 
 The document is broadly split into two parts - explanatory and
 normative materials. The explanatory text is non-normative, and
-contains no {{!RFC2119}} language. Much of this text is meant to help
+contains no [@!RFC2119] language. Much of this text is meant to help
 readers familiar with SIP, understand how SIP concepts translate (or
 don't) into RIPP. These sections include Requirements (#req), Design
 Approaches (#design), Terminology (#terminology), Reference
@@ -886,8 +896,8 @@ to do everything else.
 One of these URI is a URI which can be used to kickoff a web-based
 OAuth flow for generating an OAuth token. The other is the RIPP root
 URI. Both of these are well-known URI as defined by
-{{!I-D.nottingham-rfc5785bis}}. Consequently, they are constructed
-using the syntax defined in {{!I-D.nottingham-rfc5785bis}}.
+[@!I-D.nottingham-rfc5785bis]. Consequently, they are constructed
+using the syntax defined in [@!I-D.nottingham-rfc5785bis].
 
 Their IANA registrations can be found in (#iana).
 
@@ -1079,7 +1089,7 @@ is not present, the default can be assumed for all parameters.
 
 Codec support is signaled using boolean parameters, with names that
 match the media subtypes defined in the IANA protocol registry for
-media types {{!RFC4855}}.
+media types [@!RFC4855].
 
 The handler also contains meta-data which aids in handler
 selection and identification. These include device nicknames, image
@@ -1237,7 +1247,7 @@ to /calls on the TG URI.  The request contains:
 
 1. the target phone number or email address (TODO: need to define
 normalization procedures),
-2. A passport {{!RFC8225}} identifying the calling identity,
+2. A passport [@!RFC8225] identifying the calling identity,
 3. The handler ID from which the call is being placed,
 
 in the body.
@@ -1343,7 +1353,7 @@ peering. These include transfer-and-takeback.
 ## Media Exchange
 
 Media exchange makes use of webtransport over HTTP3
-{{!I-D.vvv-webtransport-http3}} when it is available, falling back to
+[@!I-D.vvv-webtransport-http3] when it is available, falling back to
 media byways when it is not.
 
 Once the call signaling is complete, the client attempts to open a
@@ -1545,12 +1555,12 @@ This section contains the normative specification of RIPP.
 
 A RIPP client that wishes to obtain an OAuth token to a specified
 authority through a web interface MUST construct a well known RIPP
-Oauth URI using {{!I-D.nottingham-rfc5785bis}} with ripp-oauth as the
+Oauth URI using [@!I-D.nottingham-rfc5785bis] with ripp-oauth as the
 well-known service, and use this to trigger the Oauth process.
 
 Similarly, a RIPP client wishing to access the resources defined in
 this specification, against an authority (such as example.com) MUST
-use {{!I-D.nottingham-rfc5785bis} with ripp as the well-known
+use [@!I-D.nottingham-rfc5785bis} with ripp as the well-known
 service. The result is the RIPP root URI for that authority.
 
 ## TG Discovery
@@ -1740,8 +1750,8 @@ each one, the value of the parameter is either 1 or 0, 1 indicating
 support, and 0 indicating no support.
 
 All RIPP implementations MUST support G.711 and Opus audio codecs. All
-implementations MUST support {{!RFC2833}} for DTMF, and MUST support
-{{!RFC3389}} for comfort noise, for both sending and receiving.
+implementations MUST support [@!RFC2833] for DTMF, and MUST support
+[@!RFC3389] for comfort noise, for both sending and receiving.
 
 In general, an entity MUST declare a capability for any characteristic
 of a call which may result in a proposal being unacceptable to the
@@ -1772,7 +1782,7 @@ trunks, in which case the destination MUST take the form
 valid within the domain. This form MUST NOT be used for E.164 numbers.
 
 The passport URI parameter MUST be a valid passport as defined by
-{{!RFC8224}}. It identifies the calling party and includes signature
+[@!RFC8224]. It identifies the calling party and includes signature
 information which can be used to verify it. If the client has no
 official certificate proving ownership of the identity in the
 passport, it MUST generate a self-signed certificate and use that. The
@@ -2189,7 +2199,7 @@ TODO - add in RAML
 ## Registration of Well-Known Web Services
 
 This specification defines two new well-known web services as defined
-in {{!I-D.nottingham-rfc5785bis}} - ripp and ripp-oauth.
+in [@!I-D.nottingham-rfc5785bis] - ripp and ripp-oauth.
 
 ## RIPP
 
@@ -2222,6 +2232,9 @@ Status:  Permanent.
 
 Thanks you for review and edits to: Giacomo Vacca. Thank you to Mo
 Zanaty for greatly simplifying the advertisement  proposal for video. 
+
+
+{backmatter}
 
 
 
