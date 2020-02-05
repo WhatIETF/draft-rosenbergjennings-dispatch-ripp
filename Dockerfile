@@ -34,14 +34,13 @@ ENV GOPATH /tmp/go
 RUN git clone --branch=master https://github.com/miekg/mmark.git /tmp/go/src/github.com/miekg/mmark 
 RUN cd /tmp/go/src/github.com/miekg/mmark/ && go get && go build && cd mmark && go build && cp ./mmark /usr/bin/mmark
 
-
 RUN apt install -y nodejs npm 
 
 RUN npm i -g raml2html
 RUN npm i -g raml2html-markdown-theme
 
+RUN rm -rf /tmp/go
 RUN mkdir -p /data
-
 WORKDIR /data
 
 CMD make 
