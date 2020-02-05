@@ -1,0 +1,1234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+
+  <title>Real Time Internet Peering Protocol (RIPP) Comparison with the Session Initiaton Protocol (SIP)</title>
+
+  <style type="text/css" title="Xml2Rfc (sans serif)">
+  /*<![CDATA[*/
+	  a {
+	  text-decoration: none;
+	  }
+      /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+      a.info {
+          /* This is the key. */
+          position: relative;
+          z-index: 24;
+          text-decoration: none;
+      }
+      a.info:hover {
+          z-index: 25;
+          color: #FFF; background-color: #900;
+      }
+      a.info span { display: none; }
+      a.info:hover span.info {
+          /* The span will display just on :hover state. */
+          display: block;
+          position: absolute;
+          font-size: smaller;
+          top: 2em; left: -5em; width: 15em;
+          padding: 2px; border: 1px solid #333;
+          color: #900; background-color: #EEE;
+          text-align: left;
+      }
+	  a.smpl {
+	  color: black;
+	  }
+	  a:hover {
+	  text-decoration: underline;
+	  }
+	  a:active {
+	  text-decoration: underline;
+	  }
+	  address {
+	  margin-top: 1em;
+	  margin-left: 2em;
+	  font-style: normal;
+	  }
+	  body {
+	  color: black;
+	  font-family: verdana, helvetica, arial, sans-serif;
+	  font-size: 10pt;
+	  max-width: 55em;
+	  
+	  }
+	  cite {
+	  font-style: normal;
+	  }
+	  dd {
+	  margin-right: 2em;
+	  }
+	  dl {
+	  margin-left: 2em;
+	  }
+	
+	  ul.empty {
+	  list-style-type: none;
+	  }
+	  ul.empty li {
+	  margin-top: .5em;
+	  }
+	  dl p {
+	  margin-left: 0em;
+	  }
+	  dt {
+	  margin-top: .5em;
+	  }
+	  h1 {
+	  font-size: 14pt;
+	  line-height: 21pt;
+	  page-break-after: avoid;
+	  }
+	  h1.np {
+	  page-break-before: always;
+	  }
+	  h1 a {
+	  color: #333333;
+	  }
+	  h2 {
+	  font-size: 12pt;
+	  line-height: 15pt;
+	  page-break-after: avoid;
+	  }
+	  h3, h4, h5, h6 {
+	  font-size: 10pt;
+	  page-break-after: avoid;
+	  }
+	  h2 a, h3 a, h4 a, h5 a, h6 a {
+	  color: black;
+	  }
+	  img {
+	  margin-left: 3em;
+	  }
+	  li {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol p {
+	  margin-left: 0em;
+	  }
+	  p {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  pre {
+	  margin-left: 3em;
+	  background-color: lightyellow;
+	  padding: .25em;
+	  }
+	  pre.text2 {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f0f0f0;
+	  width: 69em;
+	  }
+	  pre.inline {
+	  background-color: white;
+	  padding: 0em;
+	  }
+	  pre.text {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  width: 69em;
+	  }
+	  pre.drawing {
+	  border-style: solid;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  padding: 2em;
+	  }
+	  table {
+	  margin-left: 2em;
+	  }
+	  table.tt {
+	  vertical-align: top;
+	  }
+	  table.full {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.headers {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.tt td {
+	  vertical-align: top;
+	  }
+	  table.full td {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.tt th {
+	  vertical-align: top;
+	  }
+	  table.full th {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.headers th {
+	  border-style: none none inset none;
+	  border-width: 1px;
+	  }
+	  table.left {
+	  margin-right: auto;
+	  }
+	  table.right {
+	  margin-left: auto;
+	  }
+	  table.center {
+	  margin-left: auto;
+	  margin-right: auto;
+	  }
+	  caption {
+	  caption-side: bottom;
+	  font-weight: bold;
+	  font-size: 9pt;
+	  margin-top: .5em;
+	  }
+	
+	  table.header {
+	  border-spacing: 1px;
+	  width: 95%;
+	  font-size: 10pt;
+	  color: white;
+	  }
+	  td.top {
+	  vertical-align: top;
+	  }
+	  td.topnowrap {
+	  vertical-align: top;
+	  white-space: nowrap; 
+	  }
+	  table.header td {
+	  background-color: gray;
+	  width: 50%;
+	  }
+	  table.header a {
+	  color: white;
+	  }
+	  td.reference {
+	  vertical-align: top;
+	  white-space: nowrap;
+	  padding-right: 1em;
+	  }
+	  thead {
+	  display:table-header-group;
+	  }
+	  ul.toc, ul.toc ul {
+	  list-style: none;
+	  margin-left: 1.5em;
+	  margin-right: 0em;
+	  padding-left: 0em;
+	  }
+	  ul.toc li {
+	  line-height: 150%;
+	  font-weight: bold;
+	  font-size: 10pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  ul.toc li li {
+	  line-height: normal;
+	  font-weight: normal;
+	  font-size: 9pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  li.excluded {
+	  font-size: 0pt;
+	  }
+	  ul p {
+	  margin-left: 0em;
+	  }
+	
+	  .comment {
+	  background-color: yellow;
+	  }
+	  .center {
+	  text-align: center;
+	  }
+	  .error {
+	  color: red;
+	  font-style: italic;
+	  font-weight: bold;
+	  }
+	  .figure {
+	  font-weight: bold;
+	  text-align: center;
+	  font-size: 9pt;
+	  }
+	  .filename {
+	  color: #333333;
+	  font-weight: bold;
+	  font-size: 12pt;
+	  line-height: 21pt;
+	  text-align: center;
+	  }
+	  .fn {
+	  font-weight: bold;
+	  }
+	  .hidden {
+	  display: none;
+	  }
+	  .left {
+	  text-align: left;
+	  }
+	  .right {
+	  text-align: right;
+	  }
+	  .title {
+	  color: #990000;
+	  font-size: 18pt;
+	  line-height: 18pt;
+	  font-weight: bold;
+	  text-align: center;
+	  margin-top: 36pt;
+	  }
+	  .vcardline {
+	  display: block;
+	  }
+	  .warning {
+	  font-size: 14pt;
+	  background-color: yellow;
+	  }
+	
+	
+	  @media print {
+	  .noprint {
+		display: none;
+	  }
+	
+	  a {
+		color: black;
+		text-decoration: none;
+	  }
+	
+	  table.header {
+		width: 90%;
+	  }
+	
+	  td.header {
+		width: 50%;
+		color: black;
+		background-color: white;
+		vertical-align: top;
+		font-size: 12pt;
+	  }
+	
+	  ul.toc a::after {
+		content: leader('.') target-counter(attr(href), page);
+	  }
+	
+	  ul.ind li li a {
+		content: target-counter(attr(href), page);
+	  }
+	
+	  .print2col {
+		column-count: 2;
+		-moz-column-count: 2;
+		column-fill: auto;
+	  }
+	  }
+	
+	  @page {
+	  @top-left {
+		   content: "Internet-Draft"; 
+	  } 
+	  @top-right {
+		   content: "December 2010"; 
+	  } 
+	  @top-center {
+		   content: "Abbreviated Title";
+	  } 
+	  @bottom-left {
+		   content: "Doe"; 
+	  } 
+	  @bottom-center {
+		   content: "Expires June 2011"; 
+	  } 
+	  @bottom-right {
+		   content: "[Page " counter(page) "]"; 
+	  } 
+	  }
+	
+	  @page:first { 
+		@top-left {
+		  content: normal;
+		}
+		@top-right {
+		  content: normal;
+		}
+		@top-center {
+		  content: normal;
+		}
+	  }
+  /*]]>*/
+  </style>
+
+  <link href="#rfc.toc" rel="Contents">
+<link href="#rfc.section.1" rel="Chapter" title="1 Introduction">
+<link href="#rfc.section.2" rel="Chapter" title="2 Core Specifications">
+<link href="#rfc.section.2.1" rel="Chapter" title="2.1 The Main SIP Spec - RFC3261">
+<link href="#rfc.section.2.2" rel="Chapter" title="2.2 RFC3262 - Reliability of Provisional Responses">
+<link href="#rfc.section.2.3" rel="Chapter" title="2.3 RFC3263 - DNS SRV for SIP">
+<link href="#rfc.section.2.4" rel="Chapter" title="2.4 RFC3264 - Offer/Answer">
+<link href="#rfc.section.2.5" rel="Chapter" title="2.5 RFC3265 - SIP Events">
+<link href="#rfc.section.3" rel="Chapter" title="3 SIP Extensions">
+<link href="#rfc.section.3.1" rel="Chapter" title="3.1 SIP INFO (RFC 2976)">
+<link href="#rfc.section.3.2" rel="Chapter" title="3.2 UPDATE (RFC 3311)">
+<link href="#rfc.section.3.3" rel="Chapter" title="3.3 Resource Management and SIP (RFC 3312)">
+<link href="#rfc.section.3.4" rel="Chapter" title="3.4 Privacy Header (RFC 3323)">
+<link href="#rfc.section.3.5" rel="Chapter" title="3.5 P-Asserted-ID (RFC 3325)">
+<link href="#rfc.section.3.6" rel="Chapter" title="3.6 Reason header field (RFC 3326)">
+<link href="#rfc.section.3.7" rel="Chapter" title="3.7 Service-Route (RFC 3327)">
+<link href="#rfc.section.3.8" rel="Chapter" title="3.8 REFER (RFC 3515)">
+<link href="#rfc.section.3.9" rel="Chapter" title="3.9 Symmetric Response Routing (RFC 3581)">
+<link href="#rfc.section.3.10" rel="Chapter" title="3.10 Registration Event Package (RFC 3680)">
+<link href="#rfc.section.3.11" rel="Chapter" title="3.11 Third Party Call Controll (RFC 3725)">
+<link href="#rfc.section.3.12" rel="Chapter" title="3.12 E.164 and SIP (RFC 3824)">
+<link href="#rfc.section.3.13" rel="Chapter" title="3.13 UA Capabilities (RFC 3840)">
+<link href="#rfc.section.3.14" rel="Chapter" title="3.14 Caller Prefs (RFC 3841)">
+<link href="#rfc.section.3.15" rel="Chapter" title="3.15 Replaces Header Field (RFC 3891)">
+<link href="#rfc.section.3.16" rel="Chapter" title="3.16 Referred-By (RFC 3892)">
+<link href="#rfc.section.3.17" rel="Chapter" title="3.17 PUBLISH method (RFC 3903)">
+<link href="#rfc.section.3.18" rel="Chapter" title="3.18 Join Header Field (RFC 3911)">
+<link href="#rfc.section.3.19" rel="Chapter" title="3.19 Early Media (RFC 3960)">
+<link href="#rfc.section.3.20" rel="Chapter" title="3.20 Session Timers (RFC 4028)">
+<link href="#rfc.section.3.21" rel="Chapter" title="3.21 INVITE Dialog Event Package (RFC 4235)">
+<link href="#rfc.section.3.22" rel="Chapter" title="3.22 Request History (RFC 4244)">
+<link href="#rfc.section.3.23" rel="Chapter" title="3.23 Actions for non-INVITE?? (RFC 4320)">
+<link href="#rfc.section.3.24" rel="Chapter" title="3.24 Pre-Emption Events (RFC 4411)">
+<link href="#rfc.section.3.25" rel="Chapter" title="3.25 Resource-Priority">
+<link href="#rfc.section.3.26" rel="Chapter" title="3.26 Suppression of Implied REFER Subscription (RFC 4488)">
+<link href="#rfc.section.3.27" rel="Chapter" title="3.27 Conveying Feature Tags (RFC 4508)">
+<link href="#rfc.section.3.28" rel="Chapter" title="3.28 Request Auth?? (RFC 4538)">
+<link href="#rfc.section.3.29" rel="Chapter" title="3.29 KPML (RFC 4730)">
+<link href="#rfc.section.3.30" rel="Chapter" title="3.30 representing trunk groups (RFC 4904)">
+<link href="#rfc.section.3.31" rel="Chapter" title="3.31 Connected Identity (RFC 4916)">
+<link href="#rfc.section.3.32" rel="Chapter" title="3.32 Dial Strin (RFC 4967)">
+<link href="#rfc.section.3.33" rel="Chapter" title="3.33 URN for emergency services (RFC 5031)">
+<link href="#rfc.section.3.34" rel="Chapter" title="3.34 Rejecting Anonymous Requests (RFC 5079)">
+<link href="#rfc.section.3.35" rel="Chapter" title="3.35 Real-Time Text (RFC 5194)">
+<link href="#rfc.section.3.36" rel="Chapter" title="3.36 Answering Modes ?? (RFC 5373)">
+<link href="#rfc.section.3.37" rel="Chapter" title="3.37 SIP Outbound (RFC 5626)">
+<link href="#rfc.section.3.38" rel="Chapter" title="3.38 GRUU (RFC 5627)">
+<link href="#rfc.section.3.39" rel="Chapter" title="3.39 App Interaction Framework (RFC 5629)">
+<link href="#rfc.section.3.40" rel="Chapter" title="3.40 SIP Session Mobility (RFC 5621)">
+<link href="#rfc.section.3.41" rel="Chapter" title="3.41 Diversion (RFC 5806)">
+<link href="#rfc.section.3.42" rel="Chapter" title="3.42 Domain Certs (RFC 5922)">
+<link href="#rfc.section.3.43" rel="Chapter" title="3.43 Connection Reuse (RFC 5923)">
+<link href="#rfc.section.3.44" rel="Chapter" title="3.44 UA Config (RFC 6011)">
+<link href="#rfc.section.3.45" rel="Chapter" title="3.45 Event Package for Call Quality (RFC 6035)">
+<link href="#rfc.section.3.46" rel="Chapter" title="3.46 Certificate Management Service (RFC 6072)">
+<link href="#rfc.section.3.47" rel="Chapter" title="3.47 SIP e2e performance metrics (RFC 6076)">
+<link href="#rfc.section.3.48" rel="Chapter" title="3.48 UA Profile Delivery (RFC 6080)">
+<link href="#rfc.section.3.49" rel="Chapter" title="3.49 INFO method Package and Framework (RFC 6086)">
+<link href="#rfc.section.3.50" rel="Chapter" title="3.50 ANAT? (RFC 6135)">
+<link href="#rfc.section.3.51" rel="Chapter" title="3.51 registration of multiple numbersin SIP (RFC 6140)">
+<link href="#rfc.section.3.52" rel="Chapter" title="3.52 IPv6 Transition and SIP (RFC 6157)">
+<link href="#rfc.section.3.53" rel="Chapter" title="3.53 Indication of Support for Keepalive (RFC 6223)">
+<link href="#rfc.section.3.54" rel="Chapter" title="3.54 SIP Response for Indication of Terminated Dialog (RFC 6228)">
+<link href="#rfc.section.3.55" rel="Chapter" title="3.55 Location Conveyance in SIP (RFC 6442)">
+<link href="#rfc.section.3.56" rel="Chapter" title="3.56 Notification for Rate Control (RFC 6446)">
+<link href="#rfc.section.3.57" rel="Chapter" title="3.57 Filtering Location Notifications (RFC 6447)">
+<link href="#rfc.section.3.58" rel="Chapter" title="3.58 SIP specific event notification (RFC 6665)">
+<link href="#rfc.section.3.59" rel="Chapter" title="3.59 Framework for Session Policy (RFC 6794)">
+<link href="#rfc.section.3.60" rel="Chapter" title="3.60 SIP Events for Session Policy (RFC 6795)">
+<link href="#rfc.section.3.61" rel="Chapter" title="3.61 UA Profile set for Media Policy (RFC 6796)">
+<link href="#rfc.section.3.62" rel="Chapter" title="3.62 Completion of Calls (RFC 6910)">
+<link href="#rfc.section.3.63" rel="Chapter" title="3.63 Fax over IP in SIP (RFC 6913)">
+<link href="#rfc.section.3.64" rel="Chapter" title="3.64 Request History (RFC 7044)">
+<link href="#rfc.section.3.65" rel="Chapter" title="3.65 SIP LOad Control Event Package (RFC 7200)">
+<link href="#rfc.section.3.66" rel="Chapter" title="3.66 Session Identifier in SIP (RFC 7329)">
+<link href="#rfc.section.3.67" rel="Chapter" title="3.67 Loop Detection in SIP (RFC 7332)">
+<link href="#rfc.section.3.68" rel="Chapter" title="3.68 SIP Overload Control (RFC 7339)">
+<link href="#rfc.section.3.69" rel="Chapter" title="3.69 Media Traceroute (RFC 7403)">
+<link href="#rfc.section.3.70" rel="Chapter" title="3.70 SIP Rate Control (RFC 7415)">
+<link href="#rfc.section.3.71" rel="Chapter" title="3.71 Transporting UU Information in SIP (RFC 7433)">
+<link href="#rfc.section.3.72" rel="Chapter" title="3.72 URNs for Alert-Info (RFC 7462)">
+<link href="#rfc.section.3.73" rel="Chapter" title="3.73 Shared Appearances for an AOR (RFC 7463)">
+<link href="#rfc.section.3.74" rel="Chapter" title="3.74 SIPREC (RFC 7866)">
+<link href="#rfc.section.3.75" rel="Chapter" title="3.75 E2E Session Identification (RFC 7989)">
+<link href="#rfc.section.3.76" rel="Chapter" title="3.76 Response Code for Unwanted Calls (RFC 8197)">
+<link href="#rfc.section.3.77" rel="Chapter" title="3.77 Authenticated Identity Management (RFC 8224)">
+<link href="#rfc.section.3.78" rel="Chapter" title="3.78 Passport (RFC 8225)">
+<link href="#rfc.section.3.79" rel="Chapter" title="3.79 STIR Certs (RFC 8226)">
+<link href="#rfc.section.3.80" rel="Chapter" title="3.80 Content-ID (RFC 8262)">
+<link href="#rfc.section.3.81" rel="Chapter" title="3.81 Negotiating Human Language (RFC 8373)">
+<link href="#rfc.section.3.82" rel="Chapter" title="3.82 Passport for Resource Priority (RFC 8443)">
+<link href="#rfc.section.3.83" rel="Chapter" title="3.83 Marking SIP messages to be logged (RFC 8497)">
+<link href="#rfc.section.3.84" rel="Chapter" title="3.84 Push Notification and SIP (RFC 8599)">
+<link href="#rfc.section.4" rel="Chapter" title="4 SDP Extensions">
+<link href="#rfc.section.4.1" rel="Chapter" title="4.1 Grouping of m-lines (RFC 3388)">
+<link href="#rfc.section.4.2" rel="Chapter" title="4.2 Media Auth (RFC 3521)">
+<link href="#rfc.section.5" rel="Chapter" title="5 NAT Traversal">
+<link href="#rfc.section.5.1" rel="Chapter" title="5.1 STUN (RFC 5389)">
+<link href="#rfc.section.5.2" rel="Chapter" title="5.2 TURN (RFC 5766)">
+<link href="#rfc.section.5.3" rel="Chapter" title="5.3 Indicating support for ICE in SDP (RFC 5768)">
+<link href="#rfc.section.5.4" rel="Chapter" title="5.4 ICE (RFC 5245)">
+<link href="#rfc.section.5.5" rel="Chapter" title="5.5 ANAT (RFC 4091)">
+<link href="#rfc.section.5.6" rel="Chapter" title="5.6 TURN TCP (RFC 6062)">
+<link href="#rfc.section.5.7" rel="Chapter" title="5.7 TCP candidates with ICE (RFC 6544)">
+<link href="#rfc.section.6" rel="Chapter" title="6 RTP Extensions (excepting Payload Types)">
+<link href="#rfc.references" rel="Chapter" title="7 Informative References">
+<link href="#rfc.authors" rel="Chapter">
+
+
+  <meta name="generator" content="xml2rfc version 2.22.3 - https://tools.ietf.org/tools/xml2rfc" />
+  <link rel="schema.dct" href="http://purl.org/dc/terms/" />
+
+  <meta name="dct.creator" content="Rosenberg, J." />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-rosenbergjennings-dispatch-ripp-sipdiffs-00" />
+  <meta name="dct.issued" scheme="ISO8601" content="2020-02-04" />
+  <meta name="dct.abstract" content="The Real-Time Internet Peering Protocol (RIPP) and its extension for inbound calls to single user devices provide an alternative to the Session Initiation Protocol (SIP) for several use cases. The question is - how much of SIP do those two specifications replace? This document presents an analysis across the set of SIP specifications, and analyzes whether the two RIPP documents replace each with similar capability, whether they eliminate the need for that specification, or whether some or all of that specification are not addressed by RIPP.  " />
+  <meta name="description" content="The Real-Time Internet Peering Protocol (RIPP) and its extension for inbound calls to single user devices provide an alternative to the Session Initiation Protocol (SIP) for several use cases. The question is - how much of SIP do those two specifications replace? This document presents an analysis across the set of SIP specifications, and analyzes whether the two RIPP documents replace each with similar capability, whether they eliminate the need for that specification, or whether some or all of that specification are not addressed by RIPP.  " />
+
+</head>
+
+<body>
+
+  <table class="header">
+    <tbody>
+    
+    	<tr>
+<td class="left">Network Working Group</td>
+<td class="right">J. Rosenberg</td>
+</tr>
+<tr>
+<td class="left">Internet-Draft</td>
+<td class="right">Five9</td>
+</tr>
+<tr>
+<td class="left">Intended status: Standards Track</td>
+<td class="right">February 4, 2020</td>
+</tr>
+<tr>
+<td class="left">Expires: August 7, 2020</td>
+<td class="right"></td>
+</tr>
+
+    	
+    </tbody>
+  </table>
+
+  <p class="title">Real Time Internet Peering Protocol (RIPP) Comparison with the Session Initiaton Protocol (SIP)<br />
+  <span class="filename">draft-rosenbergjennings-dispatch-ripp-sipdiffs-00</span></p>
+  
+  <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
+<p>The Real-Time Internet Peering Protocol (RIPP) and its extension for inbound calls to single user devices provide an alternative to the Session Initiation Protocol (SIP) for several use cases. The question is - how much of SIP do those two specifications replace? This document presents an analysis across the set of SIP specifications, and analyzes whether the two RIPP documents replace each with similar capability, whether they eliminate the need for that specification, or whether some or all of that specification are not addressed by RIPP.  </p>
+<h1 id="rfc.status"><a href="#rfc.status">Status of This Memo</a></h1>
+<p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
+<p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
+<p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
+<p>This Internet-Draft will expire on August 7, 2020.</p>
+<h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
+<p>Copyright (c) 2020 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
+<p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
+
+  
+  <hr class="noprint" />
+  <h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1>
+  <ul class="toc">
+
+  	<li>1.   <a href="#rfc.section.1">Introduction</a>
+</li>
+<li>2.   <a href="#rfc.section.2">Core Specifications</a>
+</li>
+<ul><li>2.1.   <a href="#rfc.section.2.1">The Main SIP Spec - RFC3261</a>
+</li>
+<li>2.2.   <a href="#rfc.section.2.2">RFC3262 - Reliability of Provisional Responses</a>
+</li>
+<li>2.3.   <a href="#rfc.section.2.3">RFC3263 - DNS SRV for SIP</a>
+</li>
+<li>2.4.   <a href="#rfc.section.2.4">RFC3264 - Offer/Answer</a>
+</li>
+<li>2.5.   <a href="#rfc.section.2.5">RFC3265 - SIP Events</a>
+</li>
+</ul><li>3.   <a href="#rfc.section.3">SIP Extensions</a>
+</li>
+<ul><li>3.1.   <a href="#rfc.section.3.1">SIP INFO (RFC 2976)</a>
+</li>
+<li>3.2.   <a href="#rfc.section.3.2">UPDATE (RFC 3311)</a>
+</li>
+<li>3.3.   <a href="#rfc.section.3.3">Resource Management and SIP (RFC 3312)</a>
+</li>
+<li>3.4.   <a href="#rfc.section.3.4">Privacy Header (RFC 3323)</a>
+</li>
+<li>3.5.   <a href="#rfc.section.3.5">P-Asserted-ID (RFC 3325)</a>
+</li>
+<li>3.6.   <a href="#rfc.section.3.6">Reason header field (RFC 3326)</a>
+</li>
+<li>3.7.   <a href="#rfc.section.3.7">Service-Route (RFC 3327)</a>
+</li>
+<li>3.8.   <a href="#rfc.section.3.8">REFER (RFC 3515)</a>
+</li>
+<li>3.9.   <a href="#rfc.section.3.9">Symmetric Response Routing (RFC 3581)</a>
+</li>
+<li>3.10.   <a href="#rfc.section.3.10">Registration Event Package (RFC 3680)</a>
+</li>
+<li>3.11.   <a href="#rfc.section.3.11">Third Party Call Controll (RFC 3725)</a>
+</li>
+<li>3.12.   <a href="#rfc.section.3.12">E.164 and SIP (RFC 3824)</a>
+</li>
+<li>3.13.   <a href="#rfc.section.3.13">UA Capabilities (RFC 3840)</a>
+</li>
+<li>3.14.   <a href="#rfc.section.3.14">Caller Prefs (RFC 3841)</a>
+</li>
+<li>3.15.   <a href="#rfc.section.3.15">Replaces Header Field (RFC 3891)</a>
+</li>
+<li>3.16.   <a href="#rfc.section.3.16">Referred-By (RFC 3892)</a>
+</li>
+<li>3.17.   <a href="#rfc.section.3.17">PUBLISH method (RFC 3903)</a>
+</li>
+<li>3.18.   <a href="#rfc.section.3.18">Join Header Field (RFC 3911)</a>
+</li>
+<li>3.19.   <a href="#rfc.section.3.19">Early Media (RFC 3960)</a>
+</li>
+<li>3.20.   <a href="#rfc.section.3.20">Session Timers (RFC 4028)</a>
+</li>
+<li>3.21.   <a href="#rfc.section.3.21">INVITE Dialog Event Package (RFC 4235)</a>
+</li>
+<li>3.22.   <a href="#rfc.section.3.22">Request History (RFC 4244)</a>
+</li>
+<li>3.23.   <a href="#rfc.section.3.23">Actions for non-INVITE?? (RFC 4320)</a>
+</li>
+<li>3.24.   <a href="#rfc.section.3.24">Pre-Emption Events (RFC 4411)</a>
+</li>
+<li>3.25.   <a href="#rfc.section.3.25">Resource-Priority</a>
+</li>
+<li>3.26.   <a href="#rfc.section.3.26">Suppression of Implied REFER Subscription (RFC 4488)</a>
+</li>
+<li>3.27.   <a href="#rfc.section.3.27">Conveying Feature Tags (RFC 4508)</a>
+</li>
+<li>3.28.   <a href="#rfc.section.3.28">Request Auth?? (RFC 4538)</a>
+</li>
+<li>3.29.   <a href="#rfc.section.3.29">KPML (RFC 4730)</a>
+</li>
+<li>3.30.   <a href="#rfc.section.3.30">representing trunk groups (RFC 4904)</a>
+</li>
+<li>3.31.   <a href="#rfc.section.3.31">Connected Identity (RFC 4916)</a>
+</li>
+<li>3.32.   <a href="#rfc.section.3.32">Dial Strin (RFC 4967)</a>
+</li>
+<li>3.33.   <a href="#rfc.section.3.33">URN for emergency services (RFC 5031)</a>
+</li>
+<li>3.34.   <a href="#rfc.section.3.34">Rejecting Anonymous Requests (RFC 5079)</a>
+</li>
+<li>3.35.   <a href="#rfc.section.3.35">Real-Time Text (RFC 5194)</a>
+</li>
+<li>3.36.   <a href="#rfc.section.3.36">Answering Modes ?? (RFC 5373)</a>
+</li>
+<li>3.37.   <a href="#rfc.section.3.37">SIP Outbound (RFC 5626)</a>
+</li>
+<li>3.38.   <a href="#rfc.section.3.38">GRUU (RFC 5627)</a>
+</li>
+<li>3.39.   <a href="#rfc.section.3.39">App Interaction Framework (RFC 5629)</a>
+</li>
+<li>3.40.   <a href="#rfc.section.3.40">SIP Session Mobility (RFC 5621)</a>
+</li>
+<li>3.41.   <a href="#rfc.section.3.41">Diversion (RFC 5806)</a>
+</li>
+<li>3.42.   <a href="#rfc.section.3.42">Domain Certs (RFC 5922)</a>
+</li>
+<li>3.43.   <a href="#rfc.section.3.43">Connection Reuse (RFC 5923)</a>
+</li>
+<li>3.44.   <a href="#rfc.section.3.44">UA Config (RFC 6011)</a>
+</li>
+<li>3.45.   <a href="#rfc.section.3.45">Event Package for Call Quality (RFC 6035)</a>
+</li>
+<li>3.46.   <a href="#rfc.section.3.46">Certificate Management Service (RFC 6072)</a>
+</li>
+<li>3.47.   <a href="#rfc.section.3.47">SIP e2e performance metrics (RFC 6076)</a>
+</li>
+<li>3.48.   <a href="#rfc.section.3.48">UA Profile Delivery (RFC 6080)</a>
+</li>
+<li>3.49.   <a href="#rfc.section.3.49">INFO method Package and Framework (RFC 6086)</a>
+</li>
+<li>3.50.   <a href="#rfc.section.3.50">ANAT? (RFC 6135)</a>
+</li>
+<li>3.51.   <a href="#rfc.section.3.51">registration of multiple numbersin SIP (RFC 6140)</a>
+</li>
+<li>3.52.   <a href="#rfc.section.3.52">IPv6 Transition and SIP (RFC 6157)</a>
+</li>
+<li>3.53.   <a href="#rfc.section.3.53">Indication of Support for Keepalive (RFC 6223)</a>
+</li>
+<li>3.54.   <a href="#rfc.section.3.54">SIP Response for Indication of Terminated Dialog (RFC 6228)</a>
+</li>
+<li>3.55.   <a href="#rfc.section.3.55">Location Conveyance in SIP (RFC 6442)</a>
+</li>
+<li>3.56.   <a href="#rfc.section.3.56">Notification for Rate Control (RFC 6446)</a>
+</li>
+<li>3.57.   <a href="#rfc.section.3.57">Filtering Location Notifications (RFC 6447)</a>
+</li>
+<li>3.58.   <a href="#rfc.section.3.58">SIP specific event notification (RFC 6665)</a>
+</li>
+<li>3.59.   <a href="#rfc.section.3.59">Framework for Session Policy (RFC 6794)</a>
+</li>
+<li>3.60.   <a href="#rfc.section.3.60">SIP Events for Session Policy (RFC 6795)</a>
+</li>
+<li>3.61.   <a href="#rfc.section.3.61">UA Profile set for Media Policy (RFC 6796)</a>
+</li>
+<li>3.62.   <a href="#rfc.section.3.62">Completion of Calls (RFC 6910)</a>
+</li>
+<li>3.63.   <a href="#rfc.section.3.63">Fax over IP in SIP (RFC 6913)</a>
+</li>
+<li>3.64.   <a href="#rfc.section.3.64">Request History (RFC 7044)</a>
+</li>
+<li>3.65.   <a href="#rfc.section.3.65">SIP LOad Control Event Package (RFC 7200)</a>
+</li>
+<li>3.66.   <a href="#rfc.section.3.66">Session Identifier in SIP (RFC 7329)</a>
+</li>
+<li>3.67.   <a href="#rfc.section.3.67">Loop Detection in SIP (RFC 7332)</a>
+</li>
+<li>3.68.   <a href="#rfc.section.3.68">SIP Overload Control (RFC 7339)</a>
+</li>
+<li>3.69.   <a href="#rfc.section.3.69">Media Traceroute (RFC 7403)</a>
+</li>
+<li>3.70.   <a href="#rfc.section.3.70">SIP Rate Control (RFC 7415)</a>
+</li>
+<li>3.71.   <a href="#rfc.section.3.71">Transporting UU Information in SIP (RFC 7433)</a>
+</li>
+<li>3.72.   <a href="#rfc.section.3.72">URNs for Alert-Info (RFC 7462)</a>
+</li>
+<li>3.73.   <a href="#rfc.section.3.73">Shared Appearances for an AOR (RFC 7463)</a>
+</li>
+<li>3.74.   <a href="#rfc.section.3.74">SIPREC (RFC 7866)</a>
+</li>
+<li>3.75.   <a href="#rfc.section.3.75">E2E Session Identification (RFC 7989)</a>
+</li>
+<li>3.76.   <a href="#rfc.section.3.76">Response Code for Unwanted Calls (RFC 8197)</a>
+</li>
+<li>3.77.   <a href="#rfc.section.3.77">Authenticated Identity Management (RFC 8224)</a>
+</li>
+<li>3.78.   <a href="#rfc.section.3.78">Passport (RFC 8225)</a>
+</li>
+<li>3.79.   <a href="#rfc.section.3.79">STIR Certs (RFC 8226)</a>
+</li>
+<li>3.80.   <a href="#rfc.section.3.80">Content-ID (RFC 8262)</a>
+</li>
+<li>3.81.   <a href="#rfc.section.3.81">Negotiating Human Language (RFC 8373)</a>
+</li>
+<li>3.82.   <a href="#rfc.section.3.82">Passport for Resource Priority (RFC 8443)</a>
+</li>
+<li>3.83.   <a href="#rfc.section.3.83">Marking SIP messages to be logged (RFC 8497)</a>
+</li>
+<li>3.84.   <a href="#rfc.section.3.84">Push Notification and SIP (RFC 8599)</a>
+</li>
+</ul><li>4.   <a href="#rfc.section.4">SDP Extensions</a>
+</li>
+<ul><li>4.1.   <a href="#rfc.section.4.1">Grouping of m-lines (RFC 3388)</a>
+</li>
+<li>4.2.   <a href="#rfc.section.4.2">Media Auth (RFC 3521)</a>
+</li>
+</ul><li>5.   <a href="#rfc.section.5">NAT Traversal</a>
+</li>
+<ul><li>5.1.   <a href="#rfc.section.5.1">STUN (RFC 5389)</a>
+</li>
+<li>5.2.   <a href="#rfc.section.5.2">TURN (RFC 5766)</a>
+</li>
+<li>5.3.   <a href="#rfc.section.5.3">Indicating support for ICE in SDP (RFC 5768)</a>
+</li>
+<li>5.4.   <a href="#rfc.section.5.4">ICE (RFC 5245)</a>
+</li>
+<li>5.5.   <a href="#rfc.section.5.5">ANAT (RFC 4091)</a>
+</li>
+<li>5.6.   <a href="#rfc.section.5.6">TURN TCP (RFC 6062)</a>
+</li>
+<li>5.7.   <a href="#rfc.section.5.7">TCP candidates with ICE (RFC 6544)</a>
+</li>
+</ul><li>6.   <a href="#rfc.section.6">RTP Extensions (excepting Payload Types)</a>
+</li>
+<li>7.   <a href="#rfc.references">Informative References</a>
+</li>
+<li><a href="#rfc.authors">Author's Address</a>
+</li>
+
+
+  </ul>
+
+  <h1 id="rfc.section.1">
+<a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a>
+</h1>
+<p id="rfc.section.1.p.1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119, BCP 14 <a href="#RFC2119" class="xref">[RFC2119]</a> and indicate requirement levels for compliant CoAP implementations.  </p>
+<p id="rfc.section.1.p.2">The Real-Time Internet Peering Protocol (RIPP) <a href="#I-D.rosenbergjennings-dispatch-ripp" class="xref">[I-D.rosenbergjennings-dispatch-ripp]</a> and its extension for inbound calls to single user devices [TODO ref draft-rosenberg-dispatch-ripp-inbound] provide an alternative to the Session Initiation Protocol (SIP) <a href="#RFC3261" class="xref">[RFC3261]</a> for several use cases. The question is - how much of SIP do those two specifications replace? </p>
+<p id="rfc.section.1.p.3">This document presents an analysis across the set of SIP specifications, and categorizes each specification as one of three types: </p>
+<p></p>
+
+<ol>
+<li>the two RIPP documents replace the document in whole with similar capability (replaced)</li>
+<li>the two RIPP documents eliminate the need for that specification without providing a similar capability (not-needed)</li>
+<li>the two RIPP documents do not eliminate the need for the capabilities of that specification, in whole or in part. In such a case, a RIPP extension would be needed if this specification was desired as part of RIPP. (not-replaced)</li>
+</ol>
+
+<p> </p>
+<h1 id="rfc.section.2">
+<a href="#rfc.section.2">2.</a> <a href="#core-specifications" id="core-specifications">Core Specifications</a>
+</h1>
+<p id="rfc.section.2.p.1">We first consider the core specifications - RFCs 3261 - 5, with a heavy focus on RFC3261.  </p>
+<h1 id="rfc.section.2.1">
+<a href="#rfc.section.2.1">2.1.</a> <a href="#the-main-sip-spec--rfc3261" id="the-main-sip-spec--rfc3261">The Main SIP Spec - RFC3261</a>
+</h1>
+<p id="rfc.section.2.1.p.1">There is a lot of content in this specification. The best way to analyze it compared to RIPP is to examine each of the methods and header fields, and consider the functionality provided by them.  </p>
+<p id="rfc.section.2.1.p.2">The INVITE method is of course replaced by RIPP, as is the BYE (through the ended event). Re-INVITE, though not a different method, is also supported in RIPP, though only ever initiated by the server with a new directive. Clients can move calls around by specifying the usage of a different handler. CANCEL is replaced in  [TODO ref draft-rosenberg-dispatch-ripp-inbound] by broadcasting an event to all listeners informing them that the call has been answered. The usage of CANCEL to end an unanswered call is replaced by the ended event in RIPP. REGISTER is replaced by the handler construct. ACK is not needed since RIPP is reliable.  </p>
+<p id="rfc.section.2.1.p.3">OPTIONS - which never worked that well - is replace by the more robust and complete TG construct, allowing the client the ability to discover everything needed to interact with the services of a server.  </p>
+<p id="rfc.section.2.1.p.4">Considering header fields, interestingly, a large number of them are focused on SIP routing features. These include Via, Route, Record-Route, Contact. These are not needed in RIPP, since RIPP focuses on a client to server construct. A server can, in turn, re-initiate a request. However, in SIP parlance, it would be a B2BUA and statefully know how to route return messages and forward requests later for the same call. In such an architecture, it is not necessary to stash routing state into protocol headers, which is what these headers do.  </p>
+<p id="rfc.section.2.1.p.5">The SIP content headers - Accept, Accept-Language, Content-Type, Content-Length are provided by underlying HTTP.  </p>
+<p id="rfc.section.2.1.p.6">The SIP identifiers - To, From, Call-ID and the branch parameter, are replaced by the simpler single call URI which is the one and only identifier for a call. This removes another piece of complexity from SIP - the convoluted algorithm for identifying calls, transactions, and call legs. The To and From exist in RIPP, but are replaced with secure versions using passports. The CSeq header field is not needed in RIPP since it utilizes reliable transport only, and this header field was only needed for transaction ordering.  </p>
+<p id="rfc.section.2.1.p.7">The SIP extensibility mechanisms - Require, Proxy-Require, Allow, Supported, are not needed in RIPP. These headers are necessary due to the symmetric nature of the relationship between entities. In RIPP, the client uses the services of the server and cannot insist on anything. The client can determine what services are supported through normal JSON extensibility constructs - similar to SIP heeaders - wherein unknown elements are ignored.  </p>
+<p id="rfc.section.2.1.p.8">The SIP forking concept - another source of much complexity - is eliminated in RIPP, and thus the logic in SIP associated with forking processing is not needed. Note tht, RIPP does allow a user to have multiple devices, and to make and receive calls on any of them. This is accomplished by using the normal HTTP model wherein multiple clients can manipulate the resources on the server.  </p>
+<p id="rfc.section.2.1.p.9">Consequently, we believe that RIPP serves as a full replacement for the entirety of <a href="#RFC3261" class="xref">[RFC3261]</a> and thus this specification is categorized as "replaced".  </p>
+<h1 id="rfc.section.2.2">
+<a href="#rfc.section.2.2">2.2.</a> <a href="#rfc3262--reliability-of-provisional-responses" id="rfc3262--reliability-of-provisional-responses">RFC3262 - Reliability of Provisional Responses</a>
+</h1>
+<p id="rfc.section.2.2.p.1">This specification is not needed in RIPP. It was specified to handle complexities with UDP-based signaling transport. RIPP only uses reliable transport for signaling. This specification is therefore categorized as "not-needed".  </p>
+<h1 id="rfc.section.2.3">
+<a href="#rfc.section.2.3">2.3.</a> <a href="#rfc3263--dns-srv-for-sip" id="rfc3263--dns-srv-for-sip">RFC3263 - DNS SRV for SIP</a>
+</h1>
+<p id="rfc.section.2.3.p.1">This specification is not needed in RIPP. DNS resolution is a function of HTTP and provided by A and AAAA records, not SRV. The load balancing properties of the SRV record never worked well, and are replaced by the far more robust techniques used with HTTP. This specification is therefore categorized as "not-needed".  </p>
+<h1 id="rfc.section.2.4">
+<a href="#rfc.section.2.4">2.4.</a> <a href="#rfc3264--offeranswer" id="rfc3264--offeranswer">RFC3264 - Offer/Answer</a>
+</h1>
+<p id="rfc.section.2.4.p.1">This specification, more than any other, is the one people love to hate. It has also proven incredibly robust, extended dramatically beyond its humble origines. RIPP abandons the offer/answer model entirely, favoring a model in which the server is always in control. Consequently, it is replaced by an "advertisement/proposal" model. At its core, offer/answer allowed clients to indicate their capabilities and for media streams to be set up and configured. RIPP provides this functionality, though differently. Consequently, this specification is categorized as "replaced".  </p>
+<h1 id="rfc.section.2.5">
+<a href="#rfc.section.2.5">2.5.</a> <a href="#rfc3265--sip-events" id="rfc3265--sip-events">RFC3265 - SIP Events</a>
+</h1>
+<p id="rfc.section.2.5.p.1">This specification provided a generic mechanism for clients to subscribe to events and receive notifications for them. This capability exists in RIPP using long-running GET to the /events endpoint on any resource, and uses the lifecycle of the transaction to manage the lifecycle of the subscription. Consequently, this specification is categorized as "replaced".  </p>
+<h1 id="rfc.section.3">
+<a href="#rfc.section.3">3.</a> <a href="#sip-extensions" id="sip-extensions">SIP Extensions</a>
+</h1>
+<p id="rfc.section.3.p.1">There are many SIP extensions, we do not consider all of them. Extensions which are corrections to other specifications are not considered. 3GPP specific extensions are not considered. Extensions specific to SIMPLE are not considered, and in general, presence and IM (which is out of scope for RIPP) is not considered. Generally, informational and experimental specifications are not considered, though there are some exceptions when they have effectively become normative in nature.  </p>
+<h1 id="rfc.section.3.1">
+<a href="#rfc.section.3.1">3.1.</a> <a href="#sip-info-rfc-2976" id="sip-info-rfc-2976">SIP INFO (RFC 2976)</a>
+</h1>
+<p id="rfc.section.3.1.p.1">TODO </p>
+<h1 id="rfc.section.3.2">
+<a href="#rfc.section.3.2">3.2.</a> <a href="#update-rfc-3311" id="update-rfc-3311">UPDATE (RFC 3311)</a>
+</h1>
+<p id="rfc.section.3.2.p.1">TODO </p>
+<h1 id="rfc.section.3.3">
+<a href="#rfc.section.3.3">3.3.</a> <a href="#resource-management-and-sip-rfc-3312" id="resource-management-and-sip-rfc-3312">Resource Management and SIP (RFC 3312)</a>
+</h1>
+<p id="rfc.section.3.3.p.1">TODO </p>
+<h1 id="rfc.section.3.4">
+<a href="#rfc.section.3.4">3.4.</a> <a href="#privacy-header-rfc-3323" id="privacy-header-rfc-3323">Privacy Header (RFC 3323)</a>
+</h1>
+<p id="rfc.section.3.4.p.1">TODO </p>
+<h1 id="rfc.section.3.5">
+<a href="#rfc.section.3.5">3.5.</a> <a href="#passertedid-rfc-3325" id="passertedid-rfc-3325">P-Asserted-ID (RFC 3325)</a>
+</h1>
+<p id="rfc.section.3.5.p.1">TODO </p>
+<h1 id="rfc.section.3.6">
+<a href="#rfc.section.3.6">3.6.</a> <a href="#reason-header-field-rfc-3326" id="reason-header-field-rfc-3326">Reason header field (RFC 3326)</a>
+</h1>
+<p id="rfc.section.3.6.p.1">TODO </p>
+<h1 id="rfc.section.3.7">
+<a href="#rfc.section.3.7">3.7.</a> <a href="#serviceroute-rfc-3327" id="serviceroute-rfc-3327">Service-Route (RFC 3327)</a>
+</h1>
+<p id="rfc.section.3.7.p.1">TODO </p>
+<h1 id="rfc.section.3.8">
+<a href="#rfc.section.3.8">3.8.</a> <a href="#refer-rfc-3515" id="refer-rfc-3515">REFER (RFC 3515)</a>
+</h1>
+<p id="rfc.section.3.8.p.1">TODO </p>
+<h1 id="rfc.section.3.9">
+<a href="#rfc.section.3.9">3.9.</a> <a href="#symmetric-response-routing-rfc-3581" id="symmetric-response-routing-rfc-3581">Symmetric Response Routing (RFC 3581)</a>
+</h1>
+<p id="rfc.section.3.9.p.1">TODO </p>
+<h1 id="rfc.section.3.10">
+<a href="#rfc.section.3.10">3.10.</a> <a href="#registration-event-package-rfc-3680" id="registration-event-package-rfc-3680">Registration Event Package (RFC 3680)</a>
+</h1>
+<p id="rfc.section.3.10.p.1">TODO </p>
+<h1 id="rfc.section.3.11">
+<a href="#rfc.section.3.11">3.11.</a> <a href="#third-party-call-controll-rfc-3725" id="third-party-call-controll-rfc-3725">Third Party Call Controll (RFC 3725)</a>
+</h1>
+<p id="rfc.section.3.11.p.1">TODO </p>
+<h1 id="rfc.section.3.12">
+<a href="#rfc.section.3.12">3.12.</a> <a href="#e164-and-sip-rfc-3824" id="e164-and-sip-rfc-3824">E.164 and SIP (RFC 3824)</a>
+</h1>
+<p id="rfc.section.3.12.p.1">TODO </p>
+<h1 id="rfc.section.3.13">
+<a href="#rfc.section.3.13">3.13.</a> <a href="#ua-capabilities-rfc-3840" id="ua-capabilities-rfc-3840">UA Capabilities (RFC 3840)</a>
+</h1>
+<p id="rfc.section.3.13.p.1">TODO </p>
+<h1 id="rfc.section.3.14">
+<a href="#rfc.section.3.14">3.14.</a> <a href="#caller-prefs-rfc-3841" id="caller-prefs-rfc-3841">Caller Prefs (RFC 3841)</a>
+</h1>
+<p id="rfc.section.3.14.p.1">TODO </p>
+<h1 id="rfc.section.3.15">
+<a href="#rfc.section.3.15">3.15.</a> <a href="#replaces-header-field-rfc-3891" id="replaces-header-field-rfc-3891">Replaces Header Field (RFC 3891)</a>
+</h1>
+<p id="rfc.section.3.15.p.1">TODO </p>
+<h1 id="rfc.section.3.16">
+<a href="#rfc.section.3.16">3.16.</a> <a href="#referredby-rfc-3892" id="referredby-rfc-3892">Referred-By (RFC 3892)</a>
+</h1>
+<p id="rfc.section.3.16.p.1">TODO </p>
+<h1 id="rfc.section.3.17">
+<a href="#rfc.section.3.17">3.17.</a> <a href="#publish-method-rfc-3903" id="publish-method-rfc-3903">PUBLISH method (RFC 3903)</a>
+</h1>
+<p id="rfc.section.3.17.p.1">TODO </p>
+<h1 id="rfc.section.3.18">
+<a href="#rfc.section.3.18">3.18.</a> <a href="#join-header-field-rfc-3911" id="join-header-field-rfc-3911">Join Header Field (RFC 3911)</a>
+</h1>
+<p id="rfc.section.3.18.p.1">TODO </p>
+<h1 id="rfc.section.3.19">
+<a href="#rfc.section.3.19">3.19.</a> <a href="#early-media-rfc-3960" id="early-media-rfc-3960">Early Media (RFC 3960)</a>
+</h1>
+<p id="rfc.section.3.19.p.1">TODO </p>
+<h1 id="rfc.section.3.20">
+<a href="#rfc.section.3.20">3.20.</a> <a href="#session-timers-rfc-4028" id="session-timers-rfc-4028">Session Timers (RFC 4028)</a>
+</h1>
+<p id="rfc.section.3.20.p.1">TODO </p>
+<h1 id="rfc.section.3.21">
+<a href="#rfc.section.3.21">3.21.</a> <a href="#invite-dialog-event-package-rfc-4235" id="invite-dialog-event-package-rfc-4235">INVITE Dialog Event Package (RFC 4235)</a>
+</h1>
+<p id="rfc.section.3.21.p.1">TODO </p>
+<h1 id="rfc.section.3.22">
+<a href="#rfc.section.3.22">3.22.</a> <a href="#request-history-rfc-4244" id="request-history-rfc-4244">Request History (RFC 4244)</a>
+</h1>
+<p id="rfc.section.3.22.p.1">TODO </p>
+<h1 id="rfc.section.3.23">
+<a href="#rfc.section.3.23">3.23.</a> <a href="#actions-for-noninvite-rfc-4320" id="actions-for-noninvite-rfc-4320">Actions for non-INVITE?? (RFC 4320)</a>
+</h1>
+<p id="rfc.section.3.23.p.1">TODO </p>
+<h1 id="rfc.section.3.24">
+<a href="#rfc.section.3.24">3.24.</a> <a href="#preemption-events-rfc-4411" id="preemption-events-rfc-4411">Pre-Emption Events (RFC 4411)</a>
+</h1>
+<p id="rfc.section.3.24.p.1">TODO </p>
+<h1 id="rfc.section.3.25">
+<a href="#rfc.section.3.25">3.25.</a> <a href="#resourcepriority" id="resourcepriority">Resource-Priority</a>
+</h1>
+<p id="rfc.section.3.25.p.1">TODO </p>
+<h1 id="rfc.section.3.26">
+<a href="#rfc.section.3.26">3.26.</a> <a href="#suppression-of-implied-refer-subscription-rfc-4488" id="suppression-of-implied-refer-subscription-rfc-4488">Suppression of Implied REFER Subscription (RFC 4488)</a>
+</h1>
+<p id="rfc.section.3.26.p.1">TODO </p>
+<h1 id="rfc.section.3.27">
+<a href="#rfc.section.3.27">3.27.</a> <a href="#conveying-feature-tags-rfc-4508" id="conveying-feature-tags-rfc-4508">Conveying Feature Tags (RFC 4508)</a>
+</h1>
+<p id="rfc.section.3.27.p.1">TODO </p>
+<h1 id="rfc.section.3.28">
+<a href="#rfc.section.3.28">3.28.</a> <a href="#request-auth-rfc-4538" id="request-auth-rfc-4538">Request Auth?? (RFC 4538)</a>
+</h1>
+<p id="rfc.section.3.28.p.1">TODO </p>
+<h1 id="rfc.section.3.29">
+<a href="#rfc.section.3.29">3.29.</a> <a href="#kpml-rfc-4730" id="kpml-rfc-4730">KPML (RFC 4730)</a>
+</h1>
+<p id="rfc.section.3.29.p.1">TODO </p>
+<h1 id="rfc.section.3.30">
+<a href="#rfc.section.3.30">3.30.</a> <a href="#representing-trunk-groups-rfc-4904" id="representing-trunk-groups-rfc-4904">representing trunk groups (RFC 4904)</a>
+</h1>
+<p id="rfc.section.3.30.p.1">TODO </p>
+<h1 id="rfc.section.3.31">
+<a href="#rfc.section.3.31">3.31.</a> <a href="#connected-identity-rfc-4916" id="connected-identity-rfc-4916">Connected Identity (RFC 4916)</a>
+</h1>
+<p id="rfc.section.3.31.p.1">TODO </p>
+<h1 id="rfc.section.3.32">
+<a href="#rfc.section.3.32">3.32.</a> <a href="#dial-strin-rfc-4967" id="dial-strin-rfc-4967">Dial Strin (RFC 4967)</a>
+</h1>
+<p id="rfc.section.3.32.p.1">TODO </p>
+<h1 id="rfc.section.3.33">
+<a href="#rfc.section.3.33">3.33.</a> <a href="#urn-for-emergency-services-rfc-5031" id="urn-for-emergency-services-rfc-5031">URN for emergency services (RFC 5031)</a>
+</h1>
+<p id="rfc.section.3.33.p.1">TODO </p>
+<h1 id="rfc.section.3.34">
+<a href="#rfc.section.3.34">3.34.</a> <a href="#rejecting-anonymous-requests-rfc-5079" id="rejecting-anonymous-requests-rfc-5079">Rejecting Anonymous Requests (RFC 5079)</a>
+</h1>
+<p id="rfc.section.3.34.p.1">TODO </p>
+<h1 id="rfc.section.3.35">
+<a href="#rfc.section.3.35">3.35.</a> <a href="#realtime-text-rfc-5194" id="realtime-text-rfc-5194">Real-Time Text (RFC 5194)</a>
+</h1>
+<p id="rfc.section.3.35.p.1">TODO </p>
+<h1 id="rfc.section.3.36">
+<a href="#rfc.section.3.36">3.36.</a> <a href="#answering-modes--rfc-5373" id="answering-modes--rfc-5373">Answering Modes ?? (RFC 5373)</a>
+</h1>
+<p id="rfc.section.3.36.p.1">TODO </p>
+<h1 id="rfc.section.3.37">
+<a href="#rfc.section.3.37">3.37.</a> <a href="#sip-outbound-rfc-5626" id="sip-outbound-rfc-5626">SIP Outbound (RFC 5626)</a>
+</h1>
+<p id="rfc.section.3.37.p.1">TODO </p>
+<h1 id="rfc.section.3.38">
+<a href="#rfc.section.3.38">3.38.</a> <a href="#gruu-rfc-5627" id="gruu-rfc-5627">GRUU (RFC 5627)</a>
+</h1>
+<p id="rfc.section.3.38.p.1">TODO </p>
+<h1 id="rfc.section.3.39">
+<a href="#rfc.section.3.39">3.39.</a> <a href="#app-interaction-framework-rfc-5629" id="app-interaction-framework-rfc-5629">App Interaction Framework (RFC 5629)</a>
+</h1>
+<p id="rfc.section.3.39.p.1">TODO </p>
+<h1 id="rfc.section.3.40">
+<a href="#rfc.section.3.40">3.40.</a> <a href="#sip-session-mobility-rfc-5621" id="sip-session-mobility-rfc-5621">SIP Session Mobility (RFC 5621)</a>
+</h1>
+<p id="rfc.section.3.40.p.1">TODO </p>
+<h1 id="rfc.section.3.41">
+<a href="#rfc.section.3.41">3.41.</a> <a href="#diversion-rfc-5806" id="diversion-rfc-5806">Diversion (RFC 5806)</a>
+</h1>
+<p id="rfc.section.3.41.p.1">TODO </p>
+<h1 id="rfc.section.3.42">
+<a href="#rfc.section.3.42">3.42.</a> <a href="#domain-certs-rfc-5922" id="domain-certs-rfc-5922">Domain Certs (RFC 5922)</a>
+</h1>
+<p id="rfc.section.3.42.p.1">TODO </p>
+<h1 id="rfc.section.3.43">
+<a href="#rfc.section.3.43">3.43.</a> <a href="#connection-reuse-rfc-5923" id="connection-reuse-rfc-5923">Connection Reuse (RFC 5923)</a>
+</h1>
+<p id="rfc.section.3.43.p.1">TODO </p>
+<h1 id="rfc.section.3.44">
+<a href="#rfc.section.3.44">3.44.</a> <a href="#ua-config-rfc-6011" id="ua-config-rfc-6011">UA Config (RFC 6011)</a>
+</h1>
+<p id="rfc.section.3.44.p.1">TODO </p>
+<h1 id="rfc.section.3.45">
+<a href="#rfc.section.3.45">3.45.</a> <a href="#event-package-for-call-quality-rfc-6035" id="event-package-for-call-quality-rfc-6035">Event Package for Call Quality (RFC 6035)</a>
+</h1>
+<p id="rfc.section.3.45.p.1">TODO </p>
+<h1 id="rfc.section.3.46">
+<a href="#rfc.section.3.46">3.46.</a> <a href="#certificate-management-service-rfc-6072" id="certificate-management-service-rfc-6072">Certificate Management Service (RFC 6072)</a>
+</h1>
+<p id="rfc.section.3.46.p.1">TODO </p>
+<h1 id="rfc.section.3.47">
+<a href="#rfc.section.3.47">3.47.</a> <a href="#sip-e2e-performance-metrics-rfc-6076" id="sip-e2e-performance-metrics-rfc-6076">SIP e2e performance metrics (RFC 6076)</a>
+</h1>
+<p id="rfc.section.3.47.p.1">TODO </p>
+<h1 id="rfc.section.3.48">
+<a href="#rfc.section.3.48">3.48.</a> <a href="#ua-profile-delivery-rfc-6080" id="ua-profile-delivery-rfc-6080">UA Profile Delivery (RFC 6080)</a>
+</h1>
+<p id="rfc.section.3.48.p.1">TODO </p>
+<h1 id="rfc.section.3.49">
+<a href="#rfc.section.3.49">3.49.</a> <a href="#info-method-package-and-framework-rfc-6086" id="info-method-package-and-framework-rfc-6086">INFO method Package and Framework (RFC 6086)</a>
+</h1>
+<p id="rfc.section.3.49.p.1">TODO </p>
+<h1 id="rfc.section.3.50">
+<a href="#rfc.section.3.50">3.50.</a> <a href="#anat-rfc-6135" id="anat-rfc-6135">ANAT? (RFC 6135)</a>
+</h1>
+<p id="rfc.section.3.50.p.1">TODO </p>
+<h1 id="rfc.section.3.51">
+<a href="#rfc.section.3.51">3.51.</a> <a href="#registration-of-multiple-numbersin-sip-rfc-6140" id="registration-of-multiple-numbersin-sip-rfc-6140">registration of multiple numbersin SIP (RFC 6140)</a>
+</h1>
+<p id="rfc.section.3.51.p.1">TODO </p>
+<h1 id="rfc.section.3.52">
+<a href="#rfc.section.3.52">3.52.</a> <a href="#ipv6-transition-and-sip-rfc-6157" id="ipv6-transition-and-sip-rfc-6157">IPv6 Transition and SIP (RFC 6157)</a>
+</h1>
+<p id="rfc.section.3.52.p.1">TODO </p>
+<h1 id="rfc.section.3.53">
+<a href="#rfc.section.3.53">3.53.</a> <a href="#indication-of-support-for-keepalive-rfc-6223" id="indication-of-support-for-keepalive-rfc-6223">Indication of Support for Keepalive (RFC 6223)</a>
+</h1>
+<p id="rfc.section.3.53.p.1">TODO </p>
+<h1 id="rfc.section.3.54">
+<a href="#rfc.section.3.54">3.54.</a> <a href="#sip-response-for-indication-of-terminated-dialog-rfc-6228" id="sip-response-for-indication-of-terminated-dialog-rfc-6228">SIP Response for Indication of Terminated Dialog (RFC 6228)</a>
+</h1>
+<p id="rfc.section.3.54.p.1">TODO </p>
+<h1 id="rfc.section.3.55">
+<a href="#rfc.section.3.55">3.55.</a> <a href="#location-conveyance-in-sip-rfc-6442" id="location-conveyance-in-sip-rfc-6442">Location Conveyance in SIP (RFC 6442)</a>
+</h1>
+<p id="rfc.section.3.55.p.1">TODO </p>
+<h1 id="rfc.section.3.56">
+<a href="#rfc.section.3.56">3.56.</a> <a href="#notification-for-rate-control-rfc-6446" id="notification-for-rate-control-rfc-6446">Notification for Rate Control (RFC 6446)</a>
+</h1>
+<p id="rfc.section.3.56.p.1">TODO </p>
+<h1 id="rfc.section.3.57">
+<a href="#rfc.section.3.57">3.57.</a> <a href="#filtering-location-notifications-rfc-6447" id="filtering-location-notifications-rfc-6447">Filtering Location Notifications (RFC 6447)</a>
+</h1>
+<p id="rfc.section.3.57.p.1">TODO </p>
+<h1 id="rfc.section.3.58">
+<a href="#rfc.section.3.58">3.58.</a> <a href="#sip-specific-event-notification-rfc-6665" id="sip-specific-event-notification-rfc-6665">SIP specific event notification (RFC 6665)</a>
+</h1>
+<p id="rfc.section.3.58.p.1">TODO </p>
+<h1 id="rfc.section.3.59">
+<a href="#rfc.section.3.59">3.59.</a> <a href="#framework-for-session-policy-rfc-6794" id="framework-for-session-policy-rfc-6794">Framework for Session Policy (RFC 6794)</a>
+</h1>
+<p id="rfc.section.3.59.p.1">TODO </p>
+<h1 id="rfc.section.3.60">
+<a href="#rfc.section.3.60">3.60.</a> <a href="#sip-events-for-session-policy-rfc-6795" id="sip-events-for-session-policy-rfc-6795">SIP Events for Session Policy (RFC 6795)</a>
+</h1>
+<p id="rfc.section.3.60.p.1">TODO </p>
+<h1 id="rfc.section.3.61">
+<a href="#rfc.section.3.61">3.61.</a> <a href="#ua-profile-set-for-media-policy-rfc-6796" id="ua-profile-set-for-media-policy-rfc-6796">UA Profile set for Media Policy (RFC 6796)</a>
+</h1>
+<p id="rfc.section.3.61.p.1">TODO </p>
+<h1 id="rfc.section.3.62">
+<a href="#rfc.section.3.62">3.62.</a> <a href="#completion-of-calls-rfc-6910" id="completion-of-calls-rfc-6910">Completion of Calls (RFC 6910)</a>
+</h1>
+<p id="rfc.section.3.62.p.1">TODO </p>
+<h1 id="rfc.section.3.63">
+<a href="#rfc.section.3.63">3.63.</a> <a href="#fax-over-ip-in-sip-rfc-6913" id="fax-over-ip-in-sip-rfc-6913">Fax over IP in SIP (RFC 6913)</a>
+</h1>
+<p id="rfc.section.3.63.p.1">TODO </p>
+<h1 id="rfc.section.3.64">
+<a href="#rfc.section.3.64">3.64.</a> <a href="#request-history-rfc-7044" id="request-history-rfc-7044">Request History (RFC 7044)</a>
+</h1>
+<p id="rfc.section.3.64.p.1">TODO </p>
+<h1 id="rfc.section.3.65">
+<a href="#rfc.section.3.65">3.65.</a> <a href="#sip-load-control-event-package-rfc-7200" id="sip-load-control-event-package-rfc-7200">SIP LOad Control Event Package (RFC 7200)</a>
+</h1>
+<p id="rfc.section.3.65.p.1">TODO </p>
+<h1 id="rfc.section.3.66">
+<a href="#rfc.section.3.66">3.66.</a> <a href="#session-identifier-in-sip-rfc-7329" id="session-identifier-in-sip-rfc-7329">Session Identifier in SIP (RFC 7329)</a>
+</h1>
+<p id="rfc.section.3.66.p.1">TODO </p>
+<h1 id="rfc.section.3.67">
+<a href="#rfc.section.3.67">3.67.</a> <a href="#loop-detection-in-sip-rfc-7332" id="loop-detection-in-sip-rfc-7332">Loop Detection in SIP (RFC 7332)</a>
+</h1>
+<p id="rfc.section.3.67.p.1">TODO </p>
+<h1 id="rfc.section.3.68">
+<a href="#rfc.section.3.68">3.68.</a> <a href="#sip-overload-control-rfc-7339" id="sip-overload-control-rfc-7339">SIP Overload Control (RFC 7339)</a>
+</h1>
+<p id="rfc.section.3.68.p.1">TODO </p>
+<h1 id="rfc.section.3.69">
+<a href="#rfc.section.3.69">3.69.</a> <a href="#media-traceroute-rfc-7403" id="media-traceroute-rfc-7403">Media Traceroute (RFC 7403)</a>
+</h1>
+<p id="rfc.section.3.69.p.1">TODO </p>
+<h1 id="rfc.section.3.70">
+<a href="#rfc.section.3.70">3.70.</a> <a href="#sip-rate-control-rfc-7415" id="sip-rate-control-rfc-7415">SIP Rate Control (RFC 7415)</a>
+</h1>
+<p id="rfc.section.3.70.p.1">TODO </p>
+<h1 id="rfc.section.3.71">
+<a href="#rfc.section.3.71">3.71.</a> <a href="#transporting-uu-information-in-sip-rfc-7433" id="transporting-uu-information-in-sip-rfc-7433">Transporting UU Information in SIP (RFC 7433)</a>
+</h1>
+<p id="rfc.section.3.71.p.1">TODO </p>
+<h1 id="rfc.section.3.72">
+<a href="#rfc.section.3.72">3.72.</a> <a href="#urns-for-alertinfo-rfc-7462" id="urns-for-alertinfo-rfc-7462">URNs for Alert-Info (RFC 7462)</a>
+</h1>
+<p id="rfc.section.3.72.p.1">TODO </p>
+<h1 id="rfc.section.3.73">
+<a href="#rfc.section.3.73">3.73.</a> <a href="#shared-appearances-for-an-aor-rfc-7463" id="shared-appearances-for-an-aor-rfc-7463">Shared Appearances for an AOR (RFC 7463)</a>
+</h1>
+<p id="rfc.section.3.73.p.1">TODO </p>
+<h1 id="rfc.section.3.74">
+<a href="#rfc.section.3.74">3.74.</a> <a href="#siprec-rfc-7866" id="siprec-rfc-7866">SIPREC (RFC 7866)</a>
+</h1>
+<p id="rfc.section.3.74.p.1">TODO </p>
+<h1 id="rfc.section.3.75">
+<a href="#rfc.section.3.75">3.75.</a> <a href="#e2e-session-identification-rfc-7989" id="e2e-session-identification-rfc-7989">E2E Session Identification (RFC 7989)</a>
+</h1>
+<p id="rfc.section.3.75.p.1">TODO </p>
+<h1 id="rfc.section.3.76">
+<a href="#rfc.section.3.76">3.76.</a> <a href="#response-code-for-unwanted-calls-rfc-8197" id="response-code-for-unwanted-calls-rfc-8197">Response Code for Unwanted Calls (RFC 8197)</a>
+</h1>
+<p id="rfc.section.3.76.p.1">TODO </p>
+<h1 id="rfc.section.3.77">
+<a href="#rfc.section.3.77">3.77.</a> <a href="#authenticated-identity-management-rfc-8224" id="authenticated-identity-management-rfc-8224">Authenticated Identity Management (RFC 8224)</a>
+</h1>
+<p id="rfc.section.3.77.p.1">TODO </p>
+<h1 id="rfc.section.3.78">
+<a href="#rfc.section.3.78">3.78.</a> <a href="#passport-rfc-8225" id="passport-rfc-8225">Passport (RFC 8225)</a>
+</h1>
+<p id="rfc.section.3.78.p.1">TODO </p>
+<h1 id="rfc.section.3.79">
+<a href="#rfc.section.3.79">3.79.</a> <a href="#stir-certs-rfc-8226" id="stir-certs-rfc-8226">STIR Certs (RFC 8226)</a>
+</h1>
+<p id="rfc.section.3.79.p.1">TODO </p>
+<h1 id="rfc.section.3.80">
+<a href="#rfc.section.3.80">3.80.</a> <a href="#contentid-rfc-8262" id="contentid-rfc-8262">Content-ID (RFC 8262)</a>
+</h1>
+<p id="rfc.section.3.80.p.1">TODO </p>
+<h1 id="rfc.section.3.81">
+<a href="#rfc.section.3.81">3.81.</a> <a href="#negotiating-human-language-rfc-8373" id="negotiating-human-language-rfc-8373">Negotiating Human Language (RFC 8373)</a>
+</h1>
+<p id="rfc.section.3.81.p.1">TODO </p>
+<h1 id="rfc.section.3.82">
+<a href="#rfc.section.3.82">3.82.</a> <a href="#passport-for-resource-priority-rfc-8443" id="passport-for-resource-priority-rfc-8443">Passport for Resource Priority (RFC 8443)</a>
+</h1>
+<p id="rfc.section.3.82.p.1">TODO </p>
+<h1 id="rfc.section.3.83">
+<a href="#rfc.section.3.83">3.83.</a> <a href="#marking-sip-messages-to-be-logged-rfc-8497" id="marking-sip-messages-to-be-logged-rfc-8497">Marking SIP messages to be logged (RFC 8497)</a>
+</h1>
+<p id="rfc.section.3.83.p.1">TODO </p>
+<h1 id="rfc.section.3.84">
+<a href="#rfc.section.3.84">3.84.</a> <a href="#push-notification-and-sip-rfc-8599" id="push-notification-and-sip-rfc-8599">Push Notification and SIP (RFC 8599)</a>
+</h1>
+<p id="rfc.section.3.84.p.1">TODO </p>
+<h1 id="rfc.section.4">
+<a href="#rfc.section.4">4.</a> <a href="#sdp-extensions" id="sdp-extensions">SDP Extensions</a>
+</h1>
+<h1 id="rfc.section.4.1">
+<a href="#rfc.section.4.1">4.1.</a> <a href="#grouping-of-mlines-rfc-3388" id="grouping-of-mlines-rfc-3388">Grouping of m-lines (RFC 3388)</a>
+</h1>
+<p id="rfc.section.4.1.p.1">TODO </p>
+<h1 id="rfc.section.4.2">
+<a href="#rfc.section.4.2">4.2.</a> <a href="#media-auth-rfc-3521" id="media-auth-rfc-3521">Media Auth (RFC 3521)</a>
+</h1>
+<p id="rfc.section.4.2.p.1">TODO </p>
+<h1 id="rfc.section.5">
+<a href="#rfc.section.5">5.</a> <a href="#nat-traversal" id="nat-traversal">NAT Traversal</a>
+</h1>
+<h1 id="rfc.section.5.1">
+<a href="#rfc.section.5.1">5.1.</a> <a href="#stun-rfc-5389" id="stun-rfc-5389">STUN (RFC 5389)</a>
+</h1>
+<p id="rfc.section.5.1.p.1">TODO </p>
+<h1 id="rfc.section.5.2">
+<a href="#rfc.section.5.2">5.2.</a> <a href="#turn-rfc-5766" id="turn-rfc-5766">TURN (RFC 5766)</a>
+</h1>
+<p id="rfc.section.5.2.p.1">TODO </p>
+<h1 id="rfc.section.5.3">
+<a href="#rfc.section.5.3">5.3.</a> <a href="#indicating-support-for-ice-in-sdp-rfc-5768" id="indicating-support-for-ice-in-sdp-rfc-5768">Indicating support for ICE in SDP (RFC 5768)</a>
+</h1>
+<p id="rfc.section.5.3.p.1">TODO </p>
+<h1 id="rfc.section.5.4">
+<a href="#rfc.section.5.4">5.4.</a> <a href="#ice-rfc-5245" id="ice-rfc-5245">ICE (RFC 5245)</a>
+</h1>
+<p id="rfc.section.5.4.p.1">TODO </p>
+<h1 id="rfc.section.5.5">
+<a href="#rfc.section.5.5">5.5.</a> <a href="#anat-rfc-4091" id="anat-rfc-4091">ANAT (RFC 4091)</a>
+</h1>
+<p id="rfc.section.5.5.p.1">TODO </p>
+<h1 id="rfc.section.5.6">
+<a href="#rfc.section.5.6">5.6.</a> <a href="#turn-tcp-rfc-6062" id="turn-tcp-rfc-6062">TURN TCP (RFC 6062)</a>
+</h1>
+<p id="rfc.section.5.6.p.1">TODO </p>
+<h1 id="rfc.section.5.7">
+<a href="#rfc.section.5.7">5.7.</a> <a href="#tcp-candidates-with-ice-rfc-6544" id="tcp-candidates-with-ice-rfc-6544">TCP candidates with ICE (RFC 6544)</a>
+</h1>
+<p id="rfc.section.5.7.p.1">TODO </p>
+<h1 id="rfc.section.6">
+<a href="#rfc.section.6">6.</a> <a href="#rtp-extensions-excepting-payload-types" id="rtp-extensions-excepting-payload-types">RTP Extensions (excepting Payload Types)</a>
+</h1>
+<p id="rfc.section.6.p.1">TODO </p>
+<h1 id="rfc.references">
+<a href="#rfc.references">7.</a> Informative References</h1>
+<table><tbody>
+<tr>
+<td class="reference"><b id="I-D.rosenbergjennings-dispatch-ripp">[I-D.rosenbergjennings-dispatch-ripp]</b></td>
+<td class="top">
+<a>Rosenberg, J.</a>, <a>Jennings, C.</a>, <a>Minessale, A.</a>, <a>Livingood, J.</a> and <a>J. Uberti</a>, "<a href="https://tools.ietf.org/html/draft-rosenbergjennings-dispatch-ripp-03">Real Time Internet Peering Protocol</a>", Internet-Draft draft-rosenbergjennings-dispatch-ripp-03, July 2019.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC2119">[RFC2119]</b></td>
+<td class="top">
+<a>Bradner, S.</a>, "<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC3261">[RFC3261]</b></td>
+<td class="top">
+<a>Rosenberg, J.</a>, <a>Schulzrinne, H.</a>, <a>Camarillo, G.</a>, <a>Johnston, A.</a>, <a>Peterson, J.</a>, <a>Sparks, R.</a>, <a>Handley, M.</a> and <a>E. Schooler</a>, "<a href="https://tools.ietf.org/html/rfc3261">SIP: Session Initiation Protocol</a>", RFC 3261, DOI 10.17487/RFC3261, June 2002.</td>
+</tr>
+</tbody></table>
+<h1 id="rfc.authors"><a href="#rfc.authors">Author's Address</a></h1>
+<div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Jonathan Rosenberg</span> 
+	  <span class="n hidden">
+		<span class="family-name">Rosenberg</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Five9</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:jdrosen@jdrosen.net">jdrosen@jdrosen.net</a></span>
+
+  </address>
+</div>
+
+</body>
+</html>

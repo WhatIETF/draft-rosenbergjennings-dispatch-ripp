@@ -5,7 +5,7 @@
 <head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/">
   <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
 
-  <title>RIPP WebRTC Mode</title>
+  <title>Enterprise Telephony Features in RIPP</title>
 
   <style type="text/css" title="Xml2Rfc (sans serif)">
   /*<![CDATA[*/
@@ -376,10 +376,13 @@
   <link href="#rfc.toc" rel="Contents">
 <link href="#rfc.section.1" rel="Chapter" title="1 Terminology">
 <link href="#rfc.section.2" rel="Chapter" title="2 Introduction">
-<link href="#rfc.section.3" rel="Chapter" title="3 Overview of Operation">
-<link href="#rfc.section.4" rel="Chapter" title="4 IANA Considerations">
-<link href="#rfc.section.5" rel="Chapter" title="5 Security Considerations">
-<link href="#rfc.references" rel="Chapter" title="6 Informative References">
+<link href="#rfc.section.3" rel="Chapter" title="3 Blind Transfer">
+<link href="#rfc.section.4" rel="Chapter" title="4 Warm Transfer">
+<link href="#rfc.section.5" rel="Chapter" title="5 Hold and Resume">
+<link href="#rfc.section.6" rel="Chapter" title="6 Mute">
+<link href="#rfc.section.7" rel="Chapter" title="7 IANA Considerations">
+<link href="#rfc.section.8" rel="Chapter" title="8 Security Considerations">
+<link href="#rfc.references" rel="Chapter" title="9 Informative References">
 <link href="#rfc.authors" rel="Chapter">
 
 
@@ -387,10 +390,10 @@
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Rosenberg, J., Ed." />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-rosenberg-dispatch-ripp-inbound-00" />
-  <meta name="dct.issued" scheme="ISO8601" content="2020-01-27" />
-  <meta name="dct.abstract" content="The Real-Time Internet Peering Protocol (RIPP) defines a technique for establishing, terminating and otherwise managing calls between entities in differing administrative domains. The RIPP Inbound extension brings this to end clients, such as a browser. However, it defines a different technique for media that cannot directly use the webRTC APIs, and require a change to them. This specification provides an extension to RIPP for webRTC compatibility, enabling media to flow from browser to server as is done with RIPP, or from browser to browser. It also discusses techniques for sending e2e encrypted media." />
-  <meta name="description" content="The Real-Time Internet Peering Protocol (RIPP) defines a technique for establishing, terminating and otherwise managing calls between entities in differing administrative domains. The RIPP Inbound extension brings this to end clients, such as a browser. However, it defines a different technique for media that cannot directly use the webRTC APIs, and require a change to them. This specification provides an extension to RIPP for webRTC compatibility, enabling media to flow from browser to server as is done with RIPP, or from browser to browser. It also discusses techniques for sending e2e encrypted media." />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-rosenberg-dispatch-ripp-phone-features-00" />
+  <meta name="dct.issued" scheme="ISO8601" content="2020-01-25" />
+  <meta name="dct.abstract" content="The Real-Time Internet Peering Protocol (RIPP) defines a technique for establishing, terminating and otherwise managing calls between entities in differing administrative domains. This document extends RIPP by considering the specific case of an IP hardphone or softphone which connects to an IP PBX or similar piece of software. In this use case, additional signaling is needed for traditional telephony features, like hold, transfer, and park. This document extends RIPP to provide these capabilities." />
+  <meta name="description" content="The Real-Time Internet Peering Protocol (RIPP) defines a technique for establishing, terminating and otherwise managing calls between entities in differing administrative domains. This document extends RIPP by considering the specific case of an IP hardphone or softphone which connects to an IP PBX or similar piece of software. In this use case, additional signaling is needed for traditional telephony features, like hold, transfer, and park. This document extends RIPP to provide these capabilities." />
 
 </head>
 
@@ -409,10 +412,10 @@
 </tr>
 <tr>
 <td class="left">Intended status: Standards Track</td>
-<td class="right">January 27, 2020</td>
+<td class="right">January 25, 2020</td>
 </tr>
 <tr>
-<td class="left">Expires: July 30, 2020</td>
+<td class="left">Expires: July 28, 2020</td>
 <td class="right"></td>
 </tr>
 
@@ -420,49 +423,50 @@
     </tbody>
   </table>
 
-  <p class="title">RIPP WebRTC Mode<br />
-  <span class="filename">draft-rosenberg-dispatch-ripp-inbound-00</span></p>
+  <p class="title">Enterprise Telephony Features in RIPP<br />
+  <span class="filename">draft-rosenberg-dispatch-ripp-phone-features-00</span></p>
   
   <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
-<p>The Real-Time Internet Peering Protocol (RIPP) defines a technique for establishing, terminating and otherwise managing calls between entities in differing administrative domains. The RIPP Inbound extension brings this to end clients, such as a browser. However, it defines a different technique for media that cannot directly use the webRTC APIs, and require a change to them. This specification provides an extension to RIPP for webRTC compatibility, enabling media to flow from browser to server as is done with RIPP, or from browser to browser. It also discusses techniques for sending e2e encrypted media.</p>
+<p>The Real-Time Internet Peering Protocol (RIPP) defines a technique for establishing, terminating and otherwise managing calls between entities in differing administrative domains. This document extends RIPP by considering the specific case of an IP hardphone or softphone which connects to an IP PBX or similar piece of software. In this use case, additional signaling is needed for traditional telephony features, like hold, transfer, and park. This document extends RIPP to provide these capabilities.</p>
 <h1 id="rfc.status"><a href="#rfc.status">Status of This Memo</a></h1>
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on July 30, 2020.</p>
+<p>This Internet-Draft will expire on July 28, 2020.</p>
 <h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2020 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
 <p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
 <h1 id="rfc.section.1">
 <a href="#rfc.section.1">1.</a> Terminology</h1>
-<p id="rfc.section.1.p.1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 <a href="#RFC2119" class="xref">[RFC2119]</a> <a href="#RFC8174" class="xref">[RFC8174]</a> when, and only when, they appear in all capitals, as shown here. </p>
+<p id="rfc.section.1.p.1">The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 <a href="#RFC2119" class="xref">[RFC2119]</a> <a href="#RFC8174" class="xref">[RFC8174]</a> when, and only when, they appear in all capitals, as shown here.  </p>
 <h1 id="rfc.section.2">
 <a href="#rfc.section.2">2.</a> Introduction</h1>
+<p id="rfc.section.2.p.1">blah </p>
 <h1 id="rfc.section.3">
-<a href="#rfc.section.3">3.</a> Overview of Operation</h1>
-<p id="rfc.section.3.p.1">Basic idea: The TG indicates that this compatibility mode is supported on the TG. The handler is also indicates that this mode is supported. The handler includes its own ICE candidates. This means we provide the ICE candidates at "registration" time and not before the call. This is necessary to facilitate the many call move and other operations in RIPP-inbound. This also means the browser needs to keep them fresh all of the time, rather than just before the call [[is this posible with current API??]]. </p>
-<p id="rfc.section.3.p.2">Since the media is sent by DTLS-SRTP and not embedded as media chunks in a client-to-server HTTPS connection, the browser includes its fingerprint in the handler as well. </p>
-<p id="rfc.section.3.p.3">To initiate this compatibility mode for media, the server indicates as such in the directive. It can only put it in a directive if the handler that is selected, supports the mode. The directive includes the ICE candidates from the peer. This will trigger the client to perform ICE and send media (which will be DTLS-SRTP). </p>
-<p id="rfc.section.3.p.4">RIPP itself doesnt convey the ICE candidates in the server to server link, since its only through handler whih is static for a device and not per-call. So we'd either need to move them, develop a separate way to convey them, or assume SIP or some other technique is used for server to server calls.  </p>
-<p id="rfc.section.3.p.5">Suggest we also require a well-known port for media, and we'll need an RTP headr extension to convey the callID since its included inband in RIPP.  </p>
+<a href="#rfc.section.3">3.</a> Blind Transfer</h1>
+<p id="rfc.section.3.p.1">Performs a blind transfer of the call. The event contains a string which MUST be a valid value for the target URI parameter used when setting up a new call. Once the transfer has initiated, the server MUST generate a transfer-reject event if it is unwilling to perform the transfer. If it attempts the transfer, it MUST send a transfer-pending event indicating that the transfer is in progress. If the transfer target answers the call, the server MUST generate a transfer-success event, followed by an end event, indicating the call is over for this user. If the transfer fails, the server MUST generate a transfer-failed event, in which case the call continues. Once the transfer target answers, it MUST be sent a transferred-from event, containing the URI of the call from which the transfer happened. </p>
 <h1 id="rfc.section.4">
-<a href="#rfc.section.4">4.</a> IANA Considerations</h1>
-<p id="rfc.section.4.p.1">No values are assigned in this document, no registries are created, and there is no action assigned to the IANA by this document. </p>
+<a href="#rfc.section.4">4.</a> Warm Transfer</h1>
+<p id="rfc.section.4.p.1">transfer-warm: performs a warm transfer. For this to work, the endpoint sending the event must be in two calls. It sends this event on the one to be transferred to the other. The event has a single parameter which specifies the URI of the call to which the transfer is taking place. This two calls MUST have the same authority component of their call URI. Once the peer receives this event, it MUST perform the transfer. The transfer will either complete almost immediately else fail. If it succeeds, the peer MUST respond with a transfer-success event; if it fails, respond with a transfer-failed event, in which case the call continues. Furthermore, if the transfer succeeds, the transfer target MUST be sent a transferred-from event, containing the URI of the call from which the transfer happened.</p>
 <h1 id="rfc.section.5">
-<a href="#rfc.section.5">5.</a> Security Considerations</h1>
-<p id="rfc.section.5.p.1">This document introduces no new security considerations. It is a process document about changes to the rules for certain corner cases in publishing IETF stream RFCs.</p>
+<a href="#rfc.section.5">5.</a> Hold and Resume</h1>
+<p id="rfc.section.5.p.1">hold: performs a call hold on the call. Either side can initiate this, but only if its peer indicates support. Similarly, to inform its peer that it has been placed on hold, either side may send an on-hold event to its peer, but only if hold has been indicated as a capability. When an endpoint has been told it is on-hold, it MUST send silence for audio and black screen for video. The peer MAY generate music-on-hold or any other suitable content to render while the endpoint is on hold.</p>
+<h1 id="rfc.section.6">
+<a href="#rfc.section.6">6.</a> Mute</h1>
+<p id="rfc.section.6.p.1">mute: informs the peer that it has muted. This is informative for UI purposes, useful in conference calls for example. When an endpoint mutes, in addition to sending the mute event, it MUST send silence for audio and black screen for video. Similarly, if an endpoint wishes to inform its peer that it is muting its media, it sends a mute event.</p>
+<h1 id="rfc.section.7">
+<a href="#rfc.section.7">7.</a> IANA Considerations</h1>
+<p id="rfc.section.7.p.1">No values are assigned in this document, no registries are created, and there is no action assigned to the IANA by this document. </p>
+<h1 id="rfc.section.8">
+<a href="#rfc.section.8">8.</a> Security Considerations</h1>
+<p id="rfc.section.8.p.1">This document introduces no new security considerations. It is a process document about changes to the rules for certain corner cases in publishing IETF stream RFCs.</p>
 <h1 id="rfc.references">
-<a href="#rfc.references">6.</a> Informative References</h1>
+<a href="#rfc.references">9.</a> Informative References</h1>
 <table><tbody>
 <tr>
 <td class="reference"><b id="RFC2119">[RFC2119]</b></td>
 <td class="top">
 <a>Bradner, S.</a>, "<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997.</td>
-</tr>
-<tr>
-<td class="reference"><b id="RFC3261">[RFC3261]</b></td>
-<td class="top">
-<a>Rosenberg, J.</a>, <a>Schulzrinne, H.</a>, <a>Camarillo, G.</a>, <a>Johnston, A.</a>, <a>Peterson, J.</a>, <a>Sparks, R.</a>, <a>Handley, M.</a> and <a>E. Schooler</a>, "<a href="https://tools.ietf.org/html/rfc3261">SIP: Session Initiation Protocol</a>", RFC 3261, DOI 10.17487/RFC3261, June 2002.</td>
 </tr>
 <tr>
 <td class="reference"><b id="RFC8174">[RFC8174]</b></td>
@@ -503,13 +507,19 @@
 </li>
 <li>2.   <a href="#rfc.section.2">Introduction</a>
 </li>
-<li>3.   <a href="#rfc.section.3">Overview of Operation</a>
+<li>3.   <a href="#rfc.section.3">Blind Transfer</a>
 </li>
-<li>4.   <a href="#rfc.section.4">IANA Considerations</a>
+<li>4.   <a href="#rfc.section.4">Warm Transfer</a>
 </li>
-<li>5.   <a href="#rfc.section.5">Security Considerations</a>
+<li>5.   <a href="#rfc.section.5">Hold and Resume</a>
 </li>
-<li>6.   <a href="#rfc.references">Informative References</a>
+<li>6.   <a href="#rfc.section.6">Mute</a>
+</li>
+<li>7.   <a href="#rfc.section.7">IANA Considerations</a>
+</li>
+<li>8.   <a href="#rfc.section.8">Security Considerations</a>
+</li>
+<li>9.   <a href="#rfc.references">Informative References</a>
 </li>
 <li><a href="#rfc.authors">Author's Address</a>
 </li>

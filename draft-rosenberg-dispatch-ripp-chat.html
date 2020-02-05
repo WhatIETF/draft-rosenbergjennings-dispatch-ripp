@@ -398,21 +398,22 @@
 <link href="#rfc.section.9" rel="Chapter" title="9 Interoperability Use Cases">
 <link href="#rfc.section.9.1" rel="Chapter" title="9.1 Consumer to Consumer Interop">
 <link href="#rfc.section.9.2" rel="Chapter" title="9.2 Intra-Domain Enterprise Chat Federation">
-<link href="#rfc.section.9.3" rel="Chapter" title="9.3 Inter-Company Chat">
+<link href="#rfc.section.9.3" rel="Chapter" title="9.3 Intra-Company Migration">
+<link href="#rfc.section.9.4" rel="Chapter" title="9.4 Inter-Company Chat">
 <link href="#rfc.section.10" rel="Chapter" title="10 IANA Considerations">
 <link href="#rfc.section.11" rel="Chapter" title="11 Security Considerations">
 <link href="#rfc.references" rel="Chapter" title="12 Informative References">
 <link href="#rfc.authors" rel="Chapter">
 
 
-  <meta name="generator" content="xml2rfc version 2.39.0 - https://tools.ietf.org/tools/xml2rfc" />
+  <meta name="generator" content="xml2rfc version 2.22.3 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="Rosenberg, J., Ed." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-rosenberg-dispatch-ripp-chat-00" />
   <meta name="dct.issued" scheme="ISO8601" content="2020-02-07" />
-  <meta name="dct.abstract" content="This specification defines a web-based application protocol that enables interoperability for modern enterprise and consumer applications that provide persistent group chat capabilities. It outlines the protocol capabilities needed for a union of the features provided across iMessage, Slack, and Webex Teams. The specification enables many use cases in which interoperability is desirable, including enterprises that have deployed a multiplicity of these applications, contact center clients seeking to integrate with a large number of enteprise telephony systems, inter-company chat, and interop between consumer chat apps like iMessage and WeChat.  " />
-  <meta name="description" content="This specification defines a web-based application protocol that enables interoperability for modern enterprise and consumer applications that provide persistent group chat capabilities. It outlines the protocol capabilities needed for a union of the features provided across iMessage, Slack, and Webex Teams. The specification enables many use cases in which interoperability is desirable, including enterprises that have deployed a multiplicity of these applications, contact center clients seeking to integrate with a large number of enteprise telephony systems, inter-company chat, and interop between consumer chat apps like iMessage and WeChat.  " />
+  <meta name="dct.abstract" content="This specification defines a web-based application protocol that enables interoperability for modern enterprise and consumer applications that provide persistent group chat capabilities. It outlines the protocol capabilities needed for a union of the features provided across iMessage, Slack, and Webex Teams. The specification enables many use cases in which interoperability is desirable, including enterprises that have deployed a multiplicity of these applications, contact center clients seeking to integrate with a large number of enteprise telephony systems, inter-company chat, and interop between consumer chat apps like iMessage and WeChat. " />
+  <meta name="description" content="This specification defines a web-based application protocol that enables interoperability for modern enterprise and consumer applications that provide persistent group chat capabilities. It outlines the protocol capabilities needed for a union of the features provided across iMessage, Slack, and Webex Teams. The specification enables many use cases in which interoperability is desirable, including enterprises that have deployed a multiplicity of these applications, contact center clients seeking to integrate with a large number of enteprise telephony systems, inter-company chat, and interop between consumer chat apps like iMessage and WeChat. " />
 
 </head>
 
@@ -509,7 +510,9 @@
 </li>
 <li>9.2.   <a href="#rfc.section.9.2">Intra-Domain Enterprise Chat Federation</a>
 </li>
-<li>9.3.   <a href="#rfc.section.9.3">Inter-Company Chat</a>
+<li>9.3.   <a href="#rfc.section.9.3">Intra-Company Migration</a>
+</li>
+<li>9.4.   <a href="#rfc.section.9.4">Inter-Company Chat</a>
 </li>
 </ul><li>10.   <a href="#rfc.section.10">IANA Considerations</a>
 </li>
@@ -988,10 +991,18 @@ GET https://example.com/.well-known/ietf-chat/users/887/presence
 <p id="rfc.section.9.2.p.4">When a user of the Slack client creates a new chat, the client can choose whether to create it on the Slack service or the Webex Teams service. The company can select its default, in this case, Webex Teams. As a result, new chats will all be created on the new service deployed company wide, but users will have access to their old content on Slack. This allows them to remain on Slack indefinitely, until such time as they are simply no longer using the old chats. </p>
 <p id="rfc.section.9.2.p.5">The same model also allows for cases where there is no company-wide solution, but rather a number of departmental services that are deployed, with non-overlapping user bases. Over time, users would get invited as guests into the services that they are not a native member of, and each user uses the client of their preference. </p>
 <h1 id="rfc.section.9.3">
-<a href="#rfc.section.9.3">9.3.</a> Inter-Company Chat</h1>
-<p id="rfc.section.9.3.p.1">ANother use case is when company A has deployed a team chat app, and company B has also deployed an app. Consider the case where they are both actually using the same service (though the solution works even if they arent)</p>
-<p id="rfc.section.9.3.p.2">The interop starts when a user from company A adds a user in company B, by adding their email address to a group chat. This causes an email to be delivered to the user in company B. The email client for the user - say Outlook - is configured to recognize this well-known URI and it cross-launches their messaging app and passes the URI.  </p>
-<p id="rfc.section.9.3.p.3">The user in B, their client would utilize the URI to bootstrap itself as a guest into the instance for company A, and render to the user the new chat room that the user was added to. If the policy of company A allows, the user in company B can perform searches, and the client would "fork" the search queries to both the instance in its own company (B) as well as the instance it just joined in company A, merging the results. This allows for cross-company directory search.  </p>
+<a href="#rfc.section.9.3">9.3.</a> Intra-Company Migration</h1>
+<p id="rfc.section.9.3.p.1">In this use case, a company has deployed a chat product from a first vendor, and wishes to switch to a second one. The goal is to enable a transition period in which there is no disruption to the experiences of users.</p>
+<p id="rfc.section.9.3.p.2">To accomplish this, the admin would perform a POST to the instance URI which is to be replaced (call this the old instance). This POST would indicate that a migration is to occur, and specify the URI of the instance to which users should move (call this the new instance).</p>
+<p id="rfc.section.9.3.p.3">All clients will - either immediately through the event stream, or later upon login, see that a migration is desired. Each client then proceeds to retrieve its own profile from the new instance, and set any fields which can be set, mirroring those from the old instance. </p>
+<p id="rfc.section.9.3.p.4">The client continues to access the old instance, for any chats that are there Each chat object supports a feature wherein, like the instance itself, it can be migrated. The first client to perform a GET against this chat for any reason, would create a new "matching" chat on the new instance, add the participants from the old chat to the new chat (which may trigger profile creations or new invitations), sets the name and policies to match the old one. Once the new chat is created, the cient would POST to the old chat, indicating that this chat has migrated and passing the URI for the new one. </p>
+<p id="rfc.section.9.3.p.5">Any other clients which later access the old chat, will see that it has been migrated. They learn the new chat URI, and perform any desired operations on the new one. Should a client try and perform an operation on the old one the server would reject it In essence, the old one is closed for write operatios but open for read. This allows the clients to render the chat as a single UI element, even though its ocntent is - under the hood - split between two sources. This enables the migration to be completely transparent to users, minus any feature losses or gains that come from the migration. </p>
+<p id="rfc.section.9.3.p.6">After a suitable period of time has elapsed (say, six months), the old instance can be shut down for reads. </p>
+<h1 id="rfc.section.9.4">
+<a href="#rfc.section.9.4">9.4.</a> Inter-Company Chat</h1>
+<p id="rfc.section.9.4.p.1">ANother use case is when company A has deployed a team chat app, and company B has also deployed an app. Consider the case where they are both actually using the same service (though the solution works even if they arent)</p>
+<p id="rfc.section.9.4.p.2">The interop starts when a user from company A adds a user in company B, by adding their email address to a group chat. This causes an email to be delivered to the user in company B. The email client for the user - say Outlook - is configured to recognize this well-known URI and it cross-launches their messaging app and passes the URI.  </p>
+<p id="rfc.section.9.4.p.3">The user in B, their client would utilize the URI to bootstrap itself as a guest into the instance for company A, and render to the user the new chat room that the user was added to. If the policy of company A allows, the user in company B can perform searches, and the client would "fork" the search queries to both the instance in its own company (B) as well as the instance it just joined in company A, merging the results. This allows for cross-company directory search.  </p>
 <h1 id="rfc.section.10">
 <a href="#rfc.section.10">10.</a> IANA Considerations</h1>
 <p id="rfc.section.10.p.1">No values are assigned in this document, no registries are created, and there is no action assigned to the IANA by this document. </p>

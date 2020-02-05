@@ -1,38 +1,28 @@
----
-title: Real Time Internet Peering Protocol (RIPP) Comparison with the Session Initiaton Protocol (SIP
-# abbrev: RIPP vs. SIP
-docname: draft-rosenbergjennings-dispatch-ripp-sipdiffs-00
-date: 2020-02-07
-# date: 2012-01
-# date: 2012
+%%%
 
-# stand_alone: true
+Title = "Real Time Internet Peering Protocol (RIPP) Comparison with the Session Initiaton Protocol (SIP)"
+abbrev = "RIPP vs. SIP"
+docName = "draft-rosenbergjennings-dispatch-ripp-sipdiffs-00"
+category = "std"
+ipr= "trust200902"
+area = "Internet"
+keyword = ["RTP"]
 
-ipr: trust200902
-area: Applications
-wg: dispatch
-kw: Internet-Draft
-cat: std
+[pi]
+symrefs = "yes"
+sortrefs = "yes"
 
-coding: us-ascii
-pi:    # can use array (if all yes) or hash here
-#  - toc
-#  - sortrefs
-#  - symrefs
-  toc: yes
-  sortrefs:   # defaults to yes
-  symrefs: yes
+[[author]]
+initials = "J."
+surname = "Rosenberg"
+fullname = "Jonathan Rosenberg"
+organization = "Five9"
+  [author.address]
+  email = "jdrosen@jdrosen.net"
 
-author:
-    -
-      ins: J. Rosenberg
-      name: Jonathan Rosenberg
-      org: Five9
-      email: jdrosen@jdrosen.net
+%%%
 
-
---- abstract
-
+.# Abstract
 
 The Real-Time Internet Peering Protocol (RIPP) and its extension for
 inbound calls to single user devices provide an alternative to the
@@ -43,22 +33,22 @@ and analyzes whether the two RIPP documents replace each with similar
 capability, whether they eliminate the need for that specification, or
 whether some or all of that specification are not addressed by RIPP.
 
---- middle
+{mainmatter}
 
-#Introduction    
+# Introduction
 
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
 "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
 document are to be interpreted as described in RFC 2119, BCP 14
-{{RFC2119}} and indicate requirement levels for compliant CoAP
+[@RFC2119] and indicate requirement levels for compliant CoAP
 implementations.
 
 The Real-Time Internet Peering Protocol (RIPP)
-{{?I-D.rosenbergjennings-dispatch-ripp}} and its extension for inbound
-calls to single user devices {{I-D.rosenberg-dispatch-ripp-inbound}}
+[@?I-D.rosenbergjennings-dispatch-ripp] and its extension for inbound
+calls to single user devices [TODO ref draft-rosenberg-dispatch-ripp-inbound]
 provide an alternative to the Session Initiation Protocol (SIP)
-{{?RFC3261}} for several use cases. The question is - how much of SIP
+[@?RFC3261] for several use cases. The question is - how much of SIP
 do those two specifications replace?
 
 This document presents an
@@ -80,6 +70,7 @@ specification as one of three types:
 We first consider the core specifications - RFCs 3261 - 5, with a
 heavy focus on RFC3261.
 
+
 ## The Main SIP Spec - RFC3261
 
 There is a lot of content in this specification. The best way to
@@ -90,7 +81,7 @@ The INVITE method is of course replaced by RIPP, as is the BYE
 (through the ended event). Re-INVITE, though not a different method,
 is also supported in RIPP, though only ever initiated by the server
 with a new directive. Clients can move calls around by specifying the
-usage of a different handler. CANCEL is replaced in {{ripp-inbound}}
+usage of a different handler. CANCEL is replaced in  [TODO ref draft-rosenberg-dispatch-ripp-inbound]
 by broadcasting an event to all listeners informing them that the call
 has been answered. The usage of CANCEL to end an unanswered call is
 replaced by the ended event in RIPP. REGISTER is replaced by the
@@ -138,7 +129,7 @@ is accomplished by using the normal HTTP model wherein multiple
 clients can manipulate the resources on the server.
 
 Consequently, we believe that RIPP serves as a full replacement for
-the entirety of {{RFC3261}} and thus this specification is categorized
+the entirety of [@RFC3261] and thus this specification is categorized
 as "replaced". 
 
 ## RFC3262 - Reliability of Provisional Responses
@@ -189,197 +180,387 @@ informational and experimental specifications are not considered,
 though there are some exceptions when they have effectively become
 normative in nature. 
 
-## 2976 - SIP INFO
+##  SIP INFO (RFC 2976)
 
-## 3311 - UPDATE
+TODO
 
-## 3312 - Resource Management and SIP
+##  UPDATE (RFC 3311)
 
-## 3323 - Privacy Header
+TODO 
 
-## 3325 - P-Asserted-ID
+## Resource Management and SIP (RFC 3312)
 
-## 3326 - Reason header field
+TODO 
 
-## 3327 - Service-Route
+## Privacy Header (RFC 3323)
 
-## 3515 - REFER
+TODO 
 
-## 3581 - Symmetric Response Routing
+## P-Asserted-ID (RFC 3325)
 
-## 3680 - Registration Event Package
+TODO 
 
-## 3725 - 3PCC
+## Reason header field (RFC 3326)
 
-## 3824 - E.164 and SIP
+TODO 
 
-## 3840 - UA Capabilities
+## Service-Route (RFC 3327)
 
-## 3841 - Caller Prefs
+TODO 
 
-## 3891 - Replaces Header Field
+## REFER (RFC 3515)
 
-## 3892 - Referred-By
+TODO 
 
-## 3903 - PUBLISH method
+## Symmetric Response Routing (RFC 3581)
 
-## 3911 - Join Header Field
+TODO 
 
-## 3960 - Early Media
+## Registration Event Package (RFC 3680)
 
-## 4028 - Session Timers
+TODO 
 
-## 4235 - INVITE Dialog Event Package
+## Third Party Call Controll (RFC 3725)
 
-## 4244 - Request History
+TODO 
 
-## 4320 - Actions for non-INVITE??
+## E.164 and SIP (RFC 3824)
 
-## 4411 - Pre-Emption Events
+TODO 
 
-## 4412 - Resource-Priority
+## UA Capabilities (RFC 3840)
 
-## 4488 - Suppression of Implied REFER Subscription
+TODO 
 
-## 4508 - Conveying Feature Tags
+## Caller Prefs (RFC 3841)
 
-## 4538 - Request Auth??
+TODO 
 
-## 4730 - KPML
+## Replaces Header Field (RFC 3891)
 
-## 4904 - representing trunk groups
+TODO 
 
-## 4916 - Connected Identity
+## Referred-By (RFC 3892)
 
-## 4967 - Dial Strin
+TODO 
 
-## 5031 - URN for emergency services
+## PUBLISH method (RFC 3903)
 
-## 5079 - Rejecting Anonymous Requests
+TODO 
 
-## 5194 - Real-Time Text
+## Join Header Field (RFC 3911)
 
-## 5373 - Answering Modes ??
+TODO 
 
-## 5626 - SIP Outbound
+## Early Media (RFC 3960)
 
-## 5627 - GRUU
+TODO 
 
-## 5629 - App Interaction Framework
+## Session Timers (RFC 4028)
 
-## 5621 - SIP Session Mobility
+TODO 
 
-## 5806 - Diversion
+## INVITE Dialog Event Package (RFC 4235)
 
-## 5922 - Domain Certs
+TODO 
 
-## 5923 - Connection Reuse
+## Request History (RFC 4244)
 
-## 6011 - UA Config
+TODO 
 
-## 6035 - Event Package for Call Quality
+## Actions for non-INVITE?? (RFC 4320)
 
-## 6072 - Certificate Management Service
+TODO 
 
-## 6076 - SIP e2e performance metrics
+## Pre-Emption Events (RFC 4411)
 
-## 6080 - UA Profile Delivery
+TODO 
 
-## 6086 - INFO method Package and Framework
+## Resource-Priority
 
-## 6135 - ANAT?
+TODO 
 
-## 6140 - registration of multiple numbersin SIP
+## Suppression of Implied REFER Subscription (RFC 4488)
 
-## 6157 - IPv6 Transition and SIP
+TODO 
 
-## 6223 - Indication of Support for Keepalive
+## Conveying Feature Tags (RFC 4508)
 
-## 6228 - SIP Response for Indication of Terminated Dialog
+TODO 
 
-## 6442 - Location Conveyance in SIP
+## Request Auth?? (RFC 4538)
 
-## 6446 - Notification for Rate Control
+TODO 
 
-## 6447 - Filtering Location Notifications
+## KPML (RFC 4730)
 
-## 6665 - SIP specific event notification
+TODO 
 
-## 6794 - Framework for Session Policy
+## representing trunk groups (RFC 4904)
 
-## 6795 - SIP Events for Session Policy
+TODO 
 
-## 6796 - UA Profile set for Media Policy
+## Connected Identity (RFC 4916)
 
-## 6910 - Completion of Calls
+TODO 
 
-## 6913 - Fax over IP in SIP
+## Dial Strin (RFC 4967)
 
-## 7044 - Request History
+TODO 
 
-## 7200 - SIP LOad Control Event Package
+## URN for emergency services (RFC 5031)
 
-## 7329 - Session Identifier in SIP
+TODO 
 
-## 7332 - Loop Detection in SIP
+## Rejecting Anonymous Requests (RFC 5079)
 
-## 7339 - SIP Overload Control
+TODO 
 
-## 7403 - Media Traceroute
+## Real-Time Text (RFC 5194)
 
-## 7415 - SIP Rate Control
+TODO 
 
-## 7433 - Transporting UU Information in SIP
+## Answering Modes ?? (RFC 5373)
 
-## 7462 - URNs for Alert-Info
+TODO 
 
-## 7463 - Shared Appearances for an AOR
+## SIP Outbound (RFC 5626)
 
-## 7866 - SIPREC
+TODO 
 
-## 7989 - E2E Session Identification
+## GRUU (RFC 5627)
 
-## 8197 - Response Code for Unwanted Calls
+TODO 
 
-## 8224 - Authenticated Identity Management
+## App Interaction Framework (RFC 5629)
 
-## 8225 - Passport
+TODO 
 
-## 8226 - STIR Certs
+## SIP Session Mobility (RFC 5621)
 
-## 8262 - Content-ID
+TODO 
 
-## 8373 - Negotiating Human Language
+## Diversion (RFC 5806)
 
-## 8443 - Passport for Resource Priority
+TODO 
 
-## 8497 - Marking SIP messages to be logged
+## Domain Certs (RFC 5922)
 
-## 8599 - Push Notification and SIP
+TODO 
+
+## Connection Reuse (RFC 5923)
+
+TODO 
+
+## UA Config (RFC 6011)
+
+TODO 
+
+## Event Package for Call Quality (RFC 6035)
+
+TODO 
+
+## Certificate Management Service (RFC 6072)
+
+TODO 
+
+## SIP e2e performance metrics (RFC 6076)
+
+TODO 
+
+## UA Profile Delivery (RFC 6080)
+
+TODO 
+
+## INFO method Package and Framework (RFC 6086)
+
+TODO 
+
+## ANAT? (RFC 6135)
+
+TODO 
+
+## registration of multiple numbersin SIP (RFC 6140)
+
+TODO 
+
+## IPv6 Transition and SIP (RFC 6157)
+
+TODO 
+
+## Indication of Support for Keepalive (RFC 6223)
+
+TODO 
+
+## SIP Response for Indication of Terminated Dialog (RFC 6228)
+
+TODO 
+
+## Location Conveyance in SIP (RFC 6442)
+
+TODO 
+
+## Notification for Rate Control (RFC 6446)
+
+TODO 
+
+## Filtering Location Notifications (RFC 6447)
+
+TODO 
+
+## SIP specific event notification (RFC 6665)
+
+TODO 
+
+## Framework for Session Policy (RFC 6794)
+
+TODO 
+
+## SIP Events for Session Policy (RFC 6795)
+
+TODO 
+
+## UA Profile set for Media Policy (RFC 6796)
+
+TODO 
+
+## Completion of Calls (RFC 6910)
+
+TODO 
+
+## Fax over IP in SIP (RFC 6913)
+
+TODO 
+
+## Request History (RFC 7044)
+
+TODO 
+
+## SIP LOad Control Event Package (RFC 7200)
+
+TODO 
+
+## Session Identifier in SIP (RFC 7329)
+
+TODO 
+
+## Loop Detection in SIP (RFC 7332)
+
+TODO 
+
+## SIP Overload Control (RFC 7339)
+
+TODO 
+
+## Media Traceroute (RFC 7403)
+
+TODO 
+
+## SIP Rate Control (RFC 7415)
+
+TODO 
+
+## Transporting UU Information in SIP (RFC 7433)
+
+TODO 
+
+## URNs for Alert-Info (RFC 7462)
+
+TODO 
+
+## Shared Appearances for an AOR (RFC 7463)
+
+TODO 
+
+## SIPREC (RFC 7866)
+
+TODO 
+
+## E2E Session Identification (RFC 7989)
+
+TODO 
+
+## Response Code for Unwanted Calls (RFC 8197)
+
+TODO 
+
+## Authenticated Identity Management (RFC 8224)
+
+TODO 
+
+## Passport (RFC 8225)
+
+TODO 
+
+## STIR Certs (RFC 8226)
+
+TODO 
+
+## Content-ID (RFC 8262)
+
+TODO 
+
+## Negotiating Human Language (RFC 8373)
+
+TODO 
+
+## Passport for Resource Priority (RFC 8443)
+
+TODO 
+
+## Marking SIP messages to be logged (RFC 8497)
+
+TODO 
+
+## Push Notification and SIP (RFC 8599)
+
+TODO 
 
 
 
 # SDP Extensions
 
-## 3388 - Grouping of m-lines
+## Grouping of m-lines (RFC 3388)
 
-## 3521 - Media Auth
+TODO 
+
+## Media Auth (RFC 3521)
+
+TODO 
 
 # NAT Traversal
 
-## 5389 - STUN
+## STUN (RFC 5389)
 
-## 5766 - TURN
+TODO 
 
-## 5768 - Indicating support for ICE in SDP
+## TURN (RFC 5766)
 
-## 5245 - ICE
+TODO 
 
-## 4091 - ANAT
+## Indicating support for ICE in SDP (RFC 5768)
 
-## 6062 - TURN TCP
+TODO 
 
-## 6544 - TCP candidates with ICE
+## ICE (RFC 5245)
+
+TODO 
+
+## ANAT (RFC 4091)
+
+TODO 
+
+## TURN TCP (RFC 6062)
+
+TODO 
+
+## TCP candidates with ICE (RFC 6544)
+
+TODO 
 
 
 # RTP Extensions (excepting Payload Types)
+
+TODO 
+
+{backmatter}

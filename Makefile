@@ -5,12 +5,13 @@ DRAFT = draft-rosenbergjennings-dispatch-ripp
 VERSION = 04
 
 
-all: draft-rosenberg-dispatch-ripp-chat.txt draft-rosenberg-dispatch-ripp-inbound.txt draft-rosenberg-dispatch-ripp-phone-features.txt draft-rosenberg-dispatch-ripp-webrtc.txt $(DRAFT)-$(VERSION).txt  $(DRAFT)-$(VERSION).html ripp-api.html ripp-api.md draft-rosenberg-dispatch-ripp-sipdiffs.xml
+all: draft-rosenberg-dispatch-ripp-chat.txt draft-rosenberg-dispatch-ripp-inbound.txt draft-rosenberg-dispatch-ripp-phone-features.txt draft-rosenberg-dispatch-ripp-webrtc.txt $(DRAFT)-$(VERSION).txt  $(DRAFT)-$(VERSION).html ripp-api.html ripp-api.md draft-rosenberg-dispatch-ripp-sipdiffs.xml draft-rosenberg-dispatch-ripp-chat.html draft-rosenberg-dispatch-ripp-inbound.html draft-rosenberg-dispatch-ripp-phone-features.html draft-rosenberg-dispatch-ripp-sipdiffs.html draft-rosenberg-dispatch-ripp-webrtc.html
+
 
 diff: $(DRAFT).diff.html
 
 clean:
-	-rm -f $(DRAFT)-$(VERSION).{txt,html,xml,pdf} $(DRAFT).diff.html  draft*.txt ripp-api.{html,md}
+	-rm -f $(DRAFT)-$(VERSION).{txt,html,xml,pdf} $(DRAFT).diff.html  draft*.txt draft*.html ripp-api.{html,md} draft-rosenberg-dispatch-ripp-sipdiffs.xml
 
 .PHONY: all clean diff
 
@@ -37,9 +38,8 @@ seq-diagram.md: seq-diagram-out.txt
 $(DRAFT)-$(VERSION).xml: $(DRAFT).md  seq-diagram.md  ripp-api.md
 	mmark -xml2 -page $(DRAFT).md $@ 
 
-$(DRAFT).diff.html: $(DRAFT)-$(VERSION).txt $(DRAFT)-old.txt 
-	htmlwdiff   $(DRAFT)-old.txt   $(DRAFT)-$(VERSION).txt >   $(DRAFT).diff.html
-
+$(DRAFT).diff.html: $(DRAFT)-$(VERSION).txt $(DRAFT).old
+	htmlwdiff   $(DRAFT).old $(DRAFT)-$(VERSION).txt > $(DRAFT).diff.html
 
 draft-rosenberg-dispatch-ripp-sipdiffs.xml: draft-rosenberg-dispatch-ripp-sipdiffs.md
-	mmark -xml2 -page $(DRAFT).md $@ 
+	mmark -xml2 -page draft-rosenberg-dispatch-ripp-sipdiffs.md $@ 
