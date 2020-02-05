@@ -2,8 +2,9 @@ Real-Time Internet Peering Protocol (RIPP) BoF Proposal
 v3@ietf.org
 
 Suggested Chairs:
-Cullen Jennings
-Harald Alvestrand (?)
+Mo Zanaty
+Ideas for a seasoned co-chair: Martin Thompson, Jon Peterson, Brian Rosen, Gonzalo Camarillo
+
 
 Agenda:
 1. Problem Statement [Jonathan R.] - 15mins
