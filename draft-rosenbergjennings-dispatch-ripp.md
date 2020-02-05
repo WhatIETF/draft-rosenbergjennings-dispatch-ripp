@@ -544,6 +544,10 @@ HTTP approaches for these problems. Consequently, RIPP does not
 utilize ICE and has no specific considerations for NAT traversal, as
 these are handled by HTTP/3 itself.
 
+## HTTP Load Balancing, not Proxies
+
+(enter text here)
+
 # Terminology {#terminology}
 
 This specification follows the terminology of HTTP/3, but adds the
@@ -1022,7 +1026,8 @@ was created:
 The client can use the /consumertgs to modify this later (with a PUT
 to the URI in the "uri" parameter), DELETE it, or create another.
 
-Once created the consumer TG will persist indefinitely. 
+The server holds onto the consumer TG URI, until such time as the
+consumer is no longer receiving service from the provider.  
 
 
 ## Handler Registration
@@ -1061,16 +1066,16 @@ opposite end of the spectrum in terms of complexity.
 
 For each source or sink, there are one or more parameter sets that can
 be specified. Each parameter in the parameter set has a name and a
-value. The value is always an integer from 0 to 2**31 - 1. Parameters are
-typically standardized and registered with IANA. The registration
-indicates the meaning of the values - their units and allowed
-values. Most importantly, the parameter is always expressed in a way
-where the value represents a maximum of some sort. This enables
+value. The value is always an integer from - 2**63 +1 to 2**63 -
+1. Parameters are typically standardized and registered with IANA. The
+registration indicates the meaning of the values - their units and
+allowed values. Most importantly, the parameter is always expressed in
+a way where the value represents a maximum of some sort. This enables
 booleans (where the maximum is 1), integral ranges (where the maximum
 is a large-ish integer), or ordered enums (where the enum values
 correspond to integers in order). When a parameter is not specified,
-it takes on a default. Similarly, if the handler description document is not
-present, the default can be assumed for all parameters.
+it takes on a default. Similarly, if the handler description document
+is not present, the default can be assumed for all parameters.
 
 Codec support is signaled using boolean parameters, with names that
 match the media subtypes defined in the IANA protocol registry for
@@ -1230,7 +1235,8 @@ describe modern AV systems.
 The client can initiate calls by POSTing
 to /calls on the TG URI.  The request contains:
 
-1. the target phone number or email address,
+1. the target phone number or email address (TODO: need to define
+normalization procedures),
 2. A passport {{!RFC8225}} identifying the calling identity,
 3. The handler ID from which the call is being placed,
 
@@ -1302,32 +1308,35 @@ caller, callee and a URI for the call:
 
 Note how the audio directive has selected Opus. 
 
+In the (unlikely) case that this directive cannot be followed (due,
+perhaps to a unexpected change in capabilities as a result of a GPU or
+CPU spike), the client updates its handler with updated
+capabilities. To tell the server to create a new proposal for the
+call, it performs a POST against the existing call URI, this time
+without parameters, and the server will respond with an updated call
+description, including the new directive. 
+
+
 Another important consequence of this design is that media packets
 must be self-describing, without any kind of reference to a specific
 call. This is because the directive is constructed from the
 handler descriptions only, and the handler descriptions are semi-static. This
 means RIPP does not use dynamic payload types to identify codecs.
 
-Typically
-the response will also include a session cookie, bound to the call, to
-facilitate sticky session routing in HTTP proxies. This allows all
-further signalling and media to reach the same RIPP server that
-handled the initial request, while facilitating failover should that
-server go down. 
-
 Once a call has been created, a pair of long-lived HTTP transactions
-is initiated from the client to the server for purposes of
-signalling. One is a GET to the /events resource on the call URI,
-retrieving call events from the server. The other is a PUT to the same
-/events URI, used by the cient to send call events to its peer. The
-combination of these two is called the signalling byway. HTTP/3
-ensures zero RTT for setup of these transactions.
+is initiated from the client to the server for purposes of signalling
+(this only happens if the call was created successfully and the
+directive could be followed). One is a GET to the /events resource on
+the call URI, retrieving call events from the server. The other is a
+PUT to the same /events URI, used by the cient to send call events to
+its peer. The combination of these two is called the signalling
+byway. HTTP/3 ensures zero RTT for setup of these transactions.
 
 Signaling commands are encoded into the signalling byway using
 streaming JSON in both directions. Each JSON object encodes an event
 and its parameters. A set of events common to all deployments of RIPP
 are defined for proceeding, alerting, answered, declined, ended,
-migrate, moved, and hello. An additional set are defined targeted at
+migrate, moved, ping, and pong. An additional set are defined targeted at
 server to server cases, such as SIP trunking and inter-server
 peering. These include transfer-and-takeback.
 
@@ -1588,7 +1597,8 @@ absent, these take their default. The following are defined:
   retrying the connection. If a retry fails again, the client will try
   again but this time wait twice the value of this timer, then four
   times, eight times, etc. The value of this parameter is an integer,
-  in units of milliseconds. Its default is 2000.
+  in units of milliseconds. Its default is 2000, and the client MUST
+  NOT honor values less than 2000, rounding up to 2000 instead.
 
 * media-timeout: If a client fails to receive media ack packets after
   the timeout specified in this parameter, it considers the call dead
@@ -1596,11 +1606,9 @@ absent, these take their default. The following are defined:
   in units of milliseconds. Its default is 5000.
 
 
-OPEN ISSUE: Do we want to support cases where RIPP is implemented by
-SBCs which are not fronted by a web load balancer? In such a case,
-we'll want something similar to RFC3263, wherein the handler description
-contains the set of IP addresses for the cluster and we define load
-balancing behavior. 
+OPEN ISSUE: Need to consider realistic ways to incrementally introduce
+this into carrier networks without requiring massive forklifts of new
+load balancers, anycast and so on.
 
 ## Consumer TG Registration
 
@@ -1618,15 +1626,6 @@ HTTP/3, and MUST implement the /handlers, /calls, and /events
 resources and their associated behaviors. This URI MUST be
 reachable by the provider. The URI MUST utilize HTTPS, and MUST
 utilize a domain name for the authority component. 
-
-In addition, the client MUST mint a bearer token to be used by the
-provider when performing operations against the consumer TG.  The
-bearer token MAY be constructed in any way desired by the client. The
-token and URI SHOULD remain valid for at least one day, however, a
-security problem MAY cause them to be invalidated.  The client MUST
-refresh the registration at least one hour in advance of the
-expiration, in order to ensure no calls are delayed. The token MUST be
-unique for each unique provider TG.
 
 The destinations and origins elements in the consumer TG description MAY be
 included. If they are included, the destinations MUST be a subet of
@@ -1750,7 +1749,7 @@ client. This requirement facilitates prevention of call failures.
 
 It is RECOMMENDED that the handler description include a nickname, img,
 vendor and device-id elements. The device-id element, when present,
-MUST be globally unique in space and time. 
+MUST be a UUID. 
 
 ## Call Establishment
 
@@ -1785,8 +1784,7 @@ The server MAY authorize creation of the call using any criteria it so
 desires. If it decides to create the call, the server MUST return a
 201 Created response, and MUST include a Location header field
 containing an HTTPS URI which identifies the call that has been
-created. The call URI MUST be globally unique in time and space, with
-randomness properties identical to a type 4 UUID. 
+created. The call URI MUST contain a UUID. 
 
 The server MUST construct a directive, which tells the client what
 media to send. This directive MUST include zero or more mic parameters,
@@ -1811,12 +1809,6 @@ sink.
 The server MUST include the directive in the body of the 201 response,
 MUST include the URI for the handler that was used, MUST include the
 call direction, and MUST include the from and to participants. 
-
-The server MAY include HTTP session cookies in the 201 response. The
-client MUST support receipt of cookies {{!RFC6265}}. It MUST be prepared
-to receive up to 10 cookies per call. The client MUST destroy all
-cookies associated with a call, when the call has ended. Cookies MUST
-NOT be larger the 5K. 
 
 If the
 request is otherwise valid, but the target of the call cannot be
@@ -1869,7 +1861,7 @@ event is sufficient to determine the state of the call.
 
 In addition, the client MUST immediately establish 20 reverse media
 byways by initiating 20 GET requests to the /media resource on the call
-URI. These requests MUST NOT contain a body. The media byways are
+URI. The media byways are
 required before call answer to support early media. For any call, a
 server MUST support up to 30 reverse media byways open. 
 
@@ -1917,10 +1909,10 @@ event MAY contain an URI which replaces the current call URI, thus
 indicating the destination to which the media and signaling
 byways will be established.
 
-hello: This event is always initiated by the client. When received
-by a server, the server MUST generate a keepalive response. The
-keepalive MAY contain a nonce, and if so, the server MUST echo it in
-the response. 
+ping: This event is always initiated by the client. When received
+by a server, the server MUST generate a pong response. The
+ping MAY contain a nonce, and if so, the server MUST echo it in
+the pong
 
 The client can obtain the current state of the call at any time by
 querying the call URI. The server MUST return a call description which
@@ -2120,14 +2112,6 @@ Note that it is the sole responsibility of the client to make sure
 byways are re-established if they fail unexpectedly.
 
 
-## Retrieving Call List
-
-A client MAY initiate a GET request against the /calls resource in the
-TG. The server MUST return a body with the list of all calls which
-currently exist on the server. This is just a list of call URI. This
-is useful for a client which restarts and wishes to rebuild its view
-of call state.
-
 ## Graceful Call Migration
 
 A server MAY initiate a call migration at any time for a specific
@@ -2168,6 +2152,7 @@ initiate a migration as defined in the prior section.
 
 
 # SIP Gateway 
+(move to SIP document)
 
 RIPP is designed to be easy to gateway from SIP. The expectation is
 that RIPP will be implemented in SBCs and softswitches. A SIP to RIPP
@@ -2197,6 +2182,7 @@ gateway function in order to maximize interoperability.
 
 # RAML API {#syntax}
 
+TODO - add in RAML
 
 # IANA Considerations {#iana}
 
