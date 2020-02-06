@@ -15,4 +15,4 @@ jobs:
     - uses: actions/upload-artifact@v1
       with:
         name: drafts 
-        path: draft-*.txt 
+        path: draft-rosenbergjennings-dispatch-ripp-04.txt draft-rosenberg-dispatch-ripp-inbound.txt
