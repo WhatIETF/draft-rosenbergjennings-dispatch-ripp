@@ -140,143 +140,17 @@ A more recent technology are service meshes, such as Istio, which
 utilize sidecar HTTP proxies to facilitate inter-service
 communications. These systems come with robust control planes which
 enable additional routing features, such as canary deploys, percentage
-based routing, and so on. 
+based routing, and so on.
 
-## Problem Statement
+None of these capabilities can be used by real-time applications based
+on the Session Initiation Protocol (SIP) [@?RFC3261], since SIP is not
+an HTTP-based protocol. The newest HTTP specification - HTTP/3
+[@!I-D.ietf-quic-http] - utilizes QUIC [@?I-D.ietf-quic-transport],
+which runs on top of UDP. This means that it is now possible to
+utilize HTTP for real-time media and call control together.
 
-Unfortunately, there are many applications being deployed into these
-cloud platforms which require interconnection with other
-entities providing real-time voice and video
-services. One example is interconnection with the public switched
-telephone network (PSTN). Examples of such applications include cloud
-PBXs, cloud contact centers, cloud meetings applications, and so
-on. Furthermore, commerce websites would like to allow customers
-to call into the telephone network for customer support.
-
-In order for these applications to connect to the PSTN, or to connect
-voice and video services provided by service providers, they typically
-deploy Session Initiation Protocol (SIP) [@RFC3261] based servers -
-SBCs, SIP proxies, and softswitches, to provide this
-interconnection. Unfortunately, SIP based applications cannot make use
-of the many capabilities these cloud platforms afford to HTTP based
-applications. These SIP servers are usually deployed on bare metal or
-VMs at best. Application developers must build their own load
-balancing, HA, failover, clustering, security, and scaling
-technologies, rather than using the capabilities of these platforms.
-
-Another problem has been call drops. SIP's original design where call
-state lived only in the endpoints and media was sent p2p - provided
-extremely high reliability. In practice, SIP networks are full of
-state that resides in server intermediaries (softswitches, SBCs, and
-so on), and has seen media transmitted through these
-intermediaries. Unfortunately, the SIP protocol did not provide
-built-in mechanisms which enable call preservation - the ability of a
-call to survive failure of any server component without call drops. As
-a result, many of these servers rely on layer 3 solutions (such as
-shared VIPs with proprietary state replication), which are expensive,
-hard to deploy, and of limited scale. In other cases, they are absent,
-in which case a server failure will cause all calls to be dropped,
-requiring the end user themselves to re-initiate the call.
-
-The statefulness of most server components has also meant that
-software upgrade is a manual process. To avoid dropped calls, it must
-be performed late at night, causing a risk of downtime. Other
-implementations have waited for calls to drain, and then performed
-automated restarts. This almost always requires a timeout (typically
-an hour or more) at which point calls longer than that get
-dropped. The result is that rolling software upgrades have caused some
-amount of call drops, and can take an extremely long time to propagate
-through a cluster. This was acceptable perhaps in the era of
-traditional client-server applications where software upgrades were
-infrequent. Modern software systems perform updates many times a day,
-which is incompatible with SIP-based systems. 
-
-All of this has created a barrier to entry, particularly for
-applications such as websites which are not expert in VoIP
-technologies. Furthermore, it has meant that VoIP applications have
-been unable to take advantage of the many technology improvements that
-have come to networking and protocol design since the publication of
-RFC 3261 in 2002.
-
-In addition, SIP trunking has suffered from complex provisioning
-operations, oftentimes requiring the exchange of static IPs and
-ports. These operations are almost never self-service and
-consequently, SIP trunk turn ups can take weeks.
-
-Finally, perhaps the biggest challenge with SIP trunking has been its
-abuse for injecting robocalls, and in general weak deployment of
-security. 
-
-In summary - there are four core problems which this specification is
-addressing in the traditional usage of SIP peering between entities:
-
-1. The difficulty of deploying real-time communications servers into
-web-centric cloud platforms, which can enable modern solutions for
-load balancing, infinite scale, autoscaling, hitless software upgrade,
-and so on. 
-
-2. Lack of built-in protocol mechanisms for call preservation,
-scaling, software upgrade, and so on.
-
-3. Lack of standardized and automated techniques for provisioning and
-configuration of SIP trunks
-
-4. Lack of secure caller ID
-
-
-## Core Concept
-
-The core concept of RIPT is simple - to make voice and video peering
-yet another application that sits on top of HTTP.
-
-Though SIP was inspired by HTTP, it is not HTTP itself. SIP and HTTP
-are peers - application protocols running ontop of the Internet. In the
-intervening years, HTTP evolved to become a general purpose substrate
-for delivering Internet applications. It is fair to say that today,
-almost all applications users consume over the Internet run over
-HTTP (with obvious exception of inter-server email - much client to
-server email is also now run over HTTP).
-
-This resulted - in essence - a rift between telecommunications
-technologies and web technologies. Both had their own protocol stacks,
-their own sets of products and services, and so on.
-
-RIPT is an attempt to seal this rift by reunifying web and
-telecommunications technologies, with web as the "winner".
-
-The idea of re-converging HTTP and SIP is certainly not new, and indeed
-has been discussed in the hallways of IETF for many years. However,
-several significant limitations made this previously infeasible:
-
-1. HTTP utilized TCP, which meant that it created head-of-line
-blocking which would delay lost packets rather than just discard
-them. This will often provide intolerable latency for VoIP.
-
-2. HTTP was request response, allowing the client to send requests and
-receive a response. There as no way for a server to asynchronously
-send information to the client in an easy fashion.
-
-
-HTTP2 [@RFC7540] addressed the second of these with the introduction of pushes
-and long running requests. However, its usage of TCP was still a
-problem. This has finally been addressed with the arrival of QUIC
-[@!I-D.ietf-quic-transport] and
-HTTP/3. QUIC is based on UDP, and it introduces the concept of a stream
-that can be set up with zero RTT. These streams are carried over UDP,
-and though are still reliable, there is no head of line blocking
-across streams. This change has made it possible for HTTP to support
-real-time applications.
-
-This specification makes an assumption that
-[@!I-D.ietf-quic-transport] will be widely implemented and deployed as
-a mainstream part of web-based software systems, but any extensions
-unique to the needs of VoIP will struggle to see widespread deployment.
-As a result, RIPT uses HTTP/3 [@!I-D.ietf-quic-http], but is not an
-extension to it. This means that RIPT inherits the benefits of
-classic HTTP deployments - easy load balancing, easy expansion and
-contraction of clusters (including auto-scaling), standard techniques
-for encryption, authentication, and denial-of-service prevention, and
-so on.
+This document proposes a new protocol for performing basic call
+control and media processing as an HTTP application. 
 
 # Structure of this Document
 
@@ -284,11 +158,10 @@ The document is broadly split into two parts - explanatory and
 normative materials. The explanatory text is non-normative, and
 contains no [@!RFC2119] language. Much of this text is meant to help
 readers familiar with SIP, understand how SIP concepts translate (or
-don't) into RIPT. These sections include Requirements (#req), Design
-Approaches (#design), Terminology (#terminology), Reference
-Architecture (#refarch), Deployment Examples (#deployments). The
+don't) into RIPT. These sections include Requirements (#req),
+Terminology (#terminology), Reference 
+Architecture (#refarch), and Deployment Examples (#deployments). The
 remainder of the document specifies normative procedures.
-
 
 
 # Solution Requirements {#req}
@@ -346,217 +219,6 @@ REQ15: The solution shall make it possible to perform rolling upgrades
 through a cluster many times a day, without call drops 
 
 
-# Design Approaches {#design}
-
-To meet the requirements stated above, RIPT makes several fundamental
-changes compared to SIP. These changes, and their motivations, are
-described in the sections below.
-
-## Client-Server, not Multi-Element
-
-SIP was designed as a complete system architecture. As such, it explicitly
-incorporates features which presume the existence of a network of
-elements - proxies and registrars in particular. SIP provides many
-features to facilitate this - Via headers, record-routing, and so on.
-
-HTTP on the other hand - is strictly a client-to-server technology. Though
-it does support the notion of proxies (ala the CONNECT method for
-reverse proxies), the protocol is fundamentally designed to be between
-a client and an authoritative server. What happens beyond that
-authoritative server is beyond the scope of HTTP, and can (and often
-does) include additional HTTP transactions.
-
-Consequently, in order to reside within HTTP, RIPT follows the same
-pattern and only concerns itself with client-server behaviours. Like
-HTTP, a RIPT server can of course act as a RIPT client and further
-connect calls to downstream elements. However, such behavior requires
-no additional specification and is therefore not discussed by RIPT.
-
-## Client-Server, not Agent-to-Agent
-
-SIP is based fundamentally on the User Agent, and describes the
-communications between a pair of user agents. Either user agent can
-initiate requests towards the other. SIP defines the traditional role
-of client and server as bound to a specific transaction.
-
-HTTP does not operate this way. In HTTP, one entity is a client, and
-the other is a server. There is no way for the server to send messages
-asynchronously towards the client. HTTP/3 does enable two distinct
-techniques that facilitate server messaging towards the client. But to
-use them, RIPT must abide by HTTP/3 rules, and that means distinct
-roles for clients and servers. Clients must always initiate
-connections and send requests, not servers.
-
-To handle this, RIPT specifies that the caller implements the RIPT
-client, and the side receiving the calls is the RIPT server. For any
-particular call, the roles of client and server do not change. To
-facilitate calls in either direction, an entity can implement both RIPT
-client and RIPT server roles. However, there is no relationship
-between the two directions.
-
-## Signaling and Media Together
-
-One of the most fundamental design properties of SIP was the
-separation of signalling and media. This was fundamental to the success
-of SIP, since it enabled high quality, low latency media between
-endpoints within of an enterprise or consumer VoIP service.
-
-This design technique is quite hard to translate to HTTP, especially
-when considering load balancing and scaling techniques. HTTP load
-balancing is effective because it treats each request/response pair as
-an independent action which can route to any number of backends. In
-essence, the request/response transaction is atomic, and
-consequentially RIPT needs to operate this way as well. 
-
-Though SIP envisioned that signalling and media separation would also
-apply to inter-domain calls, in practice this has not
-happened. Inter-domain interconnect - including interconnection with
-the PSTN - is done traditionally with SBCs which terminate and
-re-originate media. Since this specification is targeted at
-inter-domain peering cases, RIPT fundamentally combines signalling and
-media together on the same connection. To ensure low latency, it uses
-multiple independent request/response transactions - each running in
-parallel over unique HTTP transactions (and thus unique QUIC streams)
-- to transmit media.
-
-
-## URIs not IPs
-
-SIP is full of IP addresses and ports. They are contained in Via
-headers, in Route and Record-Route headers. In SDP. In Contact
-headers. The usage of IPs is one of the main reasons why SIP is so
-difficult to deploy into cloud platforms. These platforms are based on
-the behavior of HTTP which has been based on TCP connections and
-therefore done most of its routing at the connection layer, and not
-the IP layer.
-
-Furthermore, modern cloud platforms are full of NATs and private IP
-space, making them inhospitable to SIP based applications which still
-struggle with NAT traversal.
-
-HTTP of course does not suffer from this. In general, "addressing", to
-the degree it exists at all, is done with HTTP URIs. RIPT follows this
-pattern. RIPT - as a web application that uses HTTP/3 - does not use or
-convey any IP addresses or ports. Furthermore, the client never
-provides addressing to the server - all traffic is sent in the reverse
-direction over the connection. 
-
-## OAuth not MTLS or private IP
-
-When used in peering arrangements today, authentication for the SIP
-connections is typically done using mutual TLS. It is also often the
-case that security is done at the IP layer, and sometimes even via
-dedicated MPLS connections which require
-pre-provisioning. Unfortunately, these techniques are quite
-incompatible with how modern cloud platforms work.
-
-HTTP - due to its client-server nature, uses asymmetric techniques
-for authentication. Most notably, certificate based authentication is
-done by the client to verify that it is speaking to the server it
-thinks it should be speaking to. For the server to identify the
-client, modern platforms make use of OAuth2.0. Though OAuth is not
-actually an authentication protocol, the use of OAuth has allowed
-authentication to be done out of band via separate identity servers which
-produce OAuth tokens which can then be used for authentication of the
-client.
-
-Consequently, RIPT follows this same approach. The client initiates
-calls towards the server. The server uses TLS to provide its identity
-to the client, and the client provides a token to the server to
-identify itself, with a login technique occuring elsewhere. To
-facilitate bidirectional calls, an entity would just implement both
-the server and client roles. For any one call, the entity placing the
-call acts as the client, and the one receiving it, as the server. To
-handle the common case where there is an asymmetric business
-relationship (one entity being a customer of the other), RIPT
-facilitates a simple provisioning process by which the customer can
-use an OAuth token to provision credentials for usage in the reverse
-direction. 
-
-This specification also envisions a simple extension which would allow
-single-device clients to receive inbound calls from the server - however, such
-an extension is outside the scope of this document.
-
-## TLS not SRTP or SIPS
-
-SIP has provided encryption of both signalling and media, through the
-usage of SIP over TLS and SIPS, and SRTP, respectively. Unfortunately,
-these have not been widely deployed. The E2E nature of SRTP has made
-keying an ongoing challenge, with multiple technologies developed over
-the years. SIP itself has seen greater uptake of TLS transport, but
-this remains uncommon largely due to the commonality of private IP
-peering as an alternative.
-
-Because of the HBH nature of RIPT, security is done fundamentally at
-the connection level - identically to HTTP. Since media is also
-carrier over the HTTP connection, both signalling and media are covered
-by the connection security provided by HTTP/3.
-
-Because of the mandatory usage of TLS1.3 with HTTP/3, and the expected
-widespread deployment of HTTP/3, running VoIP on top of HTTP/3 will bring
-built-in encryption of media and signalling everywhere,
-which is a notable improvement over the current deployment
-situation. It is also necessary in order to utilize HTTP/3.
-
-For reasons of interoperability, and to enable e2e media encryption in
-several cross-company or inter-provider use cases, RIPT assumes each
-media chunk may be encrypted, and if so, it contains a key ID which
-dereferences the encryption keys, ciphers and other information needed
-to decrypt the packet. The exchange of these keys and ciphers is done
-entirely out of band of RIPT.
-
-However, RIPT does not support SRTP. If a client receives a
-SIP call with SRTP, it must terminate the SRTP and decrypt media
-before sending it over RIPT. This matches existing practice in many
-cases. 
-
-## Authenticated CallerID
-
-Robocalling is seeing a dramatic rise in volume, and efforts to combat
-it continue. One of the causes of this problem is the ease of which
-SIP enables initiation of calls without
-authenticated caller ID.
-
-With RIPT, we remedy this by requiring the client and servers to
-implement STIR. RIPT clients must either insert a signed passport, or
-pass one through. Similarly, RIPT servers must act as
-verifying parties and reject any calls that omit a passport. In cases
-where the RIPT client is an end device, it still inserts a passport -
-but uses a self-signed certificate. 
-
-TODO: Need to check we have all the things needed in an Passport.
-
-## Calls Separate from Connections
-
-In SIP, there is a fuzzy relationship between calls and
-connections. In some cases, connection failures cause call
-terminations, and vice a versa.
-
-HTTP, on the other hand, very clearly separates the state of the
-resource being manipulated, with the state of the HTTP connection used
-to manipulate it. This design principle is inherited by
-RIPT. Consequently, call state on both client and server exist
-independently from the connections which manipulate them. This allows
-for greater availability my enabling connections for the same call to
-move between machines in the case of failures.
-
-## Path Validation, not ICE
-
-HTTP/3 is designed to work through NAT as a client-server protocol. It
-has built in techniques for dealing with NAT re-bindings, IP address
-changes due to a client moving between networks (e.g., wifi to
-cellular data). It has built in path validation that ensures that HTTP
-cannot be used for amplification attacks.
-
-SIP has, over the years, solved these problems to some degree, but not
-efficiently nor completely. To work with HTTP, RIPT must utilize the
-HTTP approaches for these problems. Consequently, RIPT does not
-utilize ICE and has no specific considerations for NAT traversal, as
-these are handled by HTTP/3 itself.
-
-## HTTP Load Balancing, not Proxies
-
-(enter text here)
 
 # Terminology {#terminology}
 
@@ -946,7 +608,7 @@ and a domestic TG which is used for domestic calls.
 To obtain the list, the client queries the /providertgs resource on
 the well-known RIPT root URI:
 
-https://example.com/.well-known/ript/providertgs
+https://example.com/.well-known/ript/v1/providertgs
 
 this URI will return the list of TG available to the client. This
 list has, for each, the TG URI and a name and description in prose,
@@ -1015,7 +677,7 @@ certificate.
 An example of a customer TG registration might be this:
 
 ~~~ ascii-art
-POST https://comcast.net/.well-known/ript/customertgs
+POST https://comcast.net/.well-known/ript/v1/customertgs
 {
   "outbound": {
     "destinations" : "+14085551*"
@@ -1041,7 +703,7 @@ was created:
 ~~~ ascii-art
 {
 
-  "uri" : "https://comcast.net/.well-known/ript/customertgs/12345",
+  "uri" : "https://comcast.net/.well-known/ript/v1/customertgs/12345",
 
   "outbound": {
     "destinations" : "+14085551*"
@@ -1116,7 +778,7 @@ An IP phone with a single microphone and speaker that support G.711 and
 opus might create its handler thusly: 
 
 ~~~ ascii-art
-POST https://comcast.net/.well-known/ript/providertgs/123/handlers
+POST https://comcast.net/.well-known/ript/v1/providertgs/123/handlers
 {
 
   "nickname": "Home Phone",
@@ -1157,7 +819,7 @@ and the reply would be:
   "device-id": "982akca99283",
 
 
-  "uri":"https://comcast.net/.well-known/ript/providertgs/123/handlers/abc",
+  "uri":"https://comcast.net/.well-known/ript/v1/providertgs/123/handlers/abc",
   "id": "abc",
 
   "mic": {
@@ -1305,9 +967,9 @@ in the body.
 For example, to place a call to a phone number from the handler above:
 
 ~~~ ascii-art
-POST "https://comcast.net/.well-known/ript/providertgs/123/calls
+POST "https://comcast.net/.well-known/ript/v1/providertgs/123/calls
 {
-  "handler": "https://comcast.net/.well-known/ript/prov
+  "handler": "https://comcast.net/.well-known/ript/v1/prov
      idertgs/123/handlers/abc",
   "destination": "+14089529999",
   "passport": "{passport encoding}"
@@ -1341,7 +1003,7 @@ for diagnostic and troubleshooting purposes:
 {
 
   "uri" :
-  "https://comcast.net/.well-known/ript/providertgs/123/calls/987",
+  "https://comcast.net/.well-known/ript/v1/providertgs/123/calls/987",
   "destination": "+14089529999",
   "passport": "{passport encoding}"
   "direction": "outbound",
@@ -1349,7 +1011,7 @@ for diagnostic and troubleshooting purposes:
   "directives": {[
 
     {
-     "handler": "https://comcast.net/.well-known/ript/prov
+     "handler": "https://comcast.net/.well-known/ript/v1/prov
      idertgs/123/handlers/abc",
 
      "mic": {
@@ -1370,7 +1032,7 @@ for diagnostic and troubleshooting purposes:
    }
   },
   {
-     "handler": "https://comcast.net/.well-known/ript/prov
+     "handler": "https://comcast.net/.well-known/ript/v1/prov
      idertgs/123/handlers/serverhandler",
 
 
