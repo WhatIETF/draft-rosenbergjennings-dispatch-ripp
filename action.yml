@@ -4,5 +4,5 @@ description: 'Run docker to run make to build RFC'
 
 runs:
     using: 'docker'
-    image: 'docker://debian:fluffy/rfc'
+    image: 'docker://fluffy/rfc'
 
