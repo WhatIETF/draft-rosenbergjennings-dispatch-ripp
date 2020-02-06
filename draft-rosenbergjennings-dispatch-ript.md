@@ -565,9 +565,9 @@ following concepts:
 
 Terminal Group (TG): A container for calls between a client and
 server. A TG is identified by a URI, hosted on the server. A TG acts
-as a unit of policy and capabilities, including rules such as rate
-limits, allowed phone numbers, and so on. The acronym is a nod to its
-circuit switched predecessor, the Trunk Group.
+as a unit of policy and capabilities, including alowed phone numbers.
+The acronym is a nod to its circuit switched predecessor,
+the Trunk Group.
 
 Call: A real-time voice and/or video session. A call is always
 associated with a TG, and is identified by a URI hosted on the
@@ -691,11 +691,15 @@ the call.
 The TG is a representation of the service offered by the server to the
 client. It indicates the allowed directions for calls (in this
 specification, outbound only), the allowed identities that can be used
-for caller ID, the allowed numbers which can be called, and a basic
-set of limits on call volumes. The purpose of the TG is to provide the
-client all of the information it needs to know, in advance, whether
-the placement of a call is within the allowed policy scope of the
-server.
+for caller ID, the allowed numbers which can be called, and the set of
+advertised media capabilities for the service. The purpose of the TG
+is to provide the client all of the information it needs to know, in
+advance, whether the placement of a call is within the allowed policy
+scope of the server. It is also meant to automate configuration,
+providing information which is manually entered today. It also
+facilitates call routing, enabling a client to know where to route
+calls, and minimizes call failures by providing information up front
+about whether a call may be rejected. 
 
 For example, a telco might offer an enterprise customer a service in
 which it can place calls to any number in the world, but it must use
@@ -933,8 +937,12 @@ https://example.com/.well-known/ript/providertgs
 
 this URI will return the list of TG available to the client. This
 list has, for each, the TG URI and a name and description in prose,
-meant for a user to select. When the user selects, the client can
-fetch the TG to learn its details, by performing a GET against the TG URI.
+meant for a troubleshooting. The client would normally select a TG
+automatically on a call by call basis based on local policy. For
+example, if the server provides three TGs, one for receiving calls to
+international numbers and one for domestic numbers, the client would
+choose the TG based on whether a call it wishes to make is towards an
+international or domestic number.
 
 An example TG supporting outbound dialing from a 2-line IP PBX to
 domestic numbers with a
@@ -1603,9 +1611,9 @@ in the list. It is RECOMMENDED that the origin server specify that
 this document can be cached.
 
 If the client receives a document and there is only one TG
-URI, it uses this for subsequent outound calls to the server. If
-there is more than one, the client SHOULD request user input if it has
-such a facility. If not, it SHOULD select the first.
+URI, it uses this for subsequent outound calls to the server. If there
+is more than one, the client can use any algorithm and policy it
+desires to choose the target TG for any call. 
 
 At the end of this process, the client will have a TG URI. It MUST
 retrieve the value of this URI, and use it to process calls. 
