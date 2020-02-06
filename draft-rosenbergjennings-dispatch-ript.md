@@ -601,8 +601,9 @@ and its calls being picked up by a backup). A handler has a
 description, which is relatively static, that describes its audio and
 video capabilities, device name, image, and so on.
 
-Directive: The directive is an instruction from the server, which
-tells a handler where it should send media to for this call. 
+Directive: The directive is an instruction on how media should be
+sent. It is communicated from the server, which tells a handler where
+it should send media to for this call.
 
 
 # Reference Architecture {#refarch}
@@ -1265,22 +1266,25 @@ POST "https://comcast.net/.well-known/ript/providertgs/123/calls
 ~~~
 
 The server takes the handler description associated with the handler
-URI, takes its own handler description (which it has never
-exchanged, but merely knows), and figures out what it will
-send, and what the client must send. It takes the latter - the
-definition of what the client must send - and constructs a
-directive out of it. The directive has the same syntax as the
-handler description. However, it only includes media sources (since by
-definition the directive tells the remote peer what to send), there is
-one parameter set per source, and for each parameter, the value
-indicates what the client should send. The directive is always specified
-in a way that makes the value of each parameter less than the maximum
-value for both the client and server. 
+URI, takes its own handler description (which it has never exchanged,
+but merely knows), and figures out what it will send, and what the
+client must send. It takes both of these, and constructs a two
+directives - the client directive indicating what the client must
+send, and the server directive which describes what it will send. The
+directives have the same syntax as the handler description. However,
+they only includes media sources (since by definition the directive
+tells the remote peer what to send), there is one parameter set per
+source, and for each parameter, the value indicates what the client
+should send. Each directive is always specified in a way that makes
+the value of each parameter less than the maximum value for both the
+client and server.
 
-The server places the call, and returns the call
-description back to the client. The call description includes the
-directive along with core meta-data about the call - directionality,
-caller, callee and a URI for the call:
+The server places the call, and returns the call description back to
+the client. The call description includes the directives along with
+core meta-data about the call - directionality, caller, callee and a
+URI for the call. The server directive does not need to be known by
+the client, and it is not processed in any way. It is included only
+for diagnostic and troubleshooting purposes:
 
 ~~~ ascii-art
 201 Created
@@ -1289,30 +1293,56 @@ caller, callee and a URI for the call:
 
   "uri" :
   "https://comcast.net/.well-known/ript/providertgs/123/calls/987",
-
-  "handler": "https://comcast.net/.well-known/ript/prov
-     idertgs/123/handlers/abc",
   "destination": "+14089529999",
   "passport": "{passport encoding}"
-
   "direction": "outbound",
 
- "mic": {
-    "id" : 0,
-    "param-sets" : {
-      "opus" : 1,
-      "PCMU" : 0
+  "directives": {[
+
+    {
+     "handler": "https://comcast.net/.well-known/ript/prov
+     idertgs/123/handlers/abc",
+
+     "mic": {
+      "id" : 0,
+      "param-sets" : {
+        "opus" : 1,
+        "PCMU" : 0
+       }
      }
-  }
-  "cam":  {
-    "id" : 2,
-    "param-sets" : {
-      "H264" : 1,
-      "max-width" : 1280,
-      "max-height" : 720
-      "max-fps" : 30
-    }
-  }
+    "cam":  {
+     "id" : 2,
+     "param-sets" : {
+       "H264" : 1,
+       "max-width" : 1280,
+       "max-height" : 720
+       "max-fps" : 30
+     }
+   }
+  },
+  {
+     "handler": "https://comcast.net/.well-known/ript/prov
+     idertgs/123/handlers/serverhandler",
+
+
+     "mic": {
+      "id" : 0,
+      "param-sets" : {
+        "opus" : 1,
+        "PCMU" : 0
+       }
+     }
+    "cam":  {
+     "id" : 2,
+     "param-sets" : {
+       "H264" : 1,
+       "max-width" : 1280,
+       "max-height" : 720
+       "max-fps" : 30
+     }
+   }
+}]
+
 }
 ~~~
 
@@ -1325,7 +1355,6 @@ capabilities. To tell the server to create a new proposal for the
 call, it performs a POST against the existing call URI, this time
 without parameters, and the server will respond with an updated call
 description, including the new directive. 
-
 
 Another important consequence of this design is that media packets
 must be self-describing, without any kind of reference to a specific
@@ -1814,11 +1843,13 @@ which sinks on its peer it will send. It MUST NOT send media for which
 there is not a corresponding sink on its peer which is a match for the
 media type. It MUST send utilizing media parameters which are less
 than the values specified in the handler description in the peer for that
-sink.
+sink. It MUST codify this into another directive describing what it
+will actually send. 
 
-The server MUST include the directive in the body of the 201 response,
+The server MUST include the client directive in the body of the 201 response,
 MUST include the URI for the handler that was used, MUST include the
-call direction, and MUST include the from and to participants. 
+call direction, MUST include the from and to participants, and
+MUST include its own server directive.
 
 If the
 request is otherwise valid, but the target of the call cannot be
@@ -1926,10 +1957,10 @@ the pong
 
 The client can obtain the current state of the call at any time by
 querying the call URI. The server MUST return a call description which
-includes the directive, call direction, calling and called parties,
-and the handler which is being used. This aspect of RIPT is essential
-for allowing clients to fail, recover, and re-obtain the state of the
-call. 
+includes the client and server directives, call direction, calling and
+called parties, and the handler which is being used. This aspect of
+RIPT is essential for allowing clients to fail, recover, and re-obtain
+the state of the call.
 
 ## Sending and Receiving Media
 
@@ -2066,7 +2097,7 @@ open (as GET requests to the /media resource for the call). If a
 response is received, the client extracts the contents, which will
 always be one media chunk and zero or more control chunks.
 
-The media sent by the client MUST match the directive received from the
+The media sent by the client MUST match the client directive received from the
 server. 
 
 ### Server Media Handling
