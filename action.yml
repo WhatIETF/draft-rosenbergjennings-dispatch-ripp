@@ -1,0 +1,8 @@
+# action.yml
+name: 'Build RFC'
+description: 'Run docker to run make to build RFC'
+
+runs:
+    using: 'docker'
+    image: 'docker://debian:fluffy/rfc'
+
