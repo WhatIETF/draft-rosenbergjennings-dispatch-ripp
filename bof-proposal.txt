@@ -3,7 +3,7 @@ v3@ietf.org
 
 Suggested Chairs:
 Mo Zanaty
-Ideas for a seasoned co-chair: Martin Thompson, Jon Peterson, Brian Rosen, Gonzalo Camarillo
+Martin Thompson
 
 
 Agenda:
