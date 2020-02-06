@@ -1,10 +1,15 @@
 #
 # To build the docker images run
 #   docker build -t fluffy/rfc .
+# Or get the docker images from with
+#   docker pull fluffy/rfc
 # To build the drafts, run
 #   docker run --mount type=bind,source="$(pwd)",destination=/data fluffy/rfc 
 # To debug docker run
 #   docker run -i --mount type=bind,source="$(pwd)",destination=/data  fluffy/rfc /bin/tcsh
+# To Push docker images to repo
+#   docker login -u fluffy
+#   docker push fluffy/rfc
 #
 
 FROM ubuntu:latest
