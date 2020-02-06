@@ -563,6 +563,12 @@ these are handled by HTTP/3 itself.
 This specification follows the terminology of HTTP/3, but adds the
 following concepts:
 
+Client: An entity which implements the rules of the client defined in
+this specification. A RIPP client always acts as an HTTP client.
+
+Server: An entity which implements the rules of a server as defined in
+this specification. A RIPP server always acts as an HTTP server.
+
 Terminal Group (TG): A container for calls between a client and
 server. A TG is identified by a URI, hosted on the server. A TG acts
 as a unit of policy and capabilities, including alowed phone numbers.
