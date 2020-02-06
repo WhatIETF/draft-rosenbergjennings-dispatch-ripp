@@ -945,19 +945,13 @@ choose the TG based on whether a call it wishes to make is towards an
 international or domestic number.
 
 An example TG supporting outbound dialing from a 2-line IP PBX to
-domestic numbers with a
-peek concurrent call rate of 10 calls (essentially a two line key
-system, using old terminology) might look like this:
+domestic numbers might look like this:
 
 ~~~ ascii-art
 {
   "outbound": {
     "origins" : ["+14085551000", "+14085551002"],
     "destinations" : "+1*",
-    "max-concurrent-calls" : {
-      "grouped-by": "tg",
-      "maximum": 10
-    }
   }
 }  
 ~~~
@@ -1633,8 +1627,6 @@ any calls. Similarly, the "destinations" field specifies the allowed
 targets for calls. The server MUST include this element if it will
 reject a call based on policy for a specific destination. The default
 is "*" meaning the TG will accept any calls.
-
-TODO: add details for max-concurrent-calls.
 
 In addition, the TG URI contains a set of configuration values. If
 absent, these take their default. The following are defined:
