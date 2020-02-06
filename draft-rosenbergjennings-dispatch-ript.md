@@ -567,7 +567,8 @@ Terminal Group (TG): A container for calls between a client and
 server. A TG is identified by a URI, hosted on the server. A TG acts
 as a unit of policy and capabilities, including alowed phone numbers.
 The acronym is a nod to its circuit switched predecessor,
-the Trunk Group.
+the Trunk Group. It exists to facilitate automated configuration of
+call routing and avoid call failures due to mismatched capabilities.
 
 Call: A real-time voice and/or video session. A call is always
 associated with a TG, and is identified by a URI hosted on the
