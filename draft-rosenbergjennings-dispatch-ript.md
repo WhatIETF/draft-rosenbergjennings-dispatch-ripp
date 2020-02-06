@@ -1006,7 +1006,7 @@ authorization of inbound requests.
 
 The customer TG URI has to be reachable by the server in order for the
 it to receive calls, and for security purposes it must also support
-TLS and present a valid certificate using the same trust chains
+TLS and present a valid domain certificate using the same trust chains
 configured into browsers. This specification envisions an extension
 which allows a client to receive calls without requiring it to run an
 HTTP server, thus allowing for it to run behind a NAT and not have a
@@ -1255,6 +1255,39 @@ represent ranges of values.
 
 We believe this represents the minimum technique which can be used to
 describe modern AV systems.
+
+## Obtaining Certificates
+
+In order to place an outbound call, a client must have a certificate
+which is valid and attests to the number that is to be used. In order
+to enable that, RIPT requires that a client obtain a passport for each
+number it wishes to place a call from.
+
+To do that, the server provides a "/cert" resource on the TG. The
+client can perform a POST to this resource, and the request would
+contain a CSR. The CSR describes an [@!RFC8226] certificate which is
+valid for a single phone number - the one the client wishes to use for
+a call. This request is, as with all others, authorized with the
+OAuth token. If the holder of the token is permitted to utilize that
+number in phone calls, the server generates a certificate and returns
+the certificate in the POST response. These certificates can last as
+long as the server desires. This means that acquisition of such
+certificates can be done in advance of the call, and regardless of
+when they are acquired, can be cached for subsequent use.
+
+In the case of a mobile phone as the RIPP client (for example), it
+would learn its own mobile number from the TG, construct a CSR for
+that number, and request the server to create a certificate that it
+would cache until it expires.
+
+An important benefit of this approach is that the server can use the
+passport itself as the technqiue to authenticate the client as defined
+in [@?RFC8224], and merely pass on the passport provided by the client
+rather than generating one. This avoids the computational cost of
+creating a signature, and also means that secure caller ID is provided
+by default, without requiring active action on behalf of the
+server. If the server does nothing, the call still has a valid
+passport.
 
 
 ## Call Establishment {#directive}
@@ -1795,6 +1828,21 @@ It is RECOMMENDED that the handler description include a nickname, img,
 vendor and device-id elements. The device-id element, when present,
 MUST be a UUID. 
 
+## Certificate Enrollment
+
+Prior to placing a call, a client MUST have a valid [@!RFC8226]
+certificate which has a subject field that contains the phone number
+or email address from which the call  is to be placed. 
+
+A server acting as an authenticator as defined in [@?RFC8224] MUST
+implement the "/certs" sub-resource of its TG. A client wishing to
+obtain a certificate can perform a POST operation to this
+resource. The body MUST contain a valid CSR. The server MUST validate
+the CSR is valid, and MUST validate that the phone number or email
+address that is requested, is amongst ones that the server is willing
+to vouch for. It MUST generate a certificate and return it in the 200
+OK response to the request. 
+
 ## Call Establishment
 
 To place a call, the client performs a POST request to /calls resource
@@ -1817,16 +1865,10 @@ valid within the domain. This form MUST NOT be used for E.164 numbers.
 
 The passport URI parameter MUST be a valid passport as defined by
 [@!RFC8224]. It identifies the calling party and includes signature
-information which can be used to verify it. If the client has no
-official certificate proving ownership of the identity in the
-passport, it MUST generate a self-signed certificate and use that. The
-caller ID and called party values in the passport MUST be within the
-allowed values defined in the "origins" and "destinations" parameters
-of the TG, respectively.
-
-OPEN ISSUE: Self signed certs are bad. Would be better if there was a
-way for the client to have a proper cert it can use, which is trusted
-only by the server. Maybe ACME?
+information which can be used to verify it. The caller ID and called
+party values in the passport MUST be within the allowed values defined
+in the "origins" and "destinations" parameters of the TG,
+respectively.
 
 The server MAY authorize creation of the call using any criteria it so
 desires. If it decides to create the call, the server MUST return a
@@ -1834,7 +1876,7 @@ desires. If it decides to create the call, the server MUST return a
 containing an HTTPS URI which identifies the call that has been
 created. The call URI MUST contain a UUID. 
 
-The server MUST construct a directive, which tells the client what
+The server MUST construct a client directive, which tells the client what
 media to send. This directive MUST include zero or more mic parameters,
 and zero or more cam parameters, corresponding to the sources and
 that the server wishes the client to send. These MUST be a subset of
@@ -1852,7 +1894,7 @@ which sinks on its peer it will send. It MUST NOT send media for which
 there is not a corresponding sink on its peer which is a match for the
 media type. It MUST send utilizing media parameters which are less
 than the values specified in the handler description in the peer for that
-sink. It MUST codify this into another directive describing what it
+sink. It MUST codify this into a server directive describing what it
 will actually send. 
 
 The server MUST include the client directive in the body of the 201 response,
