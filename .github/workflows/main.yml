@@ -1,7 +1,10 @@
 name: CI
 
-on: [push]
-
+on: 
+  push:
+    branches:
+      - master
+      
 jobs:
   build_drafts:
     name: 'Build the drafts job'
@@ -12,7 +15,8 @@ jobs:
       uses: actions/checkout@v2
     - name: Build It
       uses: ./
-    - uses: actions/upload-artifact@v1
+    - name: save ripp draft
+      uses: actions/upload-artifact@v1
       with:
-        name: drafts 
-        path: draft-rosenbergjennings-dispatch-ripp-04.txt draft-rosenberg-dispatch-ripp-inbound.txt
+        name: draft-rosenbergjennings-dispatch-ripp-04 
+        path: draft-rosenbergjennings-dispatch-ripp-04.txt
