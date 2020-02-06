@@ -5,11 +5,9 @@ on: [push]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: fluffy/rfc
 
     steps:
     - uses: actions/checkout@v2
     - name: Build It 
-      run: |
-        echo Start build 
-        make
+      run: make 

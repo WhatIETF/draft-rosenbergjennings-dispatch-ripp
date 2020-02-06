@@ -9,5 +9,3 @@ before_install:
 script:
   - docker run --mount type=bind,source="$(pwd)",destination=/data fluffy/rfc
 
-
-
