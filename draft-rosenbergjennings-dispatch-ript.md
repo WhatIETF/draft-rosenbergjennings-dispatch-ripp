@@ -1057,9 +1057,10 @@ A handler registration is created by having the client perform an HTTP
 POST operation to the /handlers resource on the TG URI. This operation
 creates a new handler instance on the server and returns its URI to
 the client. The client is expected to store this URI in order to make
-modifications at a later date (via PUT), or DELETE it. The handler can
-be destroyed at any time by the server. The client can discover this
-by subscribing to handler events, as described below.
+modifications at a later date (via PUT), or DELETE it. The handler
+registration is not soft state, there is no need for the client to
+refresh it. The server would typically delete this registration when
+the customer ends its service with the provider. 
 
 The handler description has a list of media sources and sinks that the
 endpoint has, and an ID for each which monotonically increases from
@@ -1692,16 +1693,6 @@ return a 201 Createed response, with the URI for the new handler in
 the Location header field. It MUST echo back the handler desription,
 and MUST add or replace the "uri" parameter in that description to
 contain this URI. 
-
-The server MAY time out or otherwise destroy the handler resource at
-any time. The client can discover this by performing a GET against the
-URI and seeing a 404, however it is RECOMMENDED that the client
-instead perform a long lived GET to the /events resource on the TG
-URI. This returns a long running stream json containing events. The
-"handler" event MUST be sent by the server when the handler
-is destroyed. This event indicates what happened to the handler
-("created", "modified" or "destroyed" along with the URI for the
-handler. 
 
 
 ## Handler Description Format
