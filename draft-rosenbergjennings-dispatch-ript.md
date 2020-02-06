@@ -69,7 +69,7 @@ organization = "Google"
 
 This document specifies the Realtime Internet Peering for Telephony
 (RIPT) protocol. RIPT is used to provide peering of voice and video
-communications between administrative domains. These include a
+communications between entities. These include a
 traditional voice trunking provider (such as a telco), and a trunking
 consumer (such as an enterprise PBX or contact center), or between a
 video conferencing endpoint deployed in an enterprise, and a video
@@ -146,7 +146,7 @@ based routing, and so on.
 
 Unfortunately, there are many applications being deployed into these
 cloud platforms which require interconnection with other
-administrative domains providing real-time voice and video
+entities providing real-time voice and video
 services. One example is interconnection with the public switched
 telephone network (PSTN). Examples of such applications include cloud
 PBXs, cloud contact centers, cloud meetings applications, and so
@@ -154,7 +154,7 @@ on. Furthermore, commerce websites would like to allow customers
 to call into the telephone network for customer support.
 
 In order for these applications to connect to the PSTN, or to connect
-voice and video services in other domains, they typically
+voice and video services provided by service providers, they typically
 deploy Session Initiation Protocol (SIP) [@RFC3261] based servers -
 SBCs, SIP proxies, and softswitches, to provide this
 interconnection. Unfortunately, SIP based applications cannot make use
@@ -387,19 +387,19 @@ use them, RIPT must abide by HTTP/3 rules, and that means distinct
 roles for clients and servers. Clients must always initiate
 connections and send requests, not servers.
 
-To handle this, RIPT specifies that the domain associated with the
-caller implements the RIPT client, and the domain receiving the calls
-is the RIPT server. For any particular call, the roles of client and
-server do not change. To facilitate calls in either direction, a
-domain can implement both RIPT client and RIPT server roles. However,
-there is no relationship between the two directions. 
+To handle this, RIPT specifies that the caller implements the RIPT
+client, and the side receiving the calls is the RIPT server. For any
+particular call, the roles of client and server do not change. To
+facilitate calls in either direction, an entity can implement both RIPT
+client and RIPT server roles. However, there is no relationship
+between the two directions.
 
 ## Signaling and Media Together
 
 One of the most fundamental design properties of SIP was the
 separation of signalling and media. This was fundamental to the success
 of SIP, since it enabled high quality, low latency media between
-endpoints inside of an enterprise or consumer domain.
+endpoints within of an enterprise or consumer VoIP service.
 
 This design technique is quite hard to translate to HTTP, especially
 when considering load balancing and scaling techniques. HTTP load
@@ -494,16 +494,16 @@ by the connection security provided by HTTP/3.
 
 Because of the mandatory usage of TLS1.3 with HTTP/3, and the expected
 widespread deployment of HTTP/3, running VoIP on top of HTTP/3 will bring
-built-in encryption of media and signalling between peering domains,
+built-in encryption of media and signalling everywhere,
 which is a notable improvement over the current deployment
 situation. It is also necessary in order to utilize HTTP/3.
 
-For reasons of interoperability, and to enable e2e media encryption in several
-inter-domain use cases, RIPT assumes each media chunk may be
-encrypted, and if so, it contains a key ID which dereferences the
-encryption keys, ciphers and other information needed to decrypt the
-packet. The exchange of these keys and ciphers is done entirely out of
-band of RIPT. 
+For reasons of interoperability, and to enable e2e media encryption in
+several cross-company or inter-provider use cases, RIPT assumes each
+media chunk may be encrypted, and if so, it contains a key ID which
+dereferences the encryption keys, ciphers and other information needed
+to decrypt the packet. The exchange of these keys and ciphers is done
+entirely out of band of RIPT.
 
 However, RIPT does not support SRTP. If a client receives a
 SIP call with SRTP, it must terminate the SRTP and decrypt media
@@ -514,7 +514,7 @@ cases.
 
 Robocalling is seeing a dramatic rise in volume, and efforts to combat
 it continue. One of the causes of this problem is the ease of which
-SIP enables one domain to initiate calls to another domain without
+SIP enables initiation of calls without
 authenticated caller ID.
 
 With RIPT, we remedy this by requiring the client and servers to
@@ -682,9 +682,9 @@ to applications - opening connections, closing connections, sending
 requests and responses, receiving requests and responses, and setting
 header fields and bodies. That's it.
 
-# Domain Model
+# Web Resource Model
 
-The domain model for RIPT is based on the interplay between three
+The web resource model for RIPT is based on the interplay between three
 key resources held by the server. These are the TG, the handler, and
 the call.
 
@@ -747,11 +747,11 @@ server communications this directive back to the client.
 
 # Deployment Examples {#deployments}
 
-RIPT enables communications between a pair of administrative
-domains. This enables its usage in many use cases where there are
-bilateral relationships requiring real-time communications. This
-section contains several use cases which are target use cases for
-deployment of RIPT.
+RIPT enables communications between a pair of entities, which could be
+in different companies or providers. This enables its usage in many
+use cases where there are bilateral relationships requiring real-time
+communications. This section contains several use cases which are
+target use cases for deployment of RIPT.
 
 ## Enterprise Voice Trunking
 
@@ -1540,7 +1540,7 @@ call URI, selected IP address (from either DNS or using the IP in the
 advertiseent), and session cookie are stored. These facilitate
 reconnection to the same downstream instance.
 
-In inter-domain peering arrangements, such as enterprise voice
+In inter-company peering arrangements, such as enterprise voice
 trunking or inter-carrier NNI voice peering, both sides will typically
 have a cluster of software agents (VMs, docker containers, bare-metal
 servers, dedicated hardware products, or whatever) acting as both clients and
