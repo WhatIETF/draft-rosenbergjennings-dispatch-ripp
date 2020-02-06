@@ -563,11 +563,18 @@ these are handled by HTTP/3 itself.
 This specification follows the terminology of HTTP/3, but adds the
 following concepts:
 
+Client: An entity which implements the rules of the client defined in
+this specification. A RIPP client always acts as an HTTP client.
+
+Server: An entity which implements the rules of a server as defined in
+this specification. A RIPP server always acts as an HTTP server.
+
 Terminal Group (TG): A container for calls between a client and
 server. A TG is identified by a URI, hosted on the server. A TG acts
 as a unit of policy and capabilities, including alowed phone numbers.
 The acronym is a nod to its circuit switched predecessor,
-the Trunk Group.
+the Trunk Group. It exists to facilitate automated configuration of
+call routing and avoid call failures due to mismatched capabilities.
 
 Call: A real-time voice and/or video session. A call is always
 associated with a TG, and is identified by a URI hosted on the
@@ -699,7 +706,13 @@ scope of the server. It is also meant to automate configuration,
 providing information which is manually entered today. It also
 facilitates call routing, enabling a client to know where to route
 calls, and minimizes call failures by providing information up front
-about whether a call may be rejected. 
+about whether a call may be rejected.
+
+To ensure authenticated caller ID everywhere, the TG specifies the set
+of allowed caller IDs through an [@!RFC8226] certificate. This not
+only informs the client about what numbers it can originate with, it
+also proves to the client that it is capable of vouching for those
+numbers. 
 
 For example, a telco might offer an enterprise customer a service in
 which it can place calls to any number in the world, but it must use
@@ -950,7 +963,7 @@ domestic numbers might look like this:
 ~~~ ascii-art
 {
   "outbound": {
-    "origins" : ["+14085551000", "+14085551002"],
+    "origins" : (RFC 8226 cert with "+14085551000" and "+14085551002"),
     "destinations" : "+1*",
   }
 }  
@@ -963,7 +976,7 @@ like this:
 ~~~ ascii-art
 {
   "outbound": {
-    "origins" : "+14085551*",
+    "origins" : (RFC 8226 cert with "+14085551*"),
     "destinations" : "*"
   }
 }  
@@ -1005,7 +1018,6 @@ An example of a customer TG registration might be this:
 POST https://comcast.net/.well-known/ript/customertgs
 {
   "outbound": {
-    "origins" : "*",
     "destinations" : "+14085551*"
   }
 }  
@@ -1019,7 +1031,9 @@ this TG. The provider would validate that these are authorized based
 on prior business relationship, and reject them otherwise. For
 example, if the customer indicated it wanted to receive calls for
 numbers which were not obtained from that provider, the provider's
-terms of service may not allow that, and it would reject the request.
+terms of service may not allow that, and it would reject the
+request. Also note how the origins field is absent - this is because
+the enterprise will accept inbound calls with any callerID. 
 
 A success esponse to this would be a 201 Created, with the TG which
 was created: 
@@ -1030,8 +1044,7 @@ was created:
   "uri" : "https://comcast.net/.well-known/ript/customertgs/12345",
 
   "outbound": {
-    "origins" : "*",
-    "destinations" : "*"
+    "destinations" : "+14085551*"
   }
 }  
 ~~~
@@ -1620,13 +1633,19 @@ parameters.
 
 The document MUST contain an "outbound" element. The "origins" field
 specifies the permitted caller ID values which can be present in the
-passport used in a call setup towards this TG. If the server will
-reject a call due to policy around caller ID, it MUST include a value
-for this parameter. The default is "*" meaning the server will accept
-any calls. Similarly, the "destinations" field specifies the allowed
-targets for calls. The server MUST include this element if it will
-reject a call based on policy for a specific destination. The default
-is "*" meaning the TG will accept any calls.
+passport used in a call setup towards this TG. If the server will act
+as an authentication service as defined in [@?RFC8224], it MUST
+include a value for this parameter. When present, it MUST be an
+[@!RFC8226] certificate, whose TelephoneNumberRange indicates the
+numbers which the server can vouch for. In cases where the server is
+not acting as the authentication service, the "origins" field MUST be
+absent. This would be the case in inter-carrier peering links, or in a
+consumer TG registered to the provider.
+
+The "destinations" field
+specifies the allowed targets for calls. The server MUST include this
+element if it will reject a call based on policy for a specific
+destination. The default is "*" meaning the TG will accept any calls.
 
 In addition, the TG URI contains a set of configuration values. If
 absent, these take their default. The following are defined:
@@ -1667,17 +1686,12 @@ resources and their associated behaviors. This URI MUST be
 reachable by the provider. The URI MUST utilize HTTPS, and MUST
 utilize a domain name for the authority component. 
 
-The destinations and origins elements in the consumer TG description MAY be
-included. If they are included, the destinations MUST be a subet of
-the addresses present in the origins element in the provider TG
-description. Similarly, the origins element MUST be a subset of the
-addresses present in the destinations element in the provider TG
-decription. If absent, the default is that the origins and
-destinations values are identical to the destinations and origins
-values in the provider TG, respectively. The default value for the
-destinations and origins is *. Consequently, if absent in the provider
-TG description, it means any destination address from any caller ID is
-permitted. 
+The destinations parameter in the consumer TG description MAY be
+included. If it is included, the destinations MUST be a subet of the
+addresses present in the certificate found in the origins element in
+the provider TG description. Since a consumer does not act as an
+authentication service as specified in [@?RFC8224], the origins
+parameter MUST be omitted.
 
 
 ## Handler Registration and Lifecycle Management.
@@ -1809,6 +1823,10 @@ passport, it MUST generate a self-signed certificate and use that. The
 caller ID and called party values in the passport MUST be within the
 allowed values defined in the "origins" and "destinations" parameters
 of the TG, respectively.
+
+OPEN ISSUE: Self signed certs are bad. Would be better if there was a
+way for the client to have a proper cert it can use, which is trusted
+only by the server. Maybe ACME?
 
 The server MAY authorize creation of the call using any criteria it so
 desires. If it decides to create the call, the server MUST return a
