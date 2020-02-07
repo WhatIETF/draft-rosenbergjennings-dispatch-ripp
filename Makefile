@@ -3,10 +3,10 @@ output =  $(patsubst %.md,%.txt,$(wildcard draft*.md))  $(patsubst %.xml,%.txt,$
           $(patsubst %.md,%.html,$(wildcard draft*.md))  $(patsubst %.xml,%.html,$(wildcard draft*.xml))
 
 
-all: $(output) all.tgz
+all: $(output) all.tgz ripp-api.md ripp-api.html seq-diagram.md
 
 clean:
-	-rm -f draft*.txt draft*.html ripp-api.{html,md} draft-rosenberg-dispatch-ript-sipdiffs.xml draft-rosenbergjennings-dispatch-ript.xml
+	-rm -f draft*.txt draft*.html ripp-api.{html,md} draft-rosenberg-dispatch-ript-sipdiffs.xml draft-rosenbergjennings-dispatch-ript.xml ripp-api.md ripp-api.html seq-diagram.md
 
 .PHONY: all clean 
 
