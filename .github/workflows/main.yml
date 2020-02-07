@@ -15,8 +15,13 @@ jobs:
       uses: actions/checkout@v2
     - name: Build It
       uses: ./
-    - name: save ripp draft
+    - name: save ript draft
       uses: actions/upload-artifact@v1
       with:
         name: draft-rosenbergjennings-dispatch-ript 
         path: draft-rosenbergjennings-dispatch-ript.txt
+    - name: save sipdiff draft
+      uses: actions/upload-artifact@v1
+      with:
+        name: draft-rosenberg-dispatch-ript-sipdiffs 
+        path: draft-rosenberg-dispatch-ript-sipdiffs.txt
