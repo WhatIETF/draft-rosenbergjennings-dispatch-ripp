@@ -1106,7 +1106,7 @@ directive could be followed). One is a GET to the /events resource on
 the call URI, retrieving call events from the server. The other is a
 PUT to the same /events URI, used by the client to send call events to
 its peer. The combination of these two is called the signalling
-byway. HTTP/3 ensures zero RTT for setup of these transactions.
+byway. HTTP/3 allows for an zero RTT for setup of these transactions.
 
 Signaling commands are encoded into the signalling byway using
 streaming JSON in both directions. Each JSON object encodes an event
@@ -1141,8 +1141,8 @@ delivery is desired, these are undesirable for media.
 To eliminate them for media in the forward direction, for each and
 every media chunk to send, the client will create a 
 new PUT transaction, send the media chunk, and immediately close the
-transaction. When run over HTTP3, this process takes place with
-zero-RTT. When the server receives the request and associated media
+transaction. When run over HTTP3, this process can take place with
+zero RTT. When the server receives the request and associated media
 chunk, it immediately sends a 200 OK response, includes a payload
 containing an acknowledgement media chunk, thus completing the
 transaction. Since HTTP3 will use a different QUIC stream for each
@@ -1216,8 +1216,8 @@ session routing for subsequent requests for this call.
 Whether client or server initiated, when a migration occurs, both
 sides buffer their media packets and signaling events until the byways
 are ready to carry them. This enables the migrations to occur with
-literally no gap in media. The migration takes only a single RTT
-between client and server, and thus will often occur within the
+minimal impact to the media. The migration takes only a single RTT
+between client and server, and thus can occur within the
 boundaries of jitter buffer depths. 
 
 Note that the call state persists independently of the state of the HTTP
