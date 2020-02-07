@@ -67,7 +67,7 @@ build code and specifications simultaneously.
 Relevant Drafts:
 
 https://datatracker.ietf.org/doc/draft-rosenbergjennings-dispatch-ript/
-https://datatracker.ietf.org/doc/draft-rosenberg-dispatch-ript-inboun/
+https://datatracker.ietf.org/doc/draft-rosenberg-dispatch-ript-inbound/
 https://datatracker.ietf.org/doc/draft-rosenberg-dispatch-ript-sipdiffs/
 https://datatracker.ietf.org/doc/draft-rosenberg-dispatch-ript-webrtc/
 
