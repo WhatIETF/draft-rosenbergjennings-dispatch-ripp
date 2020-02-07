@@ -28,13 +28,13 @@ The Real-Time Internet Peering for Telephony (RIPT) protocol and its
 extension for inbound calls to single user devices provide an
 alternative to the Session Initiation Protocol (SIP) for several use
 cases. This leads to many questions - how is RIPT different from SIP
-and why? How much of SIP do those two specifications
-replace? This document discusses the differences and their
-motivations, and presents an analysis across the set of SIP
-specifications, and analyzes whether the two RIPT documents replace
-each with similar capability, whether they eliminate the need for that
-specification, or whether some or all of that specification are not
-addressed by RIPT.
+and why? What should be standardized and what should not? How much of
+SIP do those two specifications replace? This document discusses the
+differences and their motivations, and presents an analysis across the
+set of SIP specifications, and analyzes whether the two RIPT documents
+replace each with similar capability, whether they eliminate the need
+for that specification, or whether some or all of that specification
+are not addressed by RIPT.
 
 {mainmatter}
 
@@ -53,10 +53,16 @@ calls to single user devices [TODO ref draft-rosenberg-dispatch-ript-inbound]
 provide an alternative to the Session Initiation Protocol (SIP)
 [@?RFC3261] for several use cases.
 
-This leads to two important questions - how is RIPT different and why?
-And,  how much of SIP do those two specifications replace? This
-document answers the first question, and then presents an
-analysis across the set of SIP specifications, and categorizes each
+This leads to three important questions:
+
+1. How is RIPT different from SIP and why?
+2. How much should be standardized, and how much should be proprietary?
+3. How much of SIP do those two specifications replace?
+
+This document answers these questions.
+
+For the third question, it presents an analysis
+across the set of SIP specifications, and categorizes each
 specification as one of three types:
 
 1. the two RIPT documents replace the document in whole with similar
@@ -505,9 +511,105 @@ requests and they get connected to a new server.
 That said, media processing is far better when there is locality of
 media. As a result, RIPT provides an additional primitive that allows
 a server to explicitly move a call off of itself, or to a new
-URI. This enables a variety of capabilities for optimization. 
+URI. This enables a variety of capabilities for optimization.
 
-# Can RIPP Really Replace SIP?
+# What should be Standardized?
+
+Many have observed that we live in a 'post standards world'. This
+means that a great deal of the applications users consume over the
+Internet do not require any kind of standardization efforts. Rather,
+they utilize the Internet as a platform - with HTTP at its core - and
+build application functionality ontop of it. Standards are not needed
+because the developer of the application develops and distributes the
+server code and any client code required for it. This is the formula
+for web and mobile applications today.
+
+This begs the question - if real-time communications is just another
+application, do we really need to standardize anything?
+
+We believe the answer is yes, and it comes down to the need for
+cross-vendor interoperability. Communications technologies remain
+unique in that they require communication between users who utilize
+differing providers. While this remains a requirement, there will
+remain a need for standardization.
+
+But where to draw the line? We propose the following framework to
+answer this question:
+
+~~~ ascii-art
+
+
+                               Provider 1                 Provider 2
+                   +------------------------------+   +----------------
+                   |                              |   |
++-------------+    |   +--------+     +--------+  |   |   +--------+
+| Browser App |    |   |        |     |        |  |   |   |        |
+|-------------|+------>| Server |+--->| Server |+-------->| Server |
+|   Browser   |  . |   |        |  .  |        |  | . |   |        |
++-------------+  . |   +--------+  .  +--------+  | . |   +--------+
+                 . |               .              | . |
+                 . +---------------.--------------+ . +----------------
+                 .                 .                .
+                 .                 .                .
+            +----------+           .                .
+  Browser   |   C->S   |           .                .
+    App     | Non-Std  |      +----------+          .
+----------  +----------+      |   S->S   |          .
+  Browser   | RIPT-In  |      | Non-Std  |          .
+            +----------+      +----------+     +----------+
+            |   RIPT   |      |   RIPT   |     |   RIPT   |
+            +----------+      +----------+     +----------+
+
+~~~
+
+A communications protocol can run between the client and its provider
+(i.e., an IP phone and a VoIP service provider, or a browser
+application and its enterprise IP PBX). It can be between server
+components within the same provider. And it can be between providers.
+
+The one area where we absolutely require standards are on the
+inter-provider links. Consequently, we argue that the minimum
+functionality needed to enable inter-provider voice and video
+(enterprise to carrier, or enterprise to enterprise, or carrier to
+carrier, or CCaaS to carrier, etc) represents the scope of
+functionality for the core RIPT specification.
+
+For the client to server, we can consider a few cases. The most
+important one is that of a browser, which provides a separation
+between the app and the browser itself. If RIPT were to be used there,
+we argue that the level of standardization effort should start and end
+with the minimum additions to RIPT needed for the browser to
+communicate to the server. Everything which can exist as a browser
+application, should not be standardized.
+
+In the case of an IP phone, we postulate that in the coming years, all
+such hardware devices will have software architectures that resemble a
+browser - allowing the provider to customize the UI and client-side
+logic in Javascript, while the underlying firmware implements the
+browser as well as the RIPT specifications.
+
+Thick applications on mobile apps frequently dont utilize
+browsers. However, our goal is to enable all of the real-time
+communications functionality to be embedded into a library which can
+be added into any app. The functionality of the library would be
+identical to the capabilities of the browser.
+
+This separation is similar to webRTC. However, it pushes more
+functionality into the browser. Capabilities, basic call control,
+media negotiation, call reliability and recovery from network drops,
+and so on - are all delegated to the browser. If RIPT were to be
+implemented by a browser, its API would have primitives for placing
+calls, answering calls, and so on.
+
+The final component is server to server communications. When a
+provider builds their own software, there is no need to standardize
+any of the additional capabilities ontop of RIPT. When the provider
+utilizes off the shelf hardware (ala IMS systems), there may be such a
+need. It is for the community to decide if such standards efforts are
+desired. 
+
+
+# Can RIPT Really Replace SIP?
 
 A great question! 
 
