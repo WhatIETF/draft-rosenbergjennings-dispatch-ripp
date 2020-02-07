@@ -1206,12 +1206,12 @@ current signaling and media transactions. It then initiates new
 transactions for signaling (the GET and PUT to /events), and media
 (the GET and PUTs to /media), targeting the URI for the call or the
 replacement URI for the call if the server provided one in the migrate
-event. Crucially, these new requests do NOT contain any session
-cookies. This means that the HTTP load balancer will send the new
-request to one of the available origin servers, which will no longer
-include the one which is being brought down for maintenance. The
-responses will contain session cookies in order to enable sticky
-session routing for subsequent requests for this call.
+event.
+Some load balancers use cookies to keep subsequent transactions "sticky"
+to a given backend, In RIPT, cookies are handled in the same way cookies
+are handled for any other HTTP session so that load balancers can change
+the cookies to stick to a new backend server to enable sticky session
+routing for subsequent requests for this call.
 
 Whether client or server initiated, when a migration occurs, both
 sides buffer their media packets and signaling events until the byways
