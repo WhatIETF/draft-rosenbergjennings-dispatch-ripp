@@ -48,7 +48,7 @@ document are to be interpreted as described in RFC 2119, BCP 14
 implementations.
 
 The Real-Time Internet Peering for Telephony (RIPT) protocol
-[@?I-D.rosenbergjennings-dispatch-ript] and its extension for inbound
+[TODO ref I-D.rosenbergjennings-dispatch-ript] and its extension for inbound
 calls to single user devices [TODO ref draft-rosenberg-dispatch-ript-inbound]
 provide an alternative to the Session Initiation Protocol (SIP)
 [@?RFC3261] for several use cases.
@@ -261,7 +261,7 @@ configuration of SIP trunks
 
 Load balancing in SIP has been problematic from the start. It was
 originally envisioned that clients would utilize DNS SRV records
-[@?RC3263] for load balancing. In practice, this suffered from two
+[@?RFC3263] for load balancing. In practice, this suffered from two
 major problems. Firstly, it made it difficult for service providers to
 dynamically adjust the set of servers. This is due to highly
 unpredictable and slow DNS propagation. Even using zero TTLs in DNS
