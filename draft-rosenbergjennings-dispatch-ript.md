@@ -485,21 +485,21 @@ calls. To set up the IP PBX for peering, the administrator would go to
 the configuration web application on the IP PBX.
 
 The  web application would have a page for selecting their trunking
-provider, with a list of supported providers. The user clicks on
-"Comcast". This begins a standard OAuth flow. The end user would be
+provider, with a list of supported providers. The admin clicks on
+"Comcast". This begins a standard OAuth flow. The admin would be
 directed to the login page for Comcast, provide their credentials, and
 then be asked to authorize the IP PBX to access their Comcast account
 on their behalf. It would also display the permissions being requested
 (which Comcast would define and the IP PBX would request). In this
 case, probably the ability to make and receive calls on their
-behalf. The user would click on "approve". The standard OAuth flow
+behalf. The admin would click on "approve". The standard OAuth flow
 would then have deposited an OAuth access token on the IP PBX.
 
 The IP PBX would use the API defined below to obtain the list of TG
-URIs which are available for that user (which will often just be
-one), and present the user with the list of such trunks. The user
+URIs which are available for that admin (which will often just be
+one), and present the admin with the list of such trunks. The admin
 would select one, if needed. At this point, the IP PBX now has the
-user's OAuth token and the provider TG URI, which are the only two
+OAuth token and the provider TG URI, which are the only two
 pre-requisites for placing calls. 
 
 No further configuration or setup is required. Using RIPT, the IP PBX
