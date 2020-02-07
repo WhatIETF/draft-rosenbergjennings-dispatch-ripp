@@ -258,7 +258,6 @@ TODO
 
 ## 3PCC: Answer or Decline Inbound
 
-
 ## 3PCC: Hangup
 
 ## 3PCC: Move Call
@@ -310,9 +309,9 @@ When a client that had sent an "answered" event receives a
 refresh its list of handlers, inform the user of the answer failure,
 and request the user to try again. If the client receives an
 "attaching" event, and the handler specified matches its own, it
-SHOULD query the call URI to obtain the directive [[OPEN ISSUE: Not
+SHOULD query the call URI to obtain the directive OPEN ISSUE: Not
 sure I like this, vs. having the client do a POST and have the server
-construct the directive then. Thinking.]] It MUST initiate signaling
+construct the directive then. Thinking. It MUST initiate signaling
 and media byways for the call, render incoming media and generate
 outgoing media for the call. Once the client has sent and received at
 least one media packet, indicating a successful connection, it MUST
