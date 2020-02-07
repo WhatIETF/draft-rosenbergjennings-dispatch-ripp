@@ -3,7 +3,7 @@ all: $(patsubst %.md,%.txt,$(wildcard draft*.md))  $(patsubst %.xml,%.txt,$(wild
      $(patsubst %.md,%.html,$(wildcard draft*.md))  $(patsubst %.xml,%.html,$(wildcard draft*.xml))
 
 clean:
-	-rm -f draft*.txt draft*.html ripp-api.{html,md} 
+	-rm -f draft*.txt draft*.html ripp-api.{html,md} draft-rosenberg-dispatch-ript-sipdiffs.xml draft-rosenbergjennings-dispatch-ript.xml
 
 .PHONY: all clean 
 
