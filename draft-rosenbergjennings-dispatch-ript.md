@@ -1730,10 +1730,11 @@ tag length values (TLV) tuples.
 Each media chunk has the following properties in the envelope part:
 
 * Media or Control: a boolean which indicates whether this is a media
-  or control packet. The remaining parameters apply when it is media.
+  or control packet. The remaining parameters apply when it is media. If
+  not present, defaults to media. (tag=TBD)
 
 * The truncated sequence number, which provides the absolute ordering
-  of the packets for the codec. (tag = 1). The sequence number is
+  of the packets for the codec. The sequence number is
   actually 64 bits long, but the encoding is of variable length. This
   allows for any number of bits to be sent on the wire. If N bits are
   sent, where N is less than 64, the value is treated as the truncated
@@ -1741,7 +1742,7 @@ Each media chunk has the following properties in the envelope part:
   from prior packets. Clients MUST send full values until such time
   as they receive an acknowledgement of the media packet containing a
   full value, and after that, SHOULD send truncated values. For video,
-  if the media is an intra-frame, the full value MUST be present.
+  if the media is an intra-frame, the full value MUST be present. (tag = 1)
 
 * The truncated timestamp, which provides the wall clock time in ms of
    when the first sample of media in the chunk was recorded. Like
@@ -1759,24 +1760,24 @@ Each media chunk has the following properties in the envelope part:
    frequent codecs. (tag = 3)
 
 * The media source, which is an 8 bit integer specifying the ID of the
-  media source for this chunk. 
+  media source for this chunk. (tag=TBD)
 
 * The media sink, which is an 8 bit integer specifying the ID of the
-  media sync for this chunk. 
+  media sync for this chunk.  (tag=TBD)
 
 * Optional Reference frame flag. Indicates other chunks are encoded
   based on this frame. Typically used with video codecs and only set
-  true on chunks that are part of an I Frame. Default value is false.
+  true on chunks that are part of an I Frame. Default value is false.  (tag=TBD)
 
 * Optional Spacial Layer scale: TBD - indicates which spacial layer this
-  packet is part of when using a scalable codec 
+  packet is part of when using a scalable codec.  (tag=TBD)
 
 * Optional Temporal Layer scale: TBD - indicates which temporal layer this
-packet is part of when using a scalable codec
+packet is part of when using a scalable codec.  (tag=TBD)
 
 * Active  Level: Provides indication of audio energy in media
   chunk and can be used by conferring bridges to do speaker
-  selection. 
+  selection.  (tag=TBD)
 
 * Optional extension parameters in the envelope
 
@@ -1794,6 +1795,8 @@ the authentication tag truncation are set by mechanisms outside this
 section. It not specified, they default to the NULL cipher with no
 keys. 
 
+TODO - need to describe more cipher and keys for this
+
 ### The Control Chunk
 
 The control chunk also has an envelope and payload, and is structured
@@ -1806,7 +1809,7 @@ parameters:
 
 
 * Control Type: a 16 bit integer which indicates the type. Only one
-  type is defined by this specification - acknowledgement.
+  type is defined by this specification - acknowledgement.  (tag=TBD)
 
 
 The payload then depends on the control type. For an acknowledgement, the
