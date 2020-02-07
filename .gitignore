@@ -3,9 +3,11 @@ ripp-api.md
 seq-diagram.md
 draft-rosenberg-dispatch-ript-sipdiffs.xml
 draft-rosenbergjennings-dispatch-ript.xml
+draft-rosenberg-dispatch-ript-inbound.xml
+draft-rosenberg-dispatch-ript-webrtc.xml
 draft*.html
 draft*.txt
-all.tgz
+all.tar
 old 
 #draft*.xml
 draft*.diff.html

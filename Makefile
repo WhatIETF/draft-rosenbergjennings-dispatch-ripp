@@ -5,7 +5,7 @@ output =  $(patsubst %.md,%.txt,$(wildcard draft*.md))  $(patsubst %.xml,%.txt,$
 all: $(output) all.tar ripp-api.md ripp-api.html seq-diagram.md
 
 clean:
-	-rm -f draft*.txt draft*.html ripp-api.{html,md} draft-rosenberg-dispatch-ript-sipdiffs.xml draft-rosenbergjennings-dispatch-ript.xml ripp-api.md ripp-api.html seq-diagram.md
+	-rm -f draft*.txt draft*.html ripp-api.{html,md} draft-rosenberg-dispatch-ript-sipdiffs.xml draft-rosenbergjennings-dispatch-ript.xml ripp-api.md ripp-api.html seq-diagram.md all.tar 
 
 .PHONY: all clean 
 
