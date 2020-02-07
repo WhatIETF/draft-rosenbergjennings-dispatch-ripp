@@ -263,12 +263,20 @@ depend on the capabilities of both sides and the use cases for which
 they are needed. This specification considers two types - a signaling
 byway and a media byway.
 
-Handler: A handler is a software or hardware entity, acting as a
-client, which sends and receives media associated with a call. The
-handler can change during a call (as in the case of a client failing
-and its calls being picked up by a backup). A handler has a
-description, which is relatively static, that describes its audio and
-video capabilities, device name, image, and so on.
+Handler: A handler is a "device" - an SBC, a phone, an IP PBX - and
+can be a software or hardware entity which sends and receives media
+associated with a call. A handler has a description, which includes
+its advertisement, which defines its media capabilities.  The handler
+can change during a call (as in the case of a client failing and its
+calls being picked up by a backup).
+
+Advertisement: A document which describes a set of semi-static
+capabilities for sending and receiving audio and video with different
+codecs, along with constraints such as maximum resolution or frame
+rates. An advertisement is semi-static in that it does not change from
+call to call, and is rather a property of the software or hardware
+system, which changes normally only upon upgrade or configuration
+change. 
 
 Directive: The directive is an instruction on how media should be
 sent. It is communicated from the server, which tells a handler where
@@ -404,14 +412,16 @@ lifecycle of the call. For example, if a software SBC instance
 supporting G729 (which is a single handler) places a call, this SBC
 crashes, and a different SBC which only supports G.711 (which is a
 different handler) needs to step in and take over the call, the
-handler would change.
+handler would change. A handler has an advertisement, which is a
+description of its media capabilities (media types and codecs). 
 
 Of course, a single physical device might be represented logically by
 one or more handlers; the mapping of a piece of software or hardware
 to a set of handlers is a matter of local implementation.
 
-A handler is always associated to a TG. As part of startup procedures,
-the client will register its handler with the TG.
+The client registers its handler with the TG. If a client receives
+services from multiple TGs, it would register that handler to multiple
+TG. 
 
 The final resource is a call, which is exactly what it sounds
 like. Calls are always associated with one and only TG. When a client
@@ -720,9 +730,10 @@ consumer is no longer receiving service from the provider.
 
 ## Handler Registration
 
-The handler is a representation of a set of capabilities that
-can be used when placing a call. The handler description is a
-semi-static declaration which declares features, codecs, and other
+The handler is a representation of a device. Each device has a set of
+capabilities that can be used when placing a call, which are contained
+in its advertisement. The handler description is a
+semi-static declaration which contains the advertisement along with other
 properties of the handler. Handler descriptions are semi-static in that they
 do not change on a call by call basis. They change only when some kind
 of significant configuration change happens. For example, if an SBC
@@ -739,19 +750,20 @@ registration is not soft state, there is no need for the client to
 refresh it. The server would typically delete this registration when
 the customer ends its service with the provider. 
 
-The handler description has a list of media sources and sinks that the
+The advertisement has a list of media sources and sinks that the
 endpoint has, and an ID for each which monotonically increases from
-0. There are four types - mics, cameras, screens and speakers. An
-endpoint can have more than one of each. The case of PSTN gateways or
-traditional voice-only phones is simple - they have a single mic and a
-single speaker, mapping to sending and receiving audio. This is true
-for a PSTN gateway regardless of its capacity. In other words, if a
-PSTN gateway has a circuit switched line card with 100 ports, its
-handler description still has just one mic and one speaker.
+0. Furthermore, each source and sink is of a particular type - audio
+or video. An advertisement can contain more than one of each. The case
+of PSTN gateways or traditional voice-only phones is simple - they
+have a single source for audio and a single sink for audio, This is
+true for a PSTN gateway regardless of its capacity. In other words, if
+a PSTN gateway has a circuit switched line card with 100 ports, its
+advertisement still has just one source and one sink.
 
-A three-screen telepresence system might have three screens,
-three mics, three cameras, and three speakers, and represents the
-opposite end of the spectrum in terms of complexity.
+A three-screen telepresence system might have three sinks for video,
+three sources for audio, three sources for video, and three sinks for
+audio, and represents the opposite end of the spectrum in terms of
+complexity.
 
 For each source or sink, there are one or more parameter sets that can
 be specified. Each parameter in the parameter set has a name and a
@@ -763,16 +775,12 @@ a way where the value represents a maximum of some sort. This enables
 booleans (where the maximum is 1), integral ranges (where the maximum
 is a large-ish integer), or ordered enums (where the enum values
 correspond to integers in order). When a parameter is not specified,
-it takes on a default. Similarly, if the handler description document
+it takes on a default. Similarly, if the advertisement
 is not present, the default can be assumed for all parameters.
 
 Codec support is signaled using boolean parameters, with names that
 match the media subtypes defined in the IANA protocol registry for
 media types [@!RFC4855].
-
-The handler also contains meta-data which aids in handler
-selection and identification. These include device nicknames, image
-URLs, vendor names, and so on.
 
 An IP phone with a single microphone and speaker that support G.711 and
 opus might create its handler thusly: 
@@ -781,28 +789,28 @@ opus might create its handler thusly:
 POST https://comcast.net/.well-known/ript/v1/providertgs/123/handlers
 {
 
-  "nickname": "Home Phone",
-  "img" : "https://www.exampe.com/images/phones/7960.jpg",
-  "vendor" : "Cisco Systems Inc.",
-  "device-id": "982akca99283",
-
-  "mic": {
-    "id" : 0,
-    "param-sets" : {
-      "opus" : 1,
-      "PCMU" : 1,
-      "PCMA" : 1
-    }
-  },
+  "handler-id": "982akca99283",
+  "advertisement" : {
+    "source": {
+      "id" : 0,
+      "media" : "audio",
+      "param-sets" : {
+        "opus" : 1,
+        "PCMU" : 1,
+        "PCMA" : 1
+      }
+    },
   
-  "spk" : {
-    "id" : 1,
-    "param-sets" : {
-      "opus" : 1,
-      "PCMU" : 1,
-      "PCMA" : 1
+    "sink" : {
+      "id" : 1,
+      "media" : "audio",
+      "param-sets" : {
+        "opus" : 1,
+        "PCMU" : 1,
+        "PCMA" : 1
+      }
     }
-  }
+ }
 }
 ~~~
 
@@ -813,43 +821,45 @@ and the reply would be:
 
 {
 
-  "nickname": "Home Phone",
-  "img" : "https://www.exampe.com/images/phones/7960.jpg",
-  "vendor" : "Cisco Systems Inc.",
-  "device-id": "982akca99283",
-
 
   "uri":"https://comcast.net/.well-known/ript/v1/providertgs/123/handlers/abc",
-  "id": "abc",
 
-  "mic": {
-    "id" : 0,
-    "param-sets" : {
-      "opus" : 1,
-      "PCMU" : 1,
-      "PCMA" : 1
+  "handler-id": "982akca99283",
+  "advertisement" : {
+    "source": {
+      "id" : 0,
+      "media" : "audio",
+      "param-sets" : {
+        "opus" : 1,
+        "PCMU" : 1,
+        "PCMA" : 1
+      }
+    },
+  
+    "sink" : {
+      "id" : 1,
+      "media" : "audio",
+      "param-sets" : {
+        "opus" : 1,
+        "PCMU" : 1,
+        "PCMA" : 1
+      }
     }
-  }
-  "spk" : {
-    "id" : 1,
-    "param-sets" : {
-      "opus" : 1,
-      "PCMU" : 1,
-      "PCMA" : 1
-    }
-  }
+ }
+
 }
 ~~~
 
-Notice how the server as added the "id" and "uri" parameters. The "id"
-parameter is a globally unique ID for this handler.
+Notice how the server as added the "uri" parameter. The "handler-id"
+is client-specified and allows for correlation across different TGs
+for the same handler. 
 
 A device with a camera that could support H.264 at 4K and av1 at 1080p
-might have a handler description that looked like, in part (focusing
-just on the capability components):
+might have an advertisement that looked like: 
 
 ~~~ ascii-art
-"cam": {
+"source": {
+   "media": "video",
    "id" : "1",
    "param-sets": [
         {
@@ -866,26 +876,29 @@ just on the capability components):
 }   
 ~~~
 
-A video phone that could support opus and H.264 at 720p @ 30 fps might look
-like:
+A video phone that could support opus and H.264 at 720p @ 30 fps might 
+have an advertisement which looks like:
 
 ~~~ ascii-art
 {
 
- "mic": {
+ "source": {
+    "media": "audio",
     "id" : 0,
     "param-sets" : {
       "opus" : 1,
       "PCMU" : 1,
      }
   }
-  "spk" : {
+  "sink" : {
+    "media":"audio",
     "id" : 1,
     "param-sets" : {
       "opus" : 1,
      }
   }
-  "cam":  {
+  "source":  {
+    "media": "video",
     "id" : 2,
     "param-sets" : {
       "H264" : 1,
@@ -894,7 +907,8 @@ like:
       "max-fps" : 30
     }
   }
-  "screen":  {
+  "sink":  {
+    "media": "video",
     "id" : 3,
     "param-sets" : {
       "H264" : 1,
@@ -960,7 +974,7 @@ to /calls on the TG URI.  The request contains:
 1. the target phone number or email address (TODO: need to define
 normalization procedures),
 2. A passport [@!RFC8225] identifying the calling identity,
-3. The handler ID from which the call is being placed,
+3. The handler URI from which the call is being placed,
 
 in the body.
 
@@ -976,26 +990,27 @@ POST "https://comcast.net/.well-known/ript/v1/providertgs/123/calls
 }
 ~~~
 
-The server takes the handler description associated with the handler
-URI, takes its own handler description (which it has never exchanged,
-but merely knows), and figures out what it will send, and what the
-client must send. It takes both of these, and constructs a two
-directives - the client directive indicating what the client must
-send, and the server directive which describes what it will send. The
-directives have the same syntax as the handler description. However,
-they only includes media sources (since by definition the directive
-tells the remote peer what to send), there is one parameter set per
-source, and for each parameter, the value indicates what the client
-should send. Each directive is always specified in a way that makes
-the value of each parameter less than the maximum value for both the
-client and server.
+The server takes the advertisement from the client's handler, takes
+its own advertisement (which it has never exchanged, but merely
+knows), and figures out what it will send, and what the client must
+send. It then constructs a two directives - the client directive
+indicating what the client must send, and the server directive which
+describes what it will send. The directives have the similar syntax as
+the handler descriptions. They contain a set of streams, each with a
+source and a sink. For the client directive, the source specifies one
+of the sources in the client handler, and the sink specifies a sink on
+the server. It is the inverse for the server directive. For For each
+stream, there is one parameter set, and for each parameter, the value
+indicates what must be sent. Each directive is always specified in a
+way that makes the value of each parameter less than the maximum value
+between the advertisements from the client and server.
 
 The server places the call, and returns the call description back to
 the client. The call description includes the directives along with
-core meta-data about the call - directionality, caller, callee and a
-URI for the call. The server directive does not need to be known by
-the client, and it is not processed in any way. It is included only
-for diagnostic and troubleshooting purposes:
+core meta-data about the call - directionality, handler, caller,
+callee and a URI for the call. The server directive does not need to
+be known by the client, and it is not processed in any way. It is
+included only for diagnostic and troubleshooting purposes:
 
 ~~~ ascii-art
 201 Created
@@ -1007,22 +1022,32 @@ for diagnostic and troubleshooting purposes:
   "destination": "+14089529999",
   "passport": "{passport encoding}"
   "direction": "outbound",
+  "handler": "https://comcast.net/.well-known/ript/v1/prov
+           idertgs/123/handlers/abc",
 
-  "directives": {[
-
+  "directives": {
+ 
+   "client": 
     {
-     "handler": "https://comcast.net/.well-known/ript/v1/prov
-     idertgs/123/handlers/abc",
-
-     "mic": {
-      "id" : 0,
+     "stream": {
+       "source": {
+          "id": 0
+       },
+       "sink" : {
+         "id": 1
+      }
       "param-sets" : {
         "opus" : 1,
         "PCMU" : 0
        }
      }
-    "cam":  {
-     "id" : 2,
+    "stream": {
+      "source": {
+          "id": 2
+      },
+      "sink": {
+         "id": 2
+      }
      "param-sets" : {
        "H264" : 1,
        "max-width" : 1280,
@@ -1031,33 +1056,30 @@ for diagnostic and troubleshooting purposes:
      }
    }
   },
-  {
-     "handler": "https://comcast.net/.well-known/ript/v1/prov
-     idertgs/123/handlers/serverhandler",
+  "server": 
+    {
+     "stream": {
+       "source": {
+          "id": 0
+       },
+       "sink" : {
+         "id": 1
+      }
 
-
-     "mic": {
-      "id" : 0,
       "param-sets" : {
         "opus" : 1,
         "PCMU" : 0
        }
      }
-    "cam":  {
-     "id" : 2,
-     "param-sets" : {
-       "H264" : 1,
-       "max-width" : 1280,
-       "max-height" : 720
-       "max-fps" : 30
-     }
-   }
-}]
-
+ }
 }
 ~~~
 
-Note how the audio directive has selected Opus. 
+Note how the client and server directives are both for Opus. Also note
+how the server directive has a single stream for audio only. This lets
+the client know that no video is coming. However, clients are always
+prepared to receive media for any sink they've specified in their
+advertisement. 
 
 In the (unlikely) case that this directive cannot be followed (due,
 perhaps to a unexpected change in capabilities as a result of a GPU or
@@ -1225,7 +1247,7 @@ RIPT also requires clients to send keepalive signaling events
 periodically for each call, and the server responds to these
 events. If the client ceases to receive the server keepalives for a certain
 duration (a value again that has a default but which can be tuned in
-the TG handler description), it treats this identically to a request for a
+the TG description), it treats this identically to a request for a
 migration. This will cause it to end its signaling and media byway
 transactions, and re-initiate them without session cookies.
 
@@ -1406,27 +1428,30 @@ contain this URI.
 
 ## Handler Description Format
 
-An handler description is a set of parameters, each of which is a name-value
-pair. This specification defines several well-known names and
-establishes an IANA registry for future extensions. Every capability
-has a default, so that if no document is posted, or it is posted but a
-specific capability is not included, the capability for the peer is
-understood.
+An handler description has a "handler-id", which is a unique
+identifier for the handler on the client, and then an
+advertisement. 
 
-Four parameters are defined for media capabilites - mic, spk, cam,
-screen, corresponding to the ability to generate audio, receive audio,
-generate video, and receive video. There MUST be one instance of these
-parameters for each corresponding source and sink which can
-simultaneously send or receive its media in a single call. Each
-instance MUST have a unique id within the handler description. Each instance
-MUST include one or more param-sets. Each param-set is a set of
-parameters. Each parameter MUST specify the
-maximum that the sink can receive, or source can send, for that
-parameter. The server MUST include a parameter and its value when it
-differs from the default, and SHOULD NOT include it when it matches
-the default. 
+The advertisement is a set of parameters, each of which is a
+name-value pair. This specification defines several well-known names
+and establishes an IANA registry for future extensions. Every
+capability has a default, so that if it is not included in the
+advertisement, the capability for the peer is understood.
 
-This specification defines the following parameters for mic and spk:
+Two parameters are defined for media capabilites - "source" and
+"sink", which specify the ability to send an receive media
+respectively, along with a "media" parameter which indicates the type
+- "audio" or "video". There MUST be one "source" and "sink" instance
+for each corresponding source and sink which can simultaneously send
+or receive its media in a single call. Each instance MUST have a
+unique id within the advertisement. Each instance MUST include
+one or more param-sets. Each param-set is a set of parameters. Each
+parameter MUST specify the maximum that the sink can receive, or
+source can send, for that parameter. A client or server MUST include a
+parameter and its value when it differs from the default, and SHOULD
+NOT include it when it matches the default.
+
+This specification defines the following parameters for audio:
 
 * sr: The maximum sample rate for audio. This is specified in Hz. The
   default is 48000.
@@ -1443,7 +1468,7 @@ This specification defines the following parameters for mic and spk:
 
 * ptime: max duration of media encoded in single packet in ms. Default is 30. 
 
-This specification defines the following parameters for cam and screen:
+This specification defines the following parameters for video:
 
 * fps: The maximum frame rate for video. This is specified in frames per
   second. The default is 30.
@@ -1486,9 +1511,6 @@ In general, an entity MUST declare a capability for any characteristic
 of a call which may result in a proposal being unacceptable to the
 client. This requirement facilitates prevention of call failures.
 
-It is RECOMMENDED that the handler description include a nickname, img,
-vendor and device-id elements. The device-id element, when present,
-MUST be a UUID. 
 
 ## Certificate Enrollment
 
@@ -1539,17 +1561,14 @@ containing an HTTPS URI which identifies the call that has been
 created. The call URI MUST contain a UUID. 
 
 The server MUST construct a client directive, which tells the client what
-media to send. This directive MUST include zero or more mic parameters,
-and zero or more cam parameters, corresponding to the sources and
-that the server wishes the client to send. These MUST be a subset of
-those present in the handler description. The server MUST
+media to send. This directive MUST include zero or more stream
+elements, each of which MUST specify a source on the handler specified
+by the client, and a sink on the server.  The server MUST
 specify the values for any codec which are not the default. The value
 for each parameter MUST be less than the value specified in the
 handler description from the client, and also MUST be less than its own
 maximum value from its own handler description. If a selected value differs
-from the default, it MUST be included in the directive. The directive
-MUST include the "id" attribute for the source. This is crucial to
-inform the peer which of its sources to send.
+from the default, it MUST be included in the directive. 
 
 Similarly, the server chooses which of its sources will send, and to
 which sinks on its peer it will send. It MUST NOT send media for which
