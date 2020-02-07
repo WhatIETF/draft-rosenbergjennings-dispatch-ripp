@@ -1,6 +1,9 @@
 
-all: $(patsubst %.md,%.txt,$(wildcard draft*.md))  $(patsubst %.xml,%.txt,$(wildcard draft*.xml)) \
-     $(patsubst %.md,%.html,$(wildcard draft*.md))  $(patsubst %.xml,%.html,$(wildcard draft*.xml))
+output =  $(patsubst %.md,%.txt,$(wildcard draft*.md))  $(patsubst %.xml,%.txt,$(wildcard draft*.xml)) \
+          $(patsubst %.md,%.html,$(wildcard draft*.md))  $(patsubst %.xml,%.html,$(wildcard draft*.xml))
+
+
+all: $(output) all.tgz
 
 clean:
 	-rm -f draft*.txt draft*.html ripp-api.{html,md} draft-rosenberg-dispatch-ript-sipdiffs.xml draft-rosenbergjennings-dispatch-ript.xml
@@ -19,6 +22,9 @@ clean:
 	mmark -xml2 -page $^ $@ 
 
 
+all.tgz: $(output)
+	tar cvfz all.tgz $(output)
+
 #$(DRAFT).diff.html: $(DRAFT)-$(VERSION).txt $(DRAFT).old
 #	htmlwdiff   $(DRAFT).old $(DRAFT)-$(VERSION).txt > $(DRAFT).diff.html
 
@@ -33,4 +39,5 @@ seq-diagram.md: seq-diagram-out.txt
 	echo "~~~ ascii-art" > seq-diagram.md
 	cat seq-diagram-out.txt >> seq-diagram.md
 	echo "~~~"  >> seq-diagram.md
+
 
