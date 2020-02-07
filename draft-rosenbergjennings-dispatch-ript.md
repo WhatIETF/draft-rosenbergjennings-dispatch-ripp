@@ -1301,24 +1301,33 @@ An handler description has a "handler-id", which is a unique
 identifier for the handler on the client, and then an
 advertisement. 
 
-The advertisement is a set of parameters, each of which is a
+The advertisement contains, for each codec on each source or sink,  a set of parameters, each of which is a
 name-value pair. This specification defines several well-known names
 and establishes an IANA registry for future extensions. Every
 capability has a default, so that if it is not included in the
 advertisement, the capability for the peer is understood.
 
-Two parameters are defined for media capabilities - "source" and
-"sink", which specify the ability to send an receive media
-respectively, along with a "media" parameter which indicates the type
-- "audio" or "video". There MUST be one "source" and "sink" instance
-for each corresponding source and sink which can simultaneously send
-or receive its media in a single call. Each instance MUST have a
-unique id within the advertisement. Each instance MUST include
-one or more param-sets. Each param-set is a set of parameters. Each
-parameter MUST specify the maximum that the sink can receive, or
-source can send, for that parameter. A client or server MUST include a
-parameter and its value when it differs from the default, and SHOULD
-NOT include it when it matches the default.
+The advertisement and directives are a list of source or sink
+descriptions. Each one starts with a source or sink ID followed by 'in'
+or 'out' for advertisements and followed 'to' and a remote source ID for
+descriptions.  Next is a colon followed by a semicolon separated list of
+codec descriptions and includes a semicolon at end. Each description
+starts with a codec name followed by a comma separated list of parameter
+values. Codecs names MUST not start with a digit. Each paramater
+consists of a name optional followed by qual sign then numeric
+value. A parameter with no equal sign after is consider to be set to
+value of 1. 
+
+There MUST be one "source" and "sink" instance ID for each corresponding
+source and sink which can simultaneously send or receive its media in a
+single call. Instance ID start at 1 with a general convention that the
+lower numbers would be more important than the upper numbers and for
+video of equal importance, the convention is to increase the ID for
+viewers left to right then top to bottom.  Each parameter MUST specify
+the maximum that the sink can receive, or source can send, for that
+parameter. A client or server MUST include a parameter and its value
+when it differs from the default, and SHOULD NOT include it when it
+matches the default.
 
 This specification defines the following parameters for audio:
 
