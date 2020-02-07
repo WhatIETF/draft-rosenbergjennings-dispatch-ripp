@@ -626,31 +626,41 @@ analyze it compared to RIPT is to examine each of the methods and
 header fields, and consider the functionality provided by them.
 
 The INVITE method is of course replaced by RIPT, as is the BYE
-(through the ended event). Re-INVITE, though not a different method,
-is also supported in RIPT, though only ever initiated by the server
-with a new directive. Clients can move calls around by specifying the
-usage of a different handler. CANCEL is replaced in  [TODO ref draft-rosenberg-dispatch-ript-inbound]
+(through the ended event). Re-INVITE is also supported in RIPT, though
+only ever initiated by the server with a new directive. Clients can
+move calls around by specifying the usage of a different
+handler or through migrations. Clients can change codecs mid-call, as
+long as they are within the bounds of the codecs allowed in the
+directive.
+
+CANCEL is replaced in [TODO ref draft-rosenberg-dispatch-ript-inbound]
 by broadcasting an event to all listeners informing them that the call
 has been answered. The usage of CANCEL to end an unanswered call is
 replaced by the ended event in RIPT. REGISTER is replaced by the
 handler construct. ACK is not needed since RIPT is reliable.
 
-OPTIONS - which never worked that well - is replace by the more robust
-and complete TG construct, allowing the client the ability to discover
-everything needed to interact with the services of a server. 
+OPTIONS is replaced by the more robust and complete TG construct,
+allowing the client the ability to discover everything needed to
+interact with the services of a server. Not just media capabilities,
+but supported phone numbers, timer values, and so on.
 
 Considering header fields, interestingly, a large number of them are
 focused on SIP routing features. These include Via, Route,
-Record-Route, Contact. These are not needed in RIPT, since RIPT
-focuses on a client to server construct. A server can, in turn,
-re-initiate a request. However, in SIP parlance, it would be a B2BUA
-and statefully know how to route return messages and forward requests
-later for the same call. In such an architecture, it is not necessary
-to stash routing state into protocol headers, which is what these
-headers do.
+Record-Route, Contact, Max-Forwards.. These are not needed in RIPT,
+since RIPT focuses on a client to server construct. A server can, in
+turn, re-initiate a request. However, in SIP parlance, it would be a
+B2BUA and statefully know how to route return messages and forward
+requests later for the same call. In such an architecture, it is not
+necessary to stash routing state into protocol headers, which is what
+these headers do.
 
-The SIP content headers - Accept, Accept-Language, Content-Type,
-Content-Length are provided by underlying HTTP.
+The SIP content headers - Accept, Accept-Encoding, Accept-Language,
+Content-Disposition, Content-Encoding, Content-Language,
+Content-Length, Content-Type, MIME-Version, are provided by underlying
+HTTP and thus are not needed in RIPT.
+
+The SIP diagnostic headers - Date, Organization, Server, User-Agent,
+Warning - are also provided by HTTP and not needed in RIPT. 
 
 The SIP identifiers - To, From, Call-ID and the branch parameter, are
 replaced by the simpler single call URI which is the one and only
@@ -662,19 +672,41 @@ in RIPT since it utilizes reliable transport only, and this header
 field was only needed for transaction ordering.
 
 The SIP extensibility mechanisms - Require, Proxy-Require, Allow,
-Supported, are not needed in RIPT. These headers are necessary due to
-the symmetric nature of the relationship between entities. In RIPT,
-the client uses the services of the server and cannot insist on
-anything. The client can determine what services are supported through
-normal JSON extensibility constructs - similar to SIP heeaders -
-wherein unknown elements are ignored.
+Supported, and Unsupported, are not needed in RIPT. These headers are
+necessary due to the symmetric nature of the relationship between
+entities. In RIPT, the client uses the services of the server and
+cannot insist on anything. The client can determine what services are
+supported through normal JSON extensibility constructs - similar to
+SIP headers - wherein unknown elements are ignored.
 
-The SIP forking concept - another source of much complexity - is
-eliminated in RIPT, and thus the logic in SIP associated with forking
-processing is not needed. Note tht, RIPT does allow a user to have
-multiple devices, and to make and receive calls on any of them. This
-is accomplished by using the normal HTTP model wherein multiple
-clients can manipulate the resources on the server.
+The SIP security headers - Authentication-Info, Authorization,
+Proxy-Authenticate, Proxy-Authorization, WWW-Authenticate - are not
+needed in RIPT since they are all replaced with more modern security
+techniques used for HTTPS.
+
+The SIP user interface headers - Alert-Info, Priority, Reply-To, and
+Subject - which never saw widespread implementation, are not provided
+by RIPT. Rather, per the discussion above, they would be part of the
+proprietary signaling between client and server, and not the subject
+of standardization.
+
+If we turn to semantics, we can consider SIP as concerning itself with
+(1) reliable message transmission and sequencing, transactions,
+success and error handling, transaction identification (2) call
+routing - including registration, forking, URI transformations, (3)
+call state management, (4) security, (5) extensibility.
+
+Of these - (1) is not needed in RIPT, since it is either provided by
+HTTP itself, or eliminated because RIPT doesnt concern itself with p2p
+signaling. (2) is covered in part by RIPT, and the parts not covered
+are not needed because RIPT is a client-server protocol. Note that,
+RIPT does allow a user to have multiple devices, and to make and
+receive calls on any of them. This is accomplished by using the normal
+HTTP model wherein multiple clients can manipulate the resources on
+the server.  (3) RIPT is entirely concerned with call state and
+matches the functionality of SIP in this regard, (4) RIPT delegates
+security entirely to HTTP and other specifications like OAuth, and (5)
+RIPT
 
 Consequently, we believe that RIPT serves as a full replacement for
 the entirety of [@RFC3261] and thus this specification is categorized
@@ -701,19 +733,48 @@ This specification, more than any other, is the one people love to
 hate. It has also proven incredibly robust, extended dramatically
 beyond its humble origines. RIPT abandons the offer/answer model
 entirely, favoring a model in which the server is always in
-control. Consequently, it is replaced by an "advertisement/proposal"
+control. Consequently, it is replaced by an "advertisement/directive"
 model. At its core, offer/answer allowed clients to indicate their
 capabilities and for media streams to be set up and configured. RIPT
-provides this functionality, though differently. Consequently, this
-specification is categorized as "replaced".
+provides this functionality, though differently.
+
+Much of the complexity of RFC3264 derives from the fact that calls can
+fork, creating a situation in which one offer can generate multiple
+answers. This capability is removed from RIPT (which is strictly
+client to server for signaling and media), eliminating that
+complexity. RFC3264 also concerns itself with matching of streams
+between offer and answer, and then how those are mapped to RTP
+concepts like IP addresses and ports. All of that is replaced with
+explicit stream identifiers in RIPT. Combined with the fact that media
+follows signaling, this eliminates the challenges in stream
+identification while also eliminating the usage of IP addresses and
+ports for stream identification - the latter being one of the reasons
+why SIP is so troublesome in network environments.
+
+RFC3264 also allows for the client to request all kinds of changes -
+adding a stream, removing a stream, modifying a stream, and so on. In
+RIPT, these are possible. However, to perform them, the client signals
+the server with its desired operation - through mechanisms outside of
+the scope of standardization - and the server uses the set of
+capabilities it has to generate a new proposal that is sent to the
+client. As an example, 'turn on video' would be accomplished by the
+client signaling such a desire to the server via non-standard means,
+and then the server providing a new proposal to the client that tells
+it to start sending video. 
+
+Consequently, this specification is categorized as "replaced".
 
 ### RFC3265 - SIP Events
 
 This specification provided a generic mechanism for clients to
 subscribe to events and receive notifications for them. This
 capability exists in RIPT using long-running GET to the /events
-endpoint on any resource, and uses the lifecycle of the transaction to
-manage the lifecycle of the subscription. Consequently, this
+endpoint on the call resource, and uses the lifecycle of the transaction to
+manage the lifecycle of the subscription. RIPT does not provide a
+generic framework for eventing, and rather allows that to be handled
+by proprietary means.
+
+Consequently, this
 specification is categorized as "replaced".
 
 
@@ -730,11 +791,40 @@ normative in nature.
 
 ###  SIP INFO (RFC 2976)
 
-TODO
+[@?RFC2976] provides a generic mechanism to carry information across
+the entire call path from one UA to another. Of its originally
+envisioned use cases, the one that achieved widespread usage was for
+DTMF. It has also become a repository for a large number of
+proprietary extensions to SIP.
+
+As a framework capability, there is no equivalent in RIPT. This is
+because RIPT doesnt define procedures for how a server, upon receiving
+information from a client, passes it to downstream servers in outbound
+requests it initiates. RIPT is strictly a client-server
+protocol. Clients can add proprietary information in the JSON.
+
+For DTMF - RIPT requires [@?RFC2833]. Given that RIPT is a
+client-server protocol where media and signaling follow each other,
+there is no reason to have a separate way to signal DTMF from the
+client to the server outside of RFC2833, which - when used with RIPT -
+is also from client to server. 
+
+As a result, this specification is characterized as "not needed".
 
 ###  UPDATE (RFC 3311)
 
-TODO 
+[@?RFC3311] was specified to allow a client to modify the parameters
+of the media session without impacting the SIP dialog. It was used to
+allow modification of media information before the call was answered,
+with a fresh SDP offer.
+
+In RIPT, this is not needed. A client would signal to the server that
+it wishes to modify some aspect of the session - for example - adding
+video - and then the server would generate a new directive which the
+client follows. That process can happen at any time in the lifecycle
+of the call.
+
+As a result, this specification is characterized as "not needed". 
 
 ### Resource Management and SIP (RFC 3312)
 
