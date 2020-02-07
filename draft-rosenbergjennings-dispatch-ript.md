@@ -1389,6 +1389,9 @@ In general, an entity MUST declare a capability for any characteristic
 of a call which may result in a proposal being unacceptable to the
 client. This requirement facilitates prevention of call failures.
 
+### ABNF
+
+TODO - Add ABNF for advertisements and directives
 
 ## Certificate Enrollment
 
