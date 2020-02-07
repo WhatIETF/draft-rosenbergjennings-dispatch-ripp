@@ -635,10 +635,10 @@ domestic numbers might look like this:
 ~~~ ascii-art
 {
   "outbound": {
-    "origins" : (RFC 8226 cert with "+14085551000" and "+14085551002"),
-    "destinations" : "+1*",
+    "origins" : "RFC 8226 cert with +14085551000 and +14085551002",
+    "destinations" : "+1*"
   }
-}  
+}
 ~~~
 
 An enterprise trunk allowing outbound calls to any number worldwide,
@@ -648,10 +648,10 @@ like this:
 ~~~ ascii-art
 {
   "outbound": {
-    "origins" : (RFC 8226 cert with "+14085551*"),
+    "origins" : "(RFC 8226 cert with +14085551* ",
     "destinations" : "*"
   }
-}  
+}
 ~~~
 
 
@@ -694,7 +694,7 @@ POST https://comcast.net/.well-known/ript/v1/customertgs
   "outbound": {
     "destinations" : "+14085551*"
   }
-}  
+}
 ~~~
 
 Notice how the directionality is "outbound" - this is because a TG
@@ -714,13 +714,11 @@ was created:
 
 ~~~ ascii-art
 {
-
   "uri" : "https://comcast.net/.well-known/ript/v1/customertgs/12345",
-
   "outbound": {
     "destinations" : "+14085551*"
   }
-}  
+}
 ~~~
 
 The client can use the /consumertgs to modify this later (with a PUT
@@ -754,7 +752,7 @@ the customer ends its service with the provider.
 
 The advertisement has a list of media sources and sinks that the
 endpoint has, and an ID for each which monotonically increases from
-0. Furthermore, each source and sink is of a particular type - audio
+1. Furthermore, each source and sink is of a particular type - audio
 or video. An advertisement can contain more than one of each. The case
 of PSTN gateways or traditional voice-only phones is simple - they
 have a single source for audio and a single sink for audio, This is
@@ -763,26 +761,40 @@ a PSTN gateway has a circuit switched line card with 100 ports, its
 advertisement still has just one source and one sink.
 
 A three-screen telepresence system might have three sinks for video,
-three sources for audio, three sources for video, and three sinks for
+one source for audio, two source for video representing a main camera
+and a presentation video feed, and one sink for
 audio, and represents the opposite end of the spectrum in terms of
 complexity.
 
-For each source or sink, there are one or more parameter sets that can
+For each codec usable by each source or sink, there are one or more parameters that can
 be specified. Each parameter in the parameter set has a name and a
 value. The value is always an integer from - 2**63 +1 to 2**63 -
 1. Parameters are typically standardized and registered with IANA. The
-registration indicates the meaning of the values - their units and
+registration indicates the meaning of the values - their units, default, and
 allowed values. Most importantly, the parameter is always expressed in
 a way where the value represents a maximum of some sort. This enables
 booleans (where the maximum is 1), integral ranges (where the maximum
 is a large integer), or ordered enums (where the enum values
 correspond to integers in order). When a parameter is not specified,
-it takes on a default. Similarly, if the advertisement
-is not present, the default can be assumed for all parameters.
+it takes on a default. Similarly, if the parameter
+is not present, the default can be assumed.
 
-Codec support is signaled using boolean parameters, with names that
+Codec support is signaled using names that
 match the media subtypes defined in the IANA protocol registry for
-media types [@!RFC4855].
+media types [@!RFC4855]. If the source or sink is audio or video can be
+determined from the codec(s) associated with it.
+
+They syntax for the advertisement consists list of descriptions for each
+source and sink. Each description starts with the source or sink ID
+followed by a direction of in or out then a colon followed by a
+semicolon list of codec descriptions. Each codec description consists of
+the name of the codec followed by a comma separated list of parameters
+for that codec on that source or sink.
+
+Open Issue: Consider if JSON would be better syntax or define mapping
+between this and JSON. This is syntax is optimized for developer
+debugging of what has proven to be one of the difficult parts of
+debugging WebRTC.
 
 An IP phone with a single microphone and speaker that support G.711 and
 opus might create its handler thusly: 
@@ -790,29 +802,9 @@ opus might create its handler thusly:
 ~~~ ascii-art
 POST https://comcast.net/.well-known/ript/v1/providertgs/123/handlers
 {
-
   "handler-id": "982akca99283",
-  "advertisement" : {
-    "source": {
-      "id" : 0,
-      "media" : "audio",
-      "param-sets" : {
-        "opus" : 1,
-        "PCMU" : 1,
-        "PCMA" : 1
-      }
-    },
-  
-    "sink" : {
-      "id" : 1,
-      "media" : "audio",
-      "param-sets" : {
-        "opus" : 1,
-        "PCMU" : 1,
-        "PCMA" : 1
-      }
-    }
- }
+  "advertisement" : "1 in: opus; PCMU; PCMA;
+                               2 out: opus; PCMU; PCMA;"
 }
 ~~~
 
@@ -820,35 +812,8 @@ and the reply would be:
 
 ~~~ ascii-art
 201 Created
-
 {
-
-
-  "uri":"https://comcast.net/.well-known/ript/v1/providertgs/123/handlers/abc",
-
-  "handler-id": "982akca99283",
-  "advertisement" : {
-    "source": {
-      "id" : 0,
-      "media" : "audio",
-      "param-sets" : {
-        "opus" : 1,
-        "PCMU" : 1,
-        "PCMA" : 1
-      }
-    },
-  
-    "sink" : {
-      "id" : 1,
-      "media" : "audio",
-      "param-sets" : {
-        "opus" : 1,
-        "PCMU" : 1,
-        "PCMA" : 1
-      }
-    }
- }
-
+  "uri":"https://comcast.net/.well-known/ript/v1/providertgs/123/handlers/abc"
 }
 ~~~
 
@@ -860,67 +825,17 @@ A device with a camera that could support H.264 at 4K and av1 at 1080p
 might have an advertisement that looked like: 
 
 ~~~ ascii-art
-"source": {
-   "media": "video",
-   "id" : "1",
-   "param-sets": [
-        {
-     "H264" : 1,
-     "max-width" : 3840
-     "max-height" : 2160     
-        },
-        {
-     "AV1" : 1,
-     "max-width" : 1920
-     "max-height" : 1080
-        }
-   ]
-}   
+1 out: H264,max-width=3840,max-height=2160; AV1,max-width=1920,max-height=1080;
 ~~~
 
-A video phone that could support opus and H.264 at 720p @ 30 fps might 
+A video phone that could support opus and H.264 at 720p @ 60 fps might 
 have an advertisement which looks like:
 
 ~~~ ascii-art
-{
-
- "source": {
-    "media": "audio",
-    "id" : 0,
-    "param-sets" : {
-      "opus" : 1,
-      "PCMU" : 1,
-     }
-  }
-  "sink" : {
-    "media":"audio",
-    "id" : 1,
-    "param-sets" : {
-      "opus" : 1,
-     }
-  }
-  "source":  {
-    "media": "video",
-    "id" : 2,
-    "param-sets" : {
-      "H264" : 1,
-      "max-width" : 1280,
-      "max-height" : 720
-      "max-fps" : 30
-    }
-  }
-  "sink":  {
-    "media": "video",
-    "id" : 3,
-    "param-sets" : {
-      "H264" : 1,
-      "max-width" : 3840,
-      "max-height" : 2160,
-      "max-height" : 60
-    }
-  }
-  
-}
+1 in: opus;
+2 out: opus;
+3 in: H264,max-width=1280,max-height=720,max-fps=60;
+3 out: H264,max-width=1280,max-height=720,max-fps=60;
 ~~~
 
 As with any kind of capabilities technology, the one defined here
@@ -997,91 +912,45 @@ POST "https://comcast.net/.well-known/ript/v1/providertgs/123/calls
 The server takes the advertisement from the client's handler, takes
 its own advertisement (which it has never exchanged, but merely
 knows), and figures out what it will send, and what the client must
-send. It then constructs a two directives - the client directive
+send. It then constructs two directives - the client directive
 indicating what the client must send, and the server directive which
 describes what it will send. The directives have the similar syntax as
 the handler descriptions. They contain a set of streams, each with a
-source and a sink. For the client directive, the source specifies one
+source and the ID of the sink on the remote side which is included in
+the media packet so that the far side understands where to render the
+media.
+For the client directive, the source specifies one
 of the sources in the client handler, and the sink specifies a sink on
 the server. It is the inverse for the server directive. For For each
 stream, there is one parameter set, and for each parameter, the value
-indicates what must be sent. Each directive is always specified in a
+indicates the upper bound of what client can sent. Each directive is always specified in a
 way that makes the value of each parameter less than the maximum value
 between the advertisements from the client and server.
 
 The server places the call, and returns the call description back to
 the client. The call description includes the directives along with
 core meta-data about the call - directionality, handler, caller,
-callee and a URI for the call. The server directive does not need to
+callee and a URI for the call. The server directive is optional and does not need to
 be known by the client, and it is not processed in any way. It is
 included only for diagnostic and troubleshooting purposes:
 
+The syntax for the description is simular to the advertisement except
+that the lines starts with the id of the source on the client, followed
+by "to" and the ID of the sink on the remote side. 
+
 ~~~ ascii-art
 201 Created
-
 {
-
   "uri" :
   "https://comcast.net/.well-known/ript/v1/providertgs/123/calls/987",
-  "destination": "+14089529999",
-  "passport": "{passport encoding}"
-  "direction": "outbound",
-  "handler": "https://comcast.net/.well-known/ript/v1/prov
-           idertgs/123/handlers/abc",
-
-  "directives": {
- 
-   "client": 
-    {
-     "stream": {
-       "source": {
-          "id": 0
-       },
-       "sink" : {
-         "id": 1
-      }
-      "param-sets" : {
-        "opus" : 1,
-        "PCMU" : 0
-       }
-     }
-    "stream": {
-      "source": {
-          "id": 2
-      },
-      "sink": {
-         "id": 2
-      }
-     "param-sets" : {
-       "H264" : 1,
-       "max-width" : 1280,
-       "max-height" : 720
-       "max-fps" : 30
-     }
-   }
-  },
-  "server": 
-    {
-     "stream": {
-       "source": {
-          "id": 0
-       },
-       "sink" : {
-         "id": 1
-      }
-
-      "param-sets" : {
-        "opus" : 1,
-        "PCMU" : 0
-       }
-     }
- }
+  "clientDirectives": "1 to 1: opus;
+                              2 to 2:  H264,max-width=1280,max-height=720",
+   "serverDirectives": "1 to 1: opus;"
 }
 ~~~
 
 Note how the client and server directives are both for Opus. Also note
-how the server directive has a single stream for audio only. This lets
-the client know that no video is coming. However, clients are always
+how the server directive has a single stream for audio only.  Clients MUST always
 prepared to receive media for any sink they've specified in their
 advertisement. 
 
@@ -1436,24 +1305,33 @@ An handler description has a "handler-id", which is a unique
 identifier for the handler on the client, and then an
 advertisement. 
 
-The advertisement is a set of parameters, each of which is a
+The advertisement contains, for each codec on each source or sink,  a set of parameters, each of which is a
 name-value pair. This specification defines several well-known names
 and establishes an IANA registry for future extensions. Every
 capability has a default, so that if it is not included in the
 advertisement, the capability for the peer is understood.
 
-Two parameters are defined for media capabilities - "source" and
-"sink", which specify the ability to send an receive media
-respectively, along with a "media" parameter which indicates the type
-- "audio" or "video". There MUST be one "source" and "sink" instance
-for each corresponding source and sink which can simultaneously send
-or receive its media in a single call. Each instance MUST have a
-unique id within the advertisement. Each instance MUST include
-one or more param-sets. Each param-set is a set of parameters. Each
-parameter MUST specify the maximum that the sink can receive, or
-source can send, for that parameter. A client or server MUST include a
-parameter and its value when it differs from the default, and SHOULD
-NOT include it when it matches the default.
+The advertisement and directives are a list of source or sink
+descriptions. Each one starts with a source or sink ID followed by 'in'
+or 'out' for advertisements and followed 'to' and a remote source ID for
+descriptions.  Next is a colon followed by a semicolon separated list of
+codec descriptions and includes a semicolon at end. Each description
+starts with a codec name followed by a comma separated list of parameter
+values. Codecs names MUST not start with a digit. Each paramater
+consists of a name optional followed by qual sign then numeric
+value. A parameter with no equal sign after is consider to be set to
+value of 1. 
+
+There MUST be one "source" and "sink" instance ID for each corresponding
+source and sink which can simultaneously send or receive its media in a
+single call. Instance ID start at 1 with a general convention that the
+lower numbers would be more important than the upper numbers and for
+video of equal importance, the convention is to increase the ID for
+viewers left to right then top to bottom.  Each parameter MUST specify
+the maximum that the sink can receive, or source can send, for that
+parameter. A client or server MUST include a parameter and its value
+when it differs from the default, and SHOULD NOT include it when it
+matches the default.
 
 This specification defines the following parameters for audio:
 
@@ -1515,6 +1393,9 @@ In general, an entity MUST declare a capability for any characteristic
 of a call which may result in a proposal being unacceptable to the
 client. This requirement facilitates prevention of call failures.
 
+### ABNF
+
+TODO - Add ABNF for advertisements and directives
 
 ## Certificate Enrollment
 
