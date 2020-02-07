@@ -666,6 +666,8 @@ and what TG(s) they are allowed to connect to. This is standard
 procedure for most web APIs when a query is performed - the set of
 resources returned depend on who is asking.
 
+Open Issue: how to say all numbers except satellites, or all numbers
+except 1-900. 
 
 ## Customer TG Registration
 
@@ -941,7 +943,7 @@ number it wishes to place a call from.
 
 To do that, the server provides a "/cert" resource on the TG. The
 client can perform a POST to this resource, and the request would
-contain a CSR. The CSR describes an [@!RFC8226] certificate which is
+contain a CSR and the response would have the certificate. The CSR describes an [@!RFC8226] certificate which is
 valid for a single phone number - the one the client wishes to use for
 a call. This request is, as with all others, authorized with the
 OAuth token. If the holder of the token is permitted to utilize that
@@ -950,6 +952,8 @@ the certificate in the POST response. These certificates can last as
 long as the server desires. This means that acquisition of such
 certificates can be done in advance of the call, and regardless of
 when they are acquired, can be cached for subsequent use.
+
+Open Issue: Do we need an async mechanics to get the certificate.
 
 In the case of a mobile phone as the RIPP client (for example), it
 would learn its own mobile number from the TG, construct a CSR for
