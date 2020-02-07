@@ -3,7 +3,7 @@ output =  $(patsubst %.md,%.txt,$(wildcard draft*.md))  $(patsubst %.xml,%.txt,$
           $(patsubst %.md,%.html,$(wildcard draft*.md))  $(patsubst %.xml,%.html,$(wildcard draft*.xml))
 
 
-all: $(output) all.tgz ripp-api.md ripp-api.html seq-diagram.md
+all: $(output) all.tar ripp-api.md ripp-api.html seq-diagram.md
 
 clean:
 	-rm -f draft*.txt draft*.html ripp-api.{html,md} draft-rosenberg-dispatch-ript-sipdiffs.xml draft-rosenbergjennings-dispatch-ript.xml ripp-api.md ripp-api.html seq-diagram.md
@@ -22,8 +22,8 @@ clean:
 	mmark -xml2 -page $^ $@ 
 
 
-all.tgz: $(output)
-	tar cvfz all.tgz $(output)
+all.tar: $(output)
+	tar cvf all.tar $(output)
 
 #$(DRAFT).diff.html: $(DRAFT)-$(VERSION).txt $(DRAFT).old
 #	htmlwdiff   $(DRAFT).old $(DRAFT)-$(VERSION).txt > $(DRAFT).diff.html
