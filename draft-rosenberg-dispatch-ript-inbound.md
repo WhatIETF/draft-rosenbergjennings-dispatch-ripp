@@ -254,25 +254,25 @@ TODO
 
 ## Select Device
 
-## 3PCC: Place Outbound
+## 3PCC Place Outbound
 
-## 3PCC: Answer or Decline Inbound
+## 3PCC Answer or Decline Inbound
 
-## 3PCC: Hangup
+## 3PCC Hangup
 
-## 3PCC: Move Call
+## 3PCC Move Call
 
-## Resiliency: Miss Incoming call
+## Resiliency Miss Incoming call
 
-## Resiliency: Mid-Call Network Change
+## Resiliency Mid-Call Network Change
 
-## Resiliency: Mid-Call Wireless Fade and Recover
+## Resiliency Mid-Call Wireless Fade and Recover
 
-## Resiliency: Mid-Call Wireless Fade and Move
+## Resiliency Mid-Call Wireless Fade and Move
 
-## Resiliency: Mid-Call Wireless Fade and Peer Hangup
+## Resiliency Mid-Call Wireless Fade and Peer Hangup
 
-## Resiliency: Mid-Call Wireless Fade and Server Drop
+## Resiliency Mid-Call Wireless Fade and Server Drop
 
 # Normative Protocol Specification
 
