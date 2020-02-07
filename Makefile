@@ -1,19 +1,26 @@
-# Makefile to build Internet Drafts from markdown using mmarc
 
-
-DRAFT = draft-rosenbergjennings-dispatch-ripp
-VERSION = 04
-
-
-all: draft-rosenberg-dispatch-ripp-chat.txt draft-rosenberg-dispatch-ripp-inbound.txt draft-rosenberg-dispatch-ripp-phone-features.txt draft-rosenberg-dispatch-ripp-webrtc.txt $(DRAFT)-$(VERSION).txt  $(DRAFT)-$(VERSION).html ripp-api.html ripp-api.md draft-rosenberg-dispatch-ripp-sipdiffs.xml draft-rosenberg-dispatch-ripp-chat.html draft-rosenberg-dispatch-ripp-inbound.html draft-rosenberg-dispatch-ripp-phone-features.html draft-rosenberg-dispatch-ripp-sipdiffs.html draft-rosenberg-dispatch-ripp-webrtc.html
-
-
-diff: $(DRAFT).diff.html
+all: $(patsubst %.md,%.txt,$(wildcard draft*.md))  $(patsubst %.xml,%.txt,$(wildcard draft*.xml)) \
+     $(patsubst %.md,%.html,$(wildcard draft*.md))  $(patsubst %.xml,%.html,$(wildcard draft*.xml))
 
 clean:
-	-rm -f $(DRAFT)-$(VERSION).{txt,html,xml,pdf} $(DRAFT).diff.html  draft*.txt draft*.html ripp-api.{html,md} draft-rosenberg-dispatch-ripp-sipdiffs.xml
+	-rm -f draft*.txt draft*.html ripp-api.{html,md} draft-rosenberg-dispatch-ript-sipdiffs.xml draft-rosenbergjennings-dispatch-ript.xml
 
-.PHONY: all clean diff
+.PHONY: all clean 
+
+.PRECIOUS: %.xml
+
+%.html: %.xml
+	xml2rfc --html $^ -o $@
+
+%.txt: %.xml
+	xml2rfc --text $^ -o $@
+
+%.xml: %.md 
+	mmark -xml2 -page $^ $@ 
+
+
+#$(DRAFT).diff.html: $(DRAFT)-$(VERSION).txt $(DRAFT).old
+#	htmlwdiff   $(DRAFT).old $(DRAFT)-$(VERSION).txt > $(DRAFT).diff.html
 
 
 ripp-api.md: ripp-api.raml 
@@ -27,19 +34,3 @@ seq-diagram.md: seq-diagram-out.txt
 	cat seq-diagram-out.txt >> seq-diagram.md
 	echo "~~~"  >> seq-diagram.md
 
-.PRECIOUS: %.xml
-
-%.html: %.xml
-	xml2rfc --html $^ -o $@
-
-%.txt: %.xml
-	xml2rfc --text $^ -o $@
-
-$(DRAFT)-$(VERSION).xml: $(DRAFT).md  seq-diagram.md  ripp-api.md
-	mmark -xml2 -page $(DRAFT).md $@ 
-
-$(DRAFT).diff.html: $(DRAFT)-$(VERSION).txt $(DRAFT).old
-	htmlwdiff   $(DRAFT).old $(DRAFT)-$(VERSION).txt > $(DRAFT).diff.html
-
-draft-rosenberg-dispatch-ripp-sipdiffs.xml: draft-rosenberg-dispatch-ripp-sipdiffs.md
-	mmark -xml2 -page draft-rosenberg-dispatch-ripp-sipdiffs.md $@ 

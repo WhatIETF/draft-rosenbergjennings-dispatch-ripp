@@ -40,4 +40,4 @@ RUN npm i -g raml2html raml2html-markdown-theme
 RUN mkdir -p /data
 WORKDIR /data
 
-CMD make 
+CMD make -k 
