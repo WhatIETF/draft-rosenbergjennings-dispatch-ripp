@@ -12,7 +12,7 @@
 Title = "RealTime Internet Peering for Telephony"
 abbrev = "RIPT"
 category = "std"
-docName = "draft-rosenbergjennings-dispatch-ript-04"
+docName = "draft-rosenbergjennings-dispatch-ript-00"
 ipr= "trust200902"
 area = "Internet"
 keyword = ["RTP"]
