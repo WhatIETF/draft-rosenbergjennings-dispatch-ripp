@@ -1938,35 +1938,6 @@ receives no acknowledgements for media packets it has sent for 1s, or
 initiate a migration as defined in the prior section.
 
 
-# SIP Gateway 
-(move to SIP document)
-
-RIPT is designed to be easy to gateway from SIP. The expectation is
-that RIPT will be implemented in SBCs and softswitches. A SIP to RIPT
-gateway has to be call-stateful, acting as a B2BUA, in order to
-gateway to RIPT. Furthermore, a SIP to RIPT gateway has to act as a
-media termination point in SIP. It has to perform any SRTP decryption
-and encryption, and it must de-packetize RTP packets to extract their
-timestamps, sequence numbers, and codec types.
-
-SIP to RIPT gateways are not transparent. SIP header fields which are
-unknown or do not map to RIPT functionality as described here, gets
-discarded.
-
-Any configuration and provisioning for RIPT happens ahead of receipt
-or transmission of SIP calls. Consequently, the logic described here
-applies at the point that a gateway receives a SIP INVITE on the SIP
-side, or receives a POST to the RIPT trunk URI on the RIPT side.
-
-This specification does define some normative procedures for the
-gateway function in order to maximize interoperability. 
-
-
-## RIPT to SIP
-
-## SIP to RIPT
-
-
 # RAML API {#syntax}
 
 TODO - add in RAML
