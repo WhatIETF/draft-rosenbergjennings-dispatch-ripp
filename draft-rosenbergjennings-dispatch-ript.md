@@ -233,7 +233,7 @@ this specification. A RIPP server always acts as an HTTP server.
 
 Terminal Group (TG): A container for calls between a client and
 server. A TG is identified by a URI, hosted on the server. A TG acts
-as a unit of policy and capabilities, including alowed phone numbers.
+as a unit of policy and capabilities, including allowed phone numbers.
 The acronym is a nod to its circuit switched predecessor,
 the Trunk Group. It exists to facilitate automated configuration of
 call routing and avoid call failures due to mismatched capabilities.
@@ -332,13 +332,13 @@ The customer and provider role is asymmetric. Typically the customer
 has purchased services from the provider. From a protocol perspective,
 RIPT assumes that the customer has an account with the provider, and
 it is possible for the customer to obtain an OAuth token which can be
-used to authenticate. However, there is no login technqiue which
+used to authenticate. However, there is no login technique which
 enables the provider to obtain a token to place calls towards the
 customer.
 
 Since calls always originate from client to server, in order to
 receive inbound calls, a customer can also run a RIPT server. RIPT
-supports a simple registration mecahnism by which the customer -
+supports a simple registration mechanism by which the customer -
 acting as a client - can use RIPT to register its
 TG URI with the provider.  This registration also includes a bearer
 token for authorization.
@@ -491,7 +491,7 @@ directed to the login page for Comcast, provide their credentials, and
 then be asked to authorize the IP PBX to access their Comcast account
 on their behalf. It would also display the permissions being requested
 (which Comcast would define and the IP PBX would request). In this
-case, probably the ability to make and recieve calls on their
+case, probably the ability to make and receive calls on their
 behalf. The user would click on "approve". The standard OAuth flow
 would then have deposited an OAuth access token on the IP PBX.
 
@@ -659,7 +659,7 @@ In most cases, the server will require the client to authenticate in
 order to retrieve this document. Typically, a server would have many
 TGs provisioned, and each TG is associated with a specific customer
 which will connect to it. The customer ID would be associated with the
-TGs it is permmitted to access, and that same customer ID would
+TGs it is permitted to access, and that same customer ID would
 normally be placed into the OAuth token that the client obtains during
 login. This allows the origin server to determine who the customer is,
 and what TG(s) they are allowed to connect to. This is standard
@@ -707,7 +707,7 @@ terms of service may not allow that, and it would reject the
 request. Also note how the origins field is absent - this is because
 the enterprise will accept inbound calls with any callerID. 
 
-A success esponse to this would be a 201 Created, with the TG which
+A success response to this would be a 201 Created, with the TG which
 was created: 
 
 ~~~ ascii-art
@@ -737,7 +737,7 @@ semi-static declaration which contains the advertisement along with other
 properties of the handler. Handler descriptions are semi-static in that they
 do not change on a call by call basis. They change only when some kind
 of significant configuration change happens. For example, if an SBC
-receives an upgrrade to support a new codec, its handler description
+receives an upgrade to support a new codec, its handler description
 would change. Consequently, handler descriptions are expected to change
 perhaps a few times a year.
 
@@ -773,7 +773,7 @@ registration indicates the meaning of the values - their units and
 allowed values. Most importantly, the parameter is always expressed in
 a way where the value represents a maximum of some sort. This enables
 booleans (where the maximum is 1), integral ranges (where the maximum
-is a large-ish integer), or ordered enums (where the enum values
+is a large integer), or ordered enums (where the enum values
 correspond to integers in order). When a parameter is not specified,
 it takes on a default. Similarly, if the advertisement
 is not present, the default can be assumed for all parameters.
@@ -921,7 +921,7 @@ have an advertisement which looks like:
 }
 ~~~
 
-As with any kind of capabilities techology, the one defined here
+As with any kind of capabilities technology, the one defined here
 cannot describe arbitrary constraints. It cannot express dependencies
 that may arise between audio and video, or between encoding and
 decoding. It, in essence, represents each as an OR-of-ANDS construct,
@@ -957,7 +957,7 @@ that number, and request the server to create a certificate that it
 would cache until it expires.
 
 An important benefit of this approach is that the server can use the
-passport itself as the technqiue to authenticate the client as defined
+passport itself as the technique to authenticate the client as defined
 in [@?RFC8224], and merely pass on the passport provided by the client
 rather than generating one. This avoids the computational cost of
 creating a signature, and also means that secure caller ID is provided
@@ -1100,7 +1100,7 @@ is initiated from the client to the server for purposes of signalling
 (this only happens if the call was created successfully and the
 directive could be followed). One is a GET to the /events resource on
 the call URI, retrieving call events from the server. The other is a
-PUT to the same /events URI, used by the cient to send call events to
+PUT to the same /events URI, used by the client to send call events to
 its peer. The combination of these two is called the signalling
 byway. HTTP/3 ensures zero RTT for setup of these transactions.
 
@@ -1114,7 +1114,7 @@ peering. These include transfer-and-takeback.
 
 ## Media Exchange
 
-Media exchange makes use of webtransport over HTTP3
+Media exchange makes use of web-transport over HTTP3
 [@!I-D.vvv-webtransport-http3] when it is available, falling back to
 media byways when it is not.
 
@@ -1191,7 +1191,7 @@ specification. Then, the origin server sends a migration event to the
 client. No additional attributes are provided in the event. 
 
 Alternatively, the server may wish to migrate the call to a specific
-instance amongst those in the cluster. One exampe of that is to move
+instance amongst those in the cluster. One example of that is to move
 calls from specific users or domains to specific hosts for reason of
 isolation. There are many other reasons. In this case, the event from
 the server will contain a URI which replaces the existing call URI,
@@ -1269,7 +1269,7 @@ stash state. Specifically, it will need to stash the callID and the
 downstream entity to which the call was set when it was
 established. If the downstream entity is a RIPT server, the TG URI,
 call URI, selected IP address (from either DNS or using the IP in the
-advertiseent), and session cookie are stored. These facilitate
+advertisement), and session cookie are stored. These facilitate
 reconnection to the same downstream instance.
 
 In inter-company peering arrangements, such as enterprise voice
@@ -1335,7 +1335,7 @@ in the list. It is RECOMMENDED that the origin server specify that
 this document can be cached.
 
 If the client receives a document and there is only one TG
-URI, it uses this for subsequent outound calls to the server. If there
+URI, it uses this for subsequent outbound calls to the server. If there
 is more than one, the client can use any algorithm and policy it
 desires to choose the target TG for any call. 
 
@@ -1345,7 +1345,7 @@ retrieve the value of this URI, and use it to process calls.
 ## TG Construction
 
 When a server (either for the consumer or the provider) retrieves a
-GET aginst the a valid TG URI, it MUST return a document with a set of
+GET against the a valid TG URI, it MUST return a document with a set of
 parameters. 
 
 The document MUST contain an "outbound" element. The "origins" field
@@ -1404,7 +1404,7 @@ reachable by the provider. The URI MUST utilize HTTPS, and MUST
 utilize a domain name for the authority component. 
 
 The destinations parameter in the consumer TG description MAY be
-included. If it is included, the destinations MUST be a subet of the
+included. If it is included, the destinations MUST be a subset of the
 addresses present in the certificate found in the origins element in
 the provider TG description. Since a consumer does not act as an
 authentication service as specified in [@?RFC8224], the origins
@@ -1416,12 +1416,12 @@ parameter MUST be omitted.
 Prior to placing a call towards a TG, a client MUST have an active
 handler registered to the server. To register one, it performs a POST
 on the /handlers resource on the TG URI. This request MUST contain a
-handler desription conformant to the syntax in (#syntax) and following
+handler description conformant to the syntax in (#syntax) and following
 the rules defined in the next section. 
 
 If the request is valid and authorized, the origin server MUST
-return a 201 Createed response, with the URI for the new handler in
-the Location header field. It MUST echo back the handler desription,
+return a 201 Created response, with the URI for the new handler in
+the Location header field. It MUST echo back the handler description,
 and MUST add or replace the "uri" parameter in that description to
 contain this URI. 
 
@@ -1438,7 +1438,7 @@ and establishes an IANA registry for future extensions. Every
 capability has a default, so that if it is not included in the
 advertisement, the capability for the peer is understood.
 
-Two parameters are defined for media capabilites - "source" and
+Two parameters are defined for media capabilities - "source" and
 "sink", which specify the ability to send an receive media
 respectively, along with a "media" parameter which indicates the type
 - "audio" or "video". There MUST be one "source" and "sink" instance
@@ -1748,7 +1748,7 @@ Each media chunk has the following properties in the envelope part:
    sequence number, this value is represented with 64 bits, but
    truncated values can be sent. The client MUST send full values
    until the first packet containing a full value has been
-   acknowleded, and after that, SHOULD send truncated values. For
+   acknowledged, and after that, SHOULD send truncated values. For
    video, if the media is an intra-frame, the full value MUST be
    present. (tag = 2)
 

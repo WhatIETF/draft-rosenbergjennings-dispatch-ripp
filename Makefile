@@ -2,7 +2,6 @@
 output =  $(patsubst %.md,%.txt,$(wildcard draft*.md))  $(patsubst %.xml,%.txt,$(wildcard draft*.xml)) \
           $(patsubst %.md,%.html,$(wildcard draft*.md))  $(patsubst %.xml,%.html,$(wildcard draft*.xml))
 
-
 all: $(output) all.tar ripp-api.md ripp-api.html seq-diagram.md
 
 clean:
@@ -20,7 +19,6 @@ clean:
 
 %.xml: %.md 
 	mmark -xml2 -page $^ $@ 
-
 
 all.tar: $(output)
 	tar cvf all.tar $(output)
