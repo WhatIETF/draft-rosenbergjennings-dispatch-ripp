@@ -9,8 +9,7 @@
 #
 
 
-Title = "RealTime Internet Peering for Telephony (RIPT) Compatibility
-with webRTC"
+Title = "RealTime Internet Peering for Telephony (RIPT) Compatibility with webRTC"
 
 abbrev = "RIPT webRTC"
 category = "std"
