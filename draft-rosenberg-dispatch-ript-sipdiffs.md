@@ -942,7 +942,7 @@ TODO
 
 TODO 
 
-### Dial Strin (RFC 4967)
+### Dial String (RFC 4967)
 
 TODO 
 
