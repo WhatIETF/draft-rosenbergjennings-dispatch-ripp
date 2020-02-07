@@ -1694,6 +1694,13 @@ called parties, and the handler which is being used. This aspect of
 RIPT is essential for allowing clients to fail, recover, and re-obtain
 the state of the call.
 
+When a server has a signaling event to send, and there are multiple
+GET requests open for /events, the server MUST send the event on all
+such open requests. This enables seamless migration. Similarly, the
+server MUST be prepared to receive events on multiple distinct PUT
+transactions, and process them in the order in which they are received
+by the server. 
+
 ## Sending and Receiving Media
 
 Media is always associated with a call. Within a call, media has a
@@ -1838,7 +1845,8 @@ If the HTTP connection supports webtransport, media chunks MUST be sent
 (and received) as datagrams over the webtrasport session.
 
 If not, to send media, the server MUST select an open GET request to
-/media. It is RECOMMENDED that the server select the oldest one. The
+/media. The server MUST select the most recent, in order to enable
+migration of media streams from one client to another. The
 server MUST place its media chunk in the body of the response. If the server has
 received any media chunks from the peer for this call since the last time it
 has sent a media packet for this call, it MUST include an
@@ -1853,7 +1861,9 @@ eventually trigger migration as the client will timeout on
 acknowledgements. 
 
 The server will receive one media and zero or more control chunks as
-the body of the PUT requests. 
+the body of the PUT requests. Note that these may actually originate
+from different clients during migration events; this is irrelevant to
+server processing of media. 
 
 ## Connection and Byway Lifecycle Management
 
