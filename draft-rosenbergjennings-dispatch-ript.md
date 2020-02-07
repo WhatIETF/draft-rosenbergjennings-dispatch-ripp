@@ -549,15 +549,15 @@ OAuth flow to obtain an OAuth token for the other.
 
 ## Video Endpoint to Meetings Provider
 
-In this use case, there is a video conferencing device. The end user
+In this use case, there is a video conferencing device such as webex.com. The end user
 wishes to join a meeting hosted on a meeting provider. The meeting
 would be modeled as a call to number at domain, where the number is the meeting
 number used for the meeting. Using the domain, the video endpoint
 would construct the RIPT root URI and then query to discover the
-available provider TGs. This request will not be authenticated,
-because the video endpoint has no relationship with the meeting
-provider. Consequently, the meeting provider returns a provider TG URI
-which corresponds to an "unauthenticated meeting join" TG.
+available provider TGs. This request could be authenticated using the
+caller ID in the passport,
+even thought the video endpoint may have no relationship with the meeting
+provider. 
 
 Of course, if the video endpoint were a user of the meeting provider,
 it could have such a token and use it for the call.
