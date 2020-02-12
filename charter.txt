@@ -1,11 +1,11 @@
 This working group will standardize a protocol, capable of operating
-ontop of HTTP/3, which is viable for performing real-time voice and
-video communications. This is inclusive of signaling, media
+atop HTTP/3, which supports real-time voice and
+video communications, including signaling, media
 negotiation, and transmission of media packets.
 
 The primary rationale for this new protocol is to enable deployment of
-real-time communications services ontop of modern "cloud"
-systems. These systems are heavily based on HTTP, and for web-based
+real-time communications services on modern "cloud"
+systems. These systems are built around HTTP, and for HTTP-based
 applications, they enable load balancing, HA, auto-scaling, and so
 on. However, real-time communications protocols are based on SIP and
 RTP, and they cannot take advantage of these HTTP-based
@@ -13,53 +13,51 @@ capabilities. Consequently, a primary constraint of the protocol being
 produced is that it must be compatible with, and take advantage of,
 HTTP-based load balancers, failover techniques, state handling,
 caching, and so on, under the assumption that these systems are
-upgraded to support HTTP3, with no special considerations for
+simply upgraded to support HTTP/3, with no special considerations for
 real-time communications.
 
 This new protocol will enable the replacement of SIP for many use
-cases. However, replacement of SIP is not a primary objective of the
+cases. However, replacement of SIP is not a primary objective of this
 standardization effort. To limit scope, the baseline protocol scope
-will be limited to only those capabilities needed to enable
-inter-company voice and video calling. This includes enterprise to
-telco calling (often called SIP trunking) and telco to telco calling
-(often called NNI). The baseline protocol will not do any more than is
-required for this. Consequently, features that are strictly end user
+will be limited to the core capabilities needed to support basic secure
+voice and video communications. Features that are strictly end user
 device facing (such as invocation of call hold), are outside the scope
-of voice (such as instant messaging and presence), or are unrelated to
+of voice and video (such as instant messaging and presence), 
+or are unrelated to
 the real-time communications itself (such as a push notification
 channel for mobile clients), are out of scope for the baseline
-protocol.
-
-The baseline protocol must also enable the automated configuration of
-this connectivity. Current solutions for inter-company communications
-require heavily on manual provisioning and configuration of IP
-addresses, codecs, capabilities, routing logic, firewall rules, and so
-on. The new protocol must include any information conveyance between
-providers that is needed, which is specific to real-time
-communications.
-
-The baseline protocol will require the communication of calling and
-called party identifiers. It will utilize STIR to the greatest extent
-possible, and make "secure caller ID" an integral part of the
-specification. Similarly, the protocol will allow for e2e media
-encryption, though keying is out of scope, and is expected to be
+protocol. The baseline protocol will allow for e2e media encryption,
+although keying is out of scope, and is expected to be
 handled by other protocols such as MLS. 
 
 The baseline protocol will adhere to best practices for web
 application development. This includes usage of OAuth for
 authentication and authorization, naming of resources, formatting and
 structure of resource content, usage of POST, PUT, DELETE, and GET,
-idempotency, and so on. 
+idempotency, and so on.
+
+Beyond the core transport, the group will standardize an extension
+to the baseline protocol which enables real-time communcations for enterprise to
+telco calling (often called SIP trunking) and telco to telco calling
+(often called NNI). It will also enable the automated configuration of
+this connectivity; while current solutions for inter-company communications
+depend heavily on manual provisioning and configuration of IP
+addresses, codecs, capabilities, routing logic, and firewall rules, 
+the new protocol must include any information conveyance between
+providers that is needed for real-time
+communications. This extension will also utilize STIR to the greatest
+extent possible, and make "secure caller ID" an integral part of the
+specification. 
 
 The group will also standardize an extension to the baseline protocol
 which enables real-time communications between a browser and its
-provider. This has significant overlap with webRTC. Experience has
+provider. This has significant overlap with WebRTC. Experience has
 shown that applications which send media to cloud services are
 difficult to build, deploy and operate at scale, for the reaons
 discussed above. Consequently, the extension will focus on cases where
 the media is sent to the same target as the signaling, and provide a
-fallback technique to utilize webRTC when p2p communications is
-desired.
+fallback technique to utilize the existing WebRTC
+protocol suite when p2p communications is desired.
 
 The group will do its work in conjunction with active development
 efforts, so that implementation experience feeds directly into
