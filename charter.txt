@@ -1,41 +1,41 @@
 This working group will standardize a protocol, capable of operating
-atop HTTP/3, which supports real-time voice and
-video communications, including signaling, media
-negotiation, and transmission of media packets.
+atop HTTP/3, which supports real-time voice and video communications,
+including signaling, media negotiation, and transmission of media
+packets.
 
 The primary rationale for this new protocol is to enable deployment of
-real-time communications services on modern "cloud"
-systems. These systems are built around HTTP, and for HTTP-based
-applications, they enable load balancing, HA, auto-scaling, and so
-on. However, real-time communications protocols are based on SIP and
-RTP, and they cannot take advantage of these HTTP-based
-capabilities. 
+real-time communications services on modern "cloud" systems. These
+systems are built around HTTP, and for HTTP-based applications, they
+enable load balancing, HA, auto-scaling, and so on. However, real-time
+communications protocols are based on SIP and RTP, and they cannot take
+advantage of these HTTP-based capabilities.
 
-It is a non-goal of this working group to replicate all of SIP and its many 
-extensions into HTTP. The group will limit itself to supporting the functionality
-in widespread actual usage today. 
+It is a non-goal of this working group to replicate all of SIP and its
+many extensions into HTTP. The group will limit itself to supporting the
+functionality in widespread actual usage today.
 
-The protocol uses HTTP techniques for authentication and authorization 
-(notably OAuth), and requires hop by hop encryption (i.e., https). The protocol
-will also allow for e2e media encryption,
-although keying is out of scope, and is expected to be
-handled by other protocols such as MLS. This extension will also utilize STIR for callerID.
+The protocol uses HTTP techniques for authentication and authorization
+(notably OAuth), and requires hop by hop encryption (i.e., https). The
+protocol will also allow for e2e media encryption, although keying is
+out of scope, and is expected to be handled by other protocols such as
+MLS. This extension will also utilize STIR for callerID.
 
-This protocol should be implementable in browsers, thick desktop clients, 
-mobile apps and servers. 
+This protocol should be implementable in browsers, thick desktop
+clients, mobile apps and servers.
 
-The group will standardize an extension to the baseline protocol that 
-automates the configuration necessary to achieve calling between on organization
-which is a customer of the other (for example, enterprise to service provider). 
+The group will standardize an extension to the baseline protocol that
+automates the configuration necessary to achieve calling between on
+organization which is a customer of the other (for example, enterprise
+to service provider).
 
 [OPEN ISSUE: Is P2P media in or out? If in, ICE or something else ?]
 
-The group will do its work in conjunction with active software development
-efforts, so that implementation experience feeds directly into
-protocol development. 
+The group will do its work in conjunction with active software
+development efforts, so that implementation experience feeds directly
+into protocol development.
 
-The group will coordinate with the Webtranport, QUIC, HTTPbis and STIR working
-groups. 
+The group will coordinate with the Webtranport, QUIC, HTTPbis and STIR
+working groups.
 
 Milestones:
 
