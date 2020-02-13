@@ -18,45 +18,44 @@ Description:
 Though extremely successful and deployed on massive scales, the
 Session Initiation Protocol (SIP) - as a 20 year old protocol - is
 showing its age. It is difficult to deploy SIP technologies into
-modern public cloud platforms. Its usage of raw IPs and ports, its
-load balancing techniques, and its state model, make it incompatible
-with services like global load balancers, autoscaling, service meshes,
+modern public cloud platforms. Its usage of raw IPs and ports, domain-specific
+load balancing techniques, and connection-oriented state model make it incompatible
+with exisiting services like global load balancers, autoscaling, service meshes,
 and so on. 
 
-As such, the goal of this BoF is to create a new protocol that 
-enables signaling and real-time interactive voice and video to operate natively
-ontop of modern web platforms. This means that:
 
-1. It needs to use HTTP URLs for addressing, and media and signaling
-can be sent in this way. 
+As such, the goal of this BoF is to create a new protocol that 
+enables signaling and real-time interactive media to operate natively
+on top of the modern web platforms. At a high level, this means:
+
+1. It uses HTTP URLs for addressing, and HTTP for transmission of signaling and media.
 
 2. It follows the HTTP connectionless model, in that, clients can refresh
-their state and manipulate the state, and can do so from any different
-number of clients.
+their state and manipulate said state, from any number of clients.
 
 3. It aligns signaling and media state into a single piece of state,
-allowing clients to manipulate it with HTTP rpc operations
+allowing clients to manipulate it with RPC operations.
 
-4. It utilizes modern http cloud security techniques, including OAuth,
+4. It uses modern HTTP-based cloud security techniques, including OAuth,
 server-side TLS, and so on.
 
-5. It utilizes modern techniques for load balancing and high availability
-used in scaled web cloud environments
+5. It uses modern techniques for load balancing and high availability
+commonly deployed in scaled web cloud environments.
 
-6. It makes use of modern http rpc techniques and data formatting
+6. It makes use of existing HTTP RPC techniques and message formatting.
 
 7. It follows modern web practice and makes security features mandatory,
-not optional (including e2e media encryption, though the media flows HbH)
+not optional (including e2e media encryption, even when media flows HbH)
 
 
-The recent efforts to standardize HTTP3 using QUIC, make it possible to 
+The recent efforts to standardize HTTP3 using QUIC make it possible to 
 achieve the above without unacceptable latency and HOL blocking, inherent
 in TCP-based protocols.
 
 
 To remedy this, a design team put together a draft specification
 called RIPP, which takes advantage of HTTP3 and QUIC to enable
-real-time communicatins over those protocols, without extending or
+real-time communications over these protocols without extending or
 changing them.
 
 The purpose of the BoF is to gain consensus on the formation of a
