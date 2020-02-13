@@ -11,39 +11,36 @@ on. However, real-time communications protocols are based on SIP and
 RTP, and they cannot take advantage of these HTTP-based
 capabilities. 
 
-The goals is not to create all the featues of SIP and redo them - the goal is to allow real time voice and video flows. 
+It is a non-goal of this working group to replicate all of SIP and its many 
+extensions into HTTP. The group will limit itself to supporting the functionality
+in widespread actual usage today. 
 
-The baseline protocol uses the underling  HTTP techniques for authentication and hop by hop enction and will allow for e2e media encryption,
+The protocol uses HTTP techniques for authentication and authorization 
+(notably OAuth), and requires hop by hop encryption (i.e., https). The protocol
+will also allow for e2e media encryption,
 although keying is out of scope, and is expected to be
-handled by other protocols such as MLS. 
+handled by other protocols such as MLS. This extension will also utilize STIR for callerID.
 
-Beyond the core transport, the group will standardize an extension
-to the baseline protocol which enables real-time communcations for enterprise to
-telco calling (often called SIP trunking) and telco to telco calling
-(often called NNI). It will also enable the automated configuration of
-this connectivity; while current solutions for inter-company communications
-depend heavily on manual provisioning and configuration of IP
-addresses, codecs, capabilities, routing logic, and firewall rules, 
-the new protocol must include any information conveyance between
-providers that is needed for real-time
-communications. This extension will also utilize STIR to the greatest
-extent possible, and make "secure caller ID" an integral part of the
-specification. 
+This protocol should be implementable in browsers, thick desktop clients, 
+mobile apps and servers. 
 
-P2P media - in or out ? If in, ICE or something else ? 
+The group will standardize an extension to the baseline protocol that 
+automates the configuration necessary to achieve calling between on organization
+which is a customer of the other (for example, enterprise to service provider). 
 
-This protocol shouidl be implementable in browsers. 
+[OPEN ISSUE: Is P2P media in or out? If in, ICE or something else ?]
 
-The group will do its work in conjunction with active development
+The group will do its work in conjunction with active software development
 efforts, so that implementation experience feeds directly into
 protocol development. 
 
-Coordinate with Webtranport , QUIC, HTTP. 
+The group will coordinate with the Webtranport, QUIC, HTTPbis and STIR working
+groups. 
 
 Milestones:
 
-Sep 2021: Submit baseline protocol to IESG
-Sep 2021: Submit browser extension protocol to IESG
+Dec 2020: Submit baseline protocol to IESG
+Mar 2021: Submit autoconfiguration protocol to IESG
 
 
 
