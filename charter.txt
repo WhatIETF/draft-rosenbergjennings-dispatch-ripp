@@ -9,32 +9,13 @@ systems. These systems are built around HTTP, and for HTTP-based
 applications, they enable load balancing, HA, auto-scaling, and so
 on. However, real-time communications protocols are based on SIP and
 RTP, and they cannot take advantage of these HTTP-based
-capabilities. Consequently, a primary constraint of the protocol being
-produced is that it must be compatible with, and take advantage of,
-HTTP-based load balancers, failover techniques, state handling,
-caching, and so on, under the assumption that these systems are
-simply upgraded to support HTTP/3, with no special considerations for
-real-time communications.
+capabilities. 
 
-This new protocol will enable the replacement of SIP for many use
-cases. However, replacement of SIP is not a primary objective of this
-standardization effort. To limit scope, the baseline protocol scope
-will be limited to the core capabilities needed to support basic secure
-voice and video communications. Features that are strictly end user
-device facing (such as invocation of call hold), are outside the scope
-of voice and video (such as instant messaging and presence), 
-or are unrelated to
-the real-time communications itself (such as a push notification
-channel for mobile clients), are out of scope for the baseline
-protocol. The baseline protocol will allow for e2e media encryption,
+The goals is not to create all the featues of SIP and redo them - the goal is to allow real time voice and video flows. 
+
+The baseline protocol uses the underling  HTTP techniques for authentication and hop by hop enction and will allow for e2e media encryption,
 although keying is out of scope, and is expected to be
 handled by other protocols such as MLS. 
-
-The baseline protocol will adhere to best practices for web
-application development. This includes usage of OAuth for
-authentication and authorization, naming of resources, formatting and
-structure of resource content, usage of POST, PUT, DELETE, and GET,
-idempotency, and so on.
 
 Beyond the core transport, the group will standardize an extension
 to the baseline protocol which enables real-time communcations for enterprise to
@@ -49,19 +30,15 @@ communications. This extension will also utilize STIR to the greatest
 extent possible, and make "secure caller ID" an integral part of the
 specification. 
 
-The group will also standardize an extension to the baseline protocol
-which enables real-time communications between a browser and its
-provider. This has significant overlap with WebRTC. Experience has
-shown that applications which send media to cloud services are
-difficult to build, deploy and operate at scale, for the reaons
-discussed above. Consequently, the extension will focus on cases where
-the media is sent to the same target as the signaling, and provide a
-fallback technique to utilize the existing WebRTC
-protocol suite when p2p communications is desired.
+P2P media - in or out ? If in, ICE or something else ? 
+
+This protocol shouidl be implementable in browsers. 
 
 The group will do its work in conjunction with active development
 efforts, so that implementation experience feeds directly into
 protocol development. 
+
+Coordinate with Webtranport , QUIC, HTTP. 
 
 Milestones:
 
