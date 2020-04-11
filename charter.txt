@@ -15,10 +15,11 @@ many extensions into HTTP. The group will limit itself to supporting the
 functionality in widespread actual usage today.
 
 The protocol uses HTTP techniques for authentication and authorization
-(notably OAuth), and requires hop by hop encryption (i.e., https). The
-protocol will also allow for e2e media encryption, although keying is
-out of scope, and is expected to be handled by other protocols such as
-MLS. This extension will also utilize STIR for callerID.
+and requires hop by hop encryption (i.e., https). The protocol will
+also specify a technnique for encapsulated e2e encrypted media
+packets, and will specify mandatory-to-implement protocol for keying
+(likely MLS) and identity (likely STIR passports). This extension will
+also utilize STIR for callerID.
 
 This protocol should be implementable in browsers, thick desktop
 clients, mobile apps and servers.
